@@ -1,6 +1,6 @@
 /**
  * ==============================
- * Artemis 0.1.0 | MIT License
+ * Artemis 0.1.1 | MIT License
  * http://aegisframework.com/
  * ==============================
  */
@@ -69,10 +69,12 @@ class Artemis {
 	}
 
 	value(value){
-		if (typeof value === 'undefined'){
-			return this.collection[0].value;
-		}else{
-			this.collection[0].value = value;
+		if(this.length > 0){
+			if (typeof value === 'undefined'){
+				return this.collection[0].value;
+			}else{
+				this.collection[0].value = value;
+			}
 		}
 	}
 
@@ -132,35 +134,43 @@ class Artemis {
 	}
 
 	filter(element){
-		return new Artemis(this.collection[0].querySelector(element));
+		if(this.length > 0){
+			return new Artemis(this.collection[0].querySelector(element));
+		}
 	}
 
 	data(name, value){
-		if (typeof value === 'undefined'){
-			return this.collection[0].dataset[name];
-		}else{
-			this.collection[0].dataset[name] = value;
+		if(this.length > 0){
+			if (typeof value === 'undefined'){
+				return this.collection[0].dataset[name];
+			}else{
+				this.collection[0].dataset[name] = value;
+			}
 		}
 	}
 
 	text(value){
-		if (typeof value === 'undefined'){
-			return this.collection[0].textContent;
-		}else{
-			this.collection[0].textContent = value;
+		if(this.length > 0){
+			if (typeof value === 'undefined'){
+				return this.collection[0].textContent;
+			}else{
+				this.collection[0].textContent = value;
+			}
 		}
 	}
 
 	html(value){
-		if (typeof value === 'undefined'){
-			return this.collection[0].innerHTML;
-		}else{
-			this.collection[0].innerHTML = value;
+		if(this.length > 0){
+			if (typeof value === 'undefined'){
+				return this.collection[0].innerHTML;
+			}else{
+				this.collection[0].innerHTML = value;
+			}
 		}
 	}
 
 	append(data){
-		if(this.collection[0]){
+		if(this.length > 0){
 			var div = document.createElement('div');
 			div.innerHTML = data;
 			this.collection[0].appendChild(div.firstChild);
@@ -175,6 +185,12 @@ class Artemis {
 
 	get(index){
 		return this.collection[index];
+	}
+
+	first(){
+		if(this.length > 0){
+			return new Artemis(this.collection[0]);
+		}
 	}
 
 	isVisible(){
@@ -351,6 +367,18 @@ class Artemis {
 		}
 	}
 
+	replaceWith(data){
+		var div = document.createElement('div');
+		div.innerHTML = data;
+		this.collection[0].parentElement.replaceChild(div, this.collection[0]);
+	}
+
+	reset(){
+		if(this.length > 0){
+			this.collection[0].reset();
+		}
+	}
+
 	property(property, value){
 		if(this.collection[0]){
 			if(typeof value !== "undefined"){
@@ -518,7 +546,9 @@ class Storage {
 class Text {
 
     static capitalize(text){
-        return text.charAt(0).toUpperCase() + text.slice(1);
+        return text.replace(/\w\S*/g, function(txt) {
+            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+        });
     }
 
     static getSuffix(text, key){

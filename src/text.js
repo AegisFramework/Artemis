@@ -7,7 +7,9 @@
 class Text {
 
     static capitalize(text){
-        return text.charAt(0).toUpperCase() + text.slice(1);
+        return text.replace(/\w\S*/g, function(txt) {
+            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+        });
     }
 
     static getSuffix(text, key){
