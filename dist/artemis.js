@@ -418,14 +418,17 @@ class Request {
 				encodedData.push(encodeURIComponent(value) + "=" + encodeURIComponent(data[value]));
 			}
 			var request = new XMLHttpRequest();
-			request.open('GET', url + "?" + encodedData.join("&"), true);
+			if (encodedData.length > 0) {
+				url = url + "?" + encodedData.join("&");
+			}
+			request.open('GET', url, true);
 			request.responseType = responseType;
 
 			request.onload = function(){
 				resolve(request.response);
 			}
 
-			request.error = function(){
+			request.onerror = function(){
 				reject(request);
 			}
 
@@ -446,7 +449,7 @@ class Request {
 				resolve(request.response);
 			}
 
-			request.error = function(){
+			request.onerror = function(){
 				reject(request);
 			}
 
@@ -464,7 +467,7 @@ class Request {
 				resolve(request.response);
 			}
 
-			request.error = function(){
+			request.onerror = function(){
 				reject(request);
 			}
 
