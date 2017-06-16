@@ -70,6 +70,12 @@ class Artemis {
 		}
 	}
 
+	focus(){
+		if(this.length > 0){
+			this.collection[0].focus();
+		}
+	}
+
 	click(callback){
 		for(let i = 0; i < this.collection.length; i++){
 			this.collection[i].addEventListener("click", callback, false);
