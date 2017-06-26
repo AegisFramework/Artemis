@@ -1,6 +1,6 @@
 {
   "name": "artemis",
-  "version": "0.1.1",
+  "version": "0.1.4",
   "description": "Aegis Framework Javascript Library",
   "main": "gulpfile.js",
   "repository": {

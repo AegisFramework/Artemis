@@ -1,6 +1,6 @@
 /**
  * ==============================
- * Artemis 0.1.1 | MIT License
+ * Artemis 0.1.3 | MIT License
  * http://aegisframework.com/
  * ==============================
  */
@@ -43,8 +43,16 @@ class Artemis {
 	}
 
 	removeClass(oldClass){
-		for(let i = 0; i < this.collection.length; i++){
-			this.collection[i].classList.remove(oldClass);
+		if (oldClass) {
+			for(let i = 0; i < this.collection.length; i++){
+				this.collection[i].classList.remove(oldClass);
+			}
+		} else {
+			for(let i = 0; i < this.collection.length; i++){
+				while (this.collection[i].classList.length > 0) {
+				   this.collection[i].classList.remove(this.collection[i].classList.item(0));
+				}
+			}
 		}
 	}
 
