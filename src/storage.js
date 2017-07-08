@@ -6,26 +6,26 @@
 
 class Storage {
 
-	static get(key){
-		if(window.localStorage){
+	static get (key) {
+		if (window.localStorage) {
 			return localStorage.getItem(key);
-		}else{
+		} else {
 			console.warn("Your browser does not support Local Storage");
 		}
 	}
 
-	static set(key, value){
-		if(window.localStorage){
+	static set (key, value) {
+		if (window.localStorage) {
 			localStorage.setItem(key, value);
-		}else{
+		} else {
 			console.warn("Your browser does not support Local Storage");
 		}
 	}
 
-	static clear(){
-		if(window.localStorage){
-			ocalStorage.clear();
-		}else{
+	static clear () {
+		if (window.localStorage) {
+			localStorage.clear();
+		} else {
 			console.warn("Your browser does not support Local Storage");
 		}
 	}

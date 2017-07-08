@@ -1,6 +1,6 @@
 {
   "name": "artemis",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Aegis Framework Javascript Library",
   "main": "gulpfile.js",
   "repository": {
@@ -9,7 +9,7 @@
   },
   "keywords": [
     "artemis",
-	"dom",
+    "dom",
     "javascript",
     "library"
   ],
@@ -23,7 +23,6 @@
     "google-closure-compiler": "^20151216.2.0",
     "gulp": "^3.9.0",
     "gulp-concat": "^2.6.0",
-    "gulp-header": "^1.7.1",
-    "gulp-rename": "^1.2.2"
+    "gulp-header": "^1.7.1"
   }
 }

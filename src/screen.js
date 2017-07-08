@@ -6,27 +6,27 @@
 
 class Screen {
 
-	static isRetina(){
+	static isRetina () {
 		return window.devicePixelRatio >= 2;
 	}
 
-	static isPortrait(){
+	static isPortrait () {
 		return window.innerHeight > window.innerWidth;
 	}
 
-	static isLandscape(){
+	static isLandscape () {
 		return (window.orientation === 90 || window.orientation === -90);
 	}
 
-	static getOrientation(){
+	static getOrientation () {
 		return this.isPortrait ? "Portrait" : "Landscape";
 	}
 
-	static getMaximumWidth(){
+	static getMaximumWidth () {
 		return window.screen.availWidth;
 	}
 
-	static getMaximumHeight(){
+	static getMaximumHeight () {
 		return window.screen.availHeight;
 	}
 }
