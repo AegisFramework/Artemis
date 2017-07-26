@@ -1,3 +1,5 @@
+/* exported Artemis */
+
 class Artemis {
 
 	constructor (selector) {
@@ -405,6 +407,8 @@ function $_ (selector) {
 	}
 
 }
+
+/* exported $_ready */
 
 function $_ready (callback) {
 	window.addEventListener("load", callback);

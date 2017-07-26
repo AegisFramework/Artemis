@@ -4,6 +4,8 @@
 * ==============================
 */
 
+/* exported Text */
+
 class Text {
 
 	static capitalize (text) {

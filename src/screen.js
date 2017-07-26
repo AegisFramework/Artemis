@@ -4,6 +4,8 @@
 * ==============================
 */
 
+/* exported Screen */
+
 class Screen {
 
 	static isRetina () {

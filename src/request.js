@@ -4,6 +4,8 @@
 * ==============================
 */
 
+/* exported Request */
+
 class Request {
 
 	static get (url, data, responseType = "") {

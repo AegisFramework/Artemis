@@ -4,6 +4,8 @@
 * ==============================
 */
 
+/* exported Storage */
+
 class Storage {
 
 	static get (key) {
