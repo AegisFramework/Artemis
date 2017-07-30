@@ -1,11 +1,13 @@
 /**
  * ==============================
- * Artemis 0.1.4 | MIT License
+ * Artemis 0.1.5 | MIT License
  * http://aegisframework.com/
  * ==============================
  */
 
 "use strict";
+/* exported Artemis */
+
 class Artemis {
 
 	constructor (selector) {
@@ -414,6 +416,8 @@ function $_ (selector) {
 
 }
 
+/* exported $_ready */
+
 function $_ready (callback) {
 	window.addEventListener("load", callback);
 }
@@ -422,6 +426,8 @@ function $_ready (callback) {
 * Request
 * ==============================
 */
+
+/* exported Request */
 
 class Request {
 
@@ -496,6 +502,8 @@ class Request {
 * ==============================
 */
 
+/* exported Screen */
+
 class Screen {
 
 	static isRetina () {
@@ -528,6 +536,8 @@ class Screen {
 * ==============================
 */
 
+/* exported Storage */
+
 class Storage {
 
 	static get (key) {
@@ -559,6 +569,8 @@ class Storage {
 * Text
 * ==============================
 */
+
+/* exported Text */
 
 class Text {
 
