@@ -35,10 +35,20 @@ class Request {
 
 	static post (url, data, responseType = "", contentType = "application/x-www-form-urlencoded") {
 		return new Promise(function (resolve, reject) {
-			var encodedData = [];
-			for (var value in data) {
-				encodedData.push(encodeURIComponent(value) + "=" + encodeURIComponent(data[value]));
+			var formData;
+			if (contentType == "application/x-www-form-urlencoded") {
+				formData = [];
+				for (var value in data) {
+					formData.push (encodeURIComponent(value) + "=" + encodeURIComponent(data[value]));
+				}
+				formData = formData.join("&");
+			} else if (contentType == "multipart/form-data") {
+				formData = new FormData ();
+				for (var value in data) {
+					formData.append (value, data[value]);
+				}
 			}
+
 			var request = new XMLHttpRequest();
 			request.open("POST", url, true);
 			request.responseType = responseType;
@@ -50,8 +60,7 @@ class Request {
 				reject(request);
 			};
 
-			request.setRequestHeader("Content-Type", `${contentType}; charset=UTF-8`);
-			request.send(encodedData.join("&"));
+			request.send(formData);
 		});
 	}
 
