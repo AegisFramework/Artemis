@@ -185,6 +185,19 @@ class Artemis {
 		}
 	}
 
+	prepend (data) {
+		if (this.length > 0) {
+			var div = document.createElement("div");
+			div.innerHTML = data;
+			if (this.collection[0].childNodes.length > 0) {
+				this.collection[0].insertBefore(div.firstChild, this.collection[0].childNodes[0]);
+			} else {
+				this.collection[0].appendChild(div.firstChild);
+			}
+
+		}
+	}
+
 	each (callback) {
 		for (let i = 0; i < this.collection.length; i++) {
 			callback(this.collection[i]);
