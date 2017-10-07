@@ -1,3 +1,3 @@
 # Artemis
 
-Aegis Frameword Javascript library.
+Aegis Framework Javascript library.

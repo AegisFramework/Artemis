@@ -78,7 +78,7 @@
 			"always"
 		],
 		"strict":[
-			2,
+			0,
 			"global"
 		]
     },

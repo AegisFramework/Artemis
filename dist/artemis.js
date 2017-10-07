@@ -1,6 +1,6 @@
 /**
  * ==============================
- * Artemis 0.1.5 | MIT License
+ * Artemis 0.1.6 | MIT License
  * http://aegisframework.com/
  * ==============================
  */
@@ -190,6 +190,19 @@ class Artemis {
 			var div = document.createElement("div");
 			div.innerHTML = data;
 			this.collection[0].appendChild(div.firstChild);
+		}
+	}
+
+	prepend (data) {
+		if (this.length > 0) {
+			var div = document.createElement("div");
+			div.innerHTML = data;
+			if (this.collection[0].childNodes.length > 0) {
+				this.collection[0].insertBefore(div.firstChild, this.collection[0].childNodes[0]);
+			} else {
+				this.collection[0].appendChild(div.firstChild);
+			}
+
 		}
 	}
 
@@ -423,6 +436,61 @@ function $_ready (callback) {
 }
 /**
 * ==============================
+* Form
+* ==============================
+*/
+
+/* exported Form */
+
+/* global $_ */
+
+class Form {
+
+	static fill (name, data) {
+		for (const field in data) {
+			var element = $_(`form[data-form="${name}"] [name="${field}"]`).get (0);
+			if (typeof element != "undefined") {
+				switch (element.type) {
+
+					case "file":
+					case "file[]":
+						break;
+
+					default:
+						element.value = data[field];
+						break;
+				}
+			}
+
+		}
+	}
+
+	static values (name) {
+		var data = {};
+		$_(`form[data-form="${name}"] [name]`).each ((element) => {
+			var value;
+			switch (element.type) {
+				case "file[]":
+					value = element.files;
+					break;
+				case "file":
+					value = element.files[0];
+					break;
+				default:
+					value = element.value;
+					break;
+			}
+
+			if (typeof value != "undefined" && value !== null) {
+				data[element.name] = value;
+			}
+		});
+
+		return data;
+	}
+}
+/**
+* ==============================
 * Request
 * ==============================
 */
@@ -458,10 +526,20 @@ class Request {
 
 	static post (url, data, responseType = "", contentType = "application/x-www-form-urlencoded") {
 		return new Promise(function (resolve, reject) {
-			var encodedData = [];
-			for (var value in data) {
-				encodedData.push(encodeURIComponent(value) + "=" + encodeURIComponent(data[value]));
+			var formData;
+			if (contentType == "application/x-www-form-urlencoded") {
+				formData = [];
+				for (var value in data) {
+					formData.push (encodeURIComponent(value) + "=" + encodeURIComponent(data[value]));
+				}
+				formData = formData.join("&");
+			} else if (contentType == "multipart/form-data") {
+				formData = new FormData ();
+				for (var value in data) {
+					formData.append (value, data[value]);
+				}
 			}
+
 			var request = new XMLHttpRequest();
 			request.open("POST", url, true);
 			request.responseType = responseType;
@@ -473,8 +551,7 @@ class Request {
 				reject(request);
 			};
 
-			request.setRequestHeader("Content-Type", `${contentType}; charset=UTF-8`);
-			request.send(encodedData.join("&"));
+			request.send(formData);
 		});
 	}
 
