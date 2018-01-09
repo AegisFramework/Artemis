@@ -8,35 +8,27 @@
 
 class Storage {
 
+	static key (index) {
+		return localStorage.key (index);
+	}
+
+	static keys () {
+		return Object.keys (localStorage);
+	}
+
 	static get (key) {
-		if (window.localStorage) {
-			return localStorage.getItem (key);
-		} else {
-			console.warn("Your browser does not support Local Storage");
-		}
+		return localStorage.getItem (key);
 	}
 
 	static set (key, value) {
-		if (window.localStorage) {
-			localStorage.setItem (key, value);
-		} else {
-			console.warn("Your browser does not support Local Storage");
-		}
+		localStorage.setItem (key, value);
 	}
 
 	static remove (key) {
-		if (window.localStorage) {
-			localStorage.removeItem (key);
-		} else {
-			console.warn("Your browser does not support Local Storage");
-		}
+		localStorage.removeItem (key);
 	}
 
 	static clear () {
-		if (window.localStorage) {
-			localStorage.clear ();
-		} else {
-			console.warn("Your browser does not support Local Storage");
-		}
+		localStorage.clear ();
 	}
 }
