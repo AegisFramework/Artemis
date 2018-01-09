@@ -1,6 +1,6 @@
 /**
  * ==============================
- * Artemis 0.1.6 | MIT License
+ * Artemis 0.1.7 | MIT License
  * http://aegisframework.com/
  * ==============================
  */
@@ -527,12 +527,15 @@ class Request {
 	static post (url, data, responseType = "", contentType = "application/x-www-form-urlencoded") {
 		return new Promise(function (resolve, reject) {
 			var formData;
+			var request = new XMLHttpRequest();
+			request.open("POST", url, true);
 			if (contentType == "application/x-www-form-urlencoded") {
 				formData = [];
 				for (var value in data) {
 					formData.push (encodeURIComponent(value) + "=" + encodeURIComponent(data[value]));
 				}
 				formData = formData.join("&");
+				request.setRequestHeader("Content-type", contentType);
 			} else if (contentType == "multipart/form-data") {
 				formData = new FormData ();
 				for (var value in data) {
@@ -540,8 +543,6 @@ class Request {
 				}
 			}
 
-			var request = new XMLHttpRequest();
-			request.open("POST", url, true);
 			request.responseType = responseType;
 			request.onload = function () {
 				resolve(request.response);
@@ -619,7 +620,7 @@ class Storage {
 
 	static get (key) {
 		if (window.localStorage) {
-			return localStorage.getItem(key);
+			return localStorage.getItem (key);
 		} else {
 			console.warn("Your browser does not support Local Storage");
 		}
@@ -627,7 +628,15 @@ class Storage {
 
 	static set (key, value) {
 		if (window.localStorage) {
-			localStorage.setItem(key, value);
+			localStorage.setItem (key, value);
+		} else {
+			console.warn("Your browser does not support Local Storage");
+		}
+	}
+
+	static remove (key) {
+		if (window.localStorage) {
+			localStorage.removeItem (key);
 		} else {
 			console.warn("Your browser does not support Local Storage");
 		}
@@ -635,7 +644,7 @@ class Storage {
 
 	static clear () {
 		if (window.localStorage) {
-			localStorage.clear();
+			localStorage.clear ();
 		} else {
 			console.warn("Your browser does not support Local Storage");
 		}

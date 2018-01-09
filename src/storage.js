@@ -10,7 +10,7 @@ class Storage {
 
 	static get (key) {
 		if (window.localStorage) {
-			return localStorage.getItem(key);
+			return localStorage.getItem (key);
 		} else {
 			console.warn("Your browser does not support Local Storage");
 		}
@@ -18,7 +18,15 @@ class Storage {
 
 	static set (key, value) {
 		if (window.localStorage) {
-			localStorage.setItem(key, value);
+			localStorage.setItem (key, value);
+		} else {
+			console.warn("Your browser does not support Local Storage");
+		}
+	}
+
+	static remove (key) {
+		if (window.localStorage) {
+			localStorage.removeItem (key);
 		} else {
 			console.warn("Your browser does not support Local Storage");
 		}
@@ -26,7 +34,7 @@ class Storage {
 
 	static clear () {
 		if (window.localStorage) {
-			localStorage.clear();
+			localStorage.clear ();
 		} else {
 			console.warn("Your browser does not support Local Storage");
 		}
