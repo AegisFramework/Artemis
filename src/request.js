@@ -36,12 +36,15 @@ class Request {
 	static post (url, data, responseType = "", contentType = "application/x-www-form-urlencoded") {
 		return new Promise(function (resolve, reject) {
 			var formData;
+			var request = new XMLHttpRequest();
+			request.open("POST", url, true);
 			if (contentType == "application/x-www-form-urlencoded") {
 				formData = [];
 				for (var value in data) {
 					formData.push (encodeURIComponent(value) + "=" + encodeURIComponent(data[value]));
 				}
 				formData = formData.join("&");
+				request.setRequestHeader("Content-type", contentType);
 			} else if (contentType == "multipart/form-data") {
 				formData = new FormData ();
 				for (var value in data) {
@@ -49,8 +52,6 @@ class Request {
 				}
 			}
 
-			var request = new XMLHttpRequest();
-			request.open("POST", url, true);
 			request.responseType = responseType;
 			request.onload = function () {
 				resolve(request.response);
