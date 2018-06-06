@@ -1,28 +1,25 @@
 {
-  "name": "artemis",
-  "version": "0.1.7",
-  "description": "Aegis Framework Javascript Library",
-  "main": "gulpfile.js",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/AegisFramework/Artemis"
-  },
-  "keywords": [
-    "artemis",
-    "dom",
-    "javascript",
-    "library"
-  ],
-  "author": "Diego Islas Ocampo",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/AegisFramework/Artemis/issues"
-  },
-  "homepage": "http://aegisframework.com/",
-  "devDependencies": {
-    "google-closure-compiler": "^20151216.2.0",
-    "gulp": "^3.9.0",
-    "gulp-concat": "^2.6.0",
-    "gulp-header": "^1.7.1"
-  }
+	"name": "artemis",
+	"version": "0.2.0",
+	"description": "Aegis Framework Javascript Library",
+	"main": "index.js",
+	"repository": "https://github.com/AegisFramework/Artemis.git",
+	"homepage": "http://aegisframework.com/",
+	"author": "Diego Islas Ocampo <dev@hyuchia.com>",
+	"license": "MIT",
+	"keywords": [
+		"artemis",
+		"dom",
+		"javascript",
+		"library"
+	],
+	"scripts": {
+		"lint": "eslint .",
+		"build": "parcel build --out-file artemis.min.js index.js "
+	},
+	"devDependencies": {
+		"babel-cli": "^6.26.0",
+		"eslint": "^4.19.1",
+		"jsdoc": "^3.5.5"
+	}
 }
