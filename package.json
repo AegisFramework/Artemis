@@ -14,7 +14,7 @@
 		"library"
 	],
 	"scripts": {
-		"lint": "eslint .",
+		"lint": "eslint index.js lib",
 		"build": "parcel build --out-file artemis.min.js index.js"
 	},
 	"devDependencies": {
