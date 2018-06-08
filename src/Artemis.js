@@ -1,4 +1,4 @@
-export default class Artemis {
+export class Artemis {
 
 	constructor (selector) {
 		if (typeof selector == 'string') {
@@ -416,7 +416,6 @@ export function $_ (selector) {
 	} else {
 		return Artemis;
 	}
-
 }
 
 export function $_ready (callback) {

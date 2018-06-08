@@ -4,7 +4,7 @@
 * ==============================
 */
 
-export default class Screen {
+export class Screen {
 
 	static isRetina () {
 		return window.devicePixelRatio >= 2;

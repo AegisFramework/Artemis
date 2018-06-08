@@ -4,7 +4,7 @@
 * ==============================
 */
 
-export default class Storage {
+export class Storage {
 
 	static key (index) {
 		return localStorage.key (index);

@@ -6,7 +6,7 @@
 
 import { $_ } from './Artemis';
 
-export default class Form {
+export class Form {
 
 	static fill (name, data) {
 		for (const field in data) {

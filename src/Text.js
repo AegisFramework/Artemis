@@ -4,7 +4,7 @@
 * ==============================
 */
 
-export default class Text {
+export class Text {
 
 	static capitalize (text) {
 		return text.replace(/\w\S*/g, function (txt) {

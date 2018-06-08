@@ -4,7 +4,7 @@
 * ==============================
 */
 
-export default class Request {
+export class Request {
 
 	static get (url, data, responseType = '') {
 		return new Promise(function (resolve, reject) {
