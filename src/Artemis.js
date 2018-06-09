@@ -617,8 +617,6 @@ export class Artemis {
 
 	/**
 	 * Replace the first element in the collection with a new one
-	 *
-	 * @param  {type} element - Element to replace the current one with
 	 */
 	replaceWith (element) {
 		const div = document.createElement ('div');
@@ -640,7 +638,7 @@ export class Artemis {
 	 *
 	 * @param  {string} property - Property name to set or get
 	 * @param  {string|Number} [value] - Value to set the property to
-	 * @return {type} - If no value is provided, this funcion will return the
+	 * @return {string|Number} - If no value is provided, this funcion will return the
 	 * current value of the indicated property
 	 */
 	property (property, value) {
