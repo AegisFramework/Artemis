@@ -6,7 +6,6 @@
 
 import { $_ } from './Artemis';
 
-
 /**
  * Utility class that provides simple function for filling and retrieving values
  * from froms. This class requires the use of the `data-form` attribute.
@@ -14,7 +13,6 @@ import { $_ } from './Artemis';
  * @class
  */
 export class Form {
-
 
 	/**
 	 * @static fill - Fill a form's inputs with the given values. Each key in the

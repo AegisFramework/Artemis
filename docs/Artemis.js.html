@@ -26,8 +26,21 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>export class Artemis {
+            <pre class="prettyprint source linenums"><code>
+/**
+ * Simple DOM manipulation functions
+ *
+ * @class
+ */
+export class Artemis {
 
+	/**
+	 * Create a new Artemis object
+	 *
+	 * @constructor
+	 * @param  {string|Object|array} selector - Selector or DOM element to use
+	 * @return {Artemis} - New instance of Artemis
+	 */
 	constructor (selector) {
 		if (typeof selector == 'string') {
 			this.collection = document.querySelectorAll(selector);
@@ -44,47 +57,77 @@
 		}
 	}
 
+	/**
+	 * Hide elements by setting their `display` property to 'none'.
+	 */
 	hide () {
-		for (let i = 0; i &lt; this.collection.length; i++) {
-			this.collection[i].style.display = 'none';
+		for (const element of this.collection) {
+			element.style.display = 'none';
 		}
 	}
 
-	show () {
-		for (let i = 0; i &lt; this.collection.length; i++) {
-			this.collection[i].style.display = 'block';
+	/**
+	 * Show elements by setting their `display` property to the given value.
+	 *
+	 * @param {string} [display='block'] - Display property to set
+	 */
+	show (display = 'block') {
+		for (const element of this.collection) {
+			element.style.display = display;
 		}
 	}
 
+	/**
+	 * Add a class to the classList object
+	 *
+	 * @param  {string} newClass - Class name to add
+	 */
 	addClass (newClass) {
-		for (let i = 0; i &lt; this.collection.length; i++) {
-			this.collection[i].classList.add(newClass);
+		for (const element of this.collection) {
+			element.classList.add (newClass);
 		}
 	}
 
-	removeClass (oldClass) {
-		if (oldClass) {
-			for (let i = 0; i &lt; this.collection.length; i++) {
-				this.collection[i].classList.remove(oldClass);
+	/**
+	 * Remove a given class from the classList object
+	 *
+	 * @param  {string} [oldClass=null] - Class to remove. If it's empty or null,
+	 * all classes will be removed
+	 */
+	removeClass (oldClass = null) {
+		if (oldClass !== null) {
+			for (const element of this.collection) {
+				element.classList.remove (oldClass);
 			}
 		} else {
-			for (let i = 0; i &lt; this.collection.length; i++) {
-				while (this.collection[i].classList.length > 0) {
-					this.collection[i].classList.remove(this.collection[i].classList.item(0));
+			for (const element of this.collection) {
+				while (element.classList.length > 0) {
+					element.classList.remove (element.classList.item (0));
 				}
 			}
 		}
 	}
 
+	/**
+	 * Toggle between two classes
+	 *
+	 * @param  {string} classes - Space separated class names
+	 */
 	toggleClass (classes) {
-		classes = classes.split(' ');
-		for (let i = 0; i &lt; this.collection.length; i++) {
+		classes = classes.split (' ');
+		for (const element of this.collection) {
 			for (let j = 0; j &lt; classes.length; j++) {
-				this.collection[i].classList.toggle(classes[j]);
+				element.classList.toggle (classes[j]);
 			}
 		}
 	}
 
+	/**
+	 * Check if the first element matching the selector has the given class
+	 *
+	 * @param  {string} classToCheck - Class name to check for
+	 * @return {boolean} - Whether the class is present or not
+	 */
 	hasClass (classToCheck) {
 		if (this.collection[0]) {
 			for (let j = 0; j &lt; this.collection[0].classList.length; j++) {
@@ -96,6 +139,13 @@
 		return false;
 	}
 
+	/**
+	 * Get or set the value from the first element matching the selector
+	 *
+	 * @param  {string} value - Value to set to the element.
+	 * @return {string} - If no value was provided, this returns the value of the
+	 * element instead of setting it
+	 */
 	value (value) {
 		if (this.length > 0) {
 			if (typeof value === 'undefined') {
@@ -106,73 +156,126 @@
 		}
 	}
 
+	/**
+	 * Focus on the first element matching the selector
+	 */
 	focus () {
 		if (this.length > 0) {
-			this.collection[0].focus();
+			this.collection[0].focus ();
 		}
 	}
 
+	/**
+	 * Add a callback for the 'click' event on every element matching the selector
+	 *
+	 * @param  {function} callback - Callback function to run when the event is triggered
+	 */
 	click (callback) {
-		for (let i = 0; i &lt; this.collection.length; i++) {
-			this.collection[i].addEventListener('click', callback, false);
+		for (const element of this.collection) {
+			element.addEventListener ('click', callback, false);
 		}
 	}
 
+	/**
+	 * Add a callback for the 'keyup' event on every element matching the selector
+	 *
+	 * @param  {function} callback - Callback function to run when the event is triggered
+	 */
 	keyup (callback) {
-		for (let i = 0; i &lt; this.collection.length; i++) {
-			this.collection[i].addEventListener('keyup', callback, false);
+		for (const element of this.collection) {
+			element.addEventListener ('keyup', callback, false);
 		}
 	}
 
+	/**
+	 * Add a callback for the 'keydown' event on every element matching the selector
+	 *
+	 * @param  {function} callback - Callback function to run when the event is triggered
+	 */
 	keydown (callback) {
-		for (let i = 0; i &lt; this.collection.length; i++) {
-			this.collection[i].addEventListener('keydown', callback, false);
+		for (const element of this.collection) {
+			element.addEventListener ('keydown', callback, false);
 		}
 	}
 
+	/**
+	 * Add a callback for the 'submit' event on every element matching the selector
+	 *
+	 * @param  {function} callback - Callback function to run when the event is triggered
+	 */
 	submit (callback) {
-		for (let i = 0; i &lt; this.collection.length; i++) {
-			this.collection[i].addEventListener('submit', callback, false);
+		for (const element of this.collection) {
+			element.addEventListener ('submit', callback, false);
 		}
 	}
 
+	/**
+	 * Add a callback for the 'change' event on every element matching the selector
+	 *
+	 * @param  {function} callback - Callback function to run when the event is triggered
+	 */
 	change (callback) {
-		for (let i = 0; i &lt; this.collection.length; i++) {
-			this.collection[i].addEventListener('change', callback, false);
+		for (const element of this.collection) {
+			element.addEventListener ('change', callback, false);
 		}
 	}
 
+	/**
+	 * Add a callback for the 'scroll' event on every element matching the selector
+	 *
+	 * @param  {function} callback - Callback function to run when the event is triggered
+	 */
 	scroll (callback) {
-		for (let i = 0; i &lt; this.collection.length; i++) {
-			this.collection[i].addEventListener('scroll', callback, false);
+		for (const element of this.collection) {
+			element.addEventListener ('scroll', callback, false);
 		}
 	}
 
+	/**
+	 * Add a callback function to a given event
+	 *
+	 * @param  {string} event - Event to add the listener to
+	 * @param  {function} callback - Callback function to run when the event is triggered
+	 * @param  {string} target - Target element on which to detect the event
+	 */
 	on (event, callback, target) {
 		event = event.split(' ');
-		for (let i = 0; i &lt; this.collection.length; i++) {
+		for (const element of this.collection) {
 			for (let j = 0; j &lt; event.length; j++) {
 				if (typeof callback === 'string' &amp;&amp; typeof target !== 'undefined') {
 
-					this.collection[i].addEventListener(event[j], function (e) {
+					element.addEventListener(event[j], function (e) {
 						if (e.target &amp;&amp; $_(e.target).matches(callback)) {
 							target.call(e.target, e);
 						}
 					}, false);
 
 				} else {
-					this.collection[i].addEventListener(event[j], callback, false);
+					element.addEventListener (event[j], callback, false);
 				}
 			}
 		}
 	}
 
-	filter (element) {
+	/**
+	 * Filter from the current collection to only those matching the new selector
+	 *
+	 * @param  {string} element - Selector to filter the collection with
+	 * @return {Artemis} - New Artemis instance with the filtered collection
+	 */
+	filter (selector) {
 		if (this.length > 0) {
-			return new Artemis(this.collection[0].querySelector(element));
+			return new Artemis (this.collection[0].querySelector (selector));
 		}
 	}
 
+	/**
+	 * Get or set a `data` property
+	 *
+	 * @param  {string} name - Name of the data property
+	 * @param  {string} [value] - Value of the property
+	 * @return {string} - If no value is set, this function returns it's current value
+	 */
 	data (name, value) {
 		if (this.length > 0) {
 			if (typeof value === 'undefined') {
@@ -183,6 +286,13 @@
 		}
 	}
 
+	/**
+	 * Get or set the text of the first element matching the selector
+	 *
+	 * @param  {string} [value] - Value to set the text to
+	 * @return {type} - If no value is present, this function returns its the
+	 * element's current text.
+	 */
 	text (value) {
 		if (this.length > 0) {
 			if (typeof value === 'undefined') {
@@ -193,6 +303,13 @@
 		}
 	}
 
+	/**
+	 * Get or set the inner HTML of the first element matching the selector
+	 *
+	 * @param  {string} [value] - Value to set the HTML to
+	 * @return {type} - If no value is present, this function returns its the
+	 * element's current HTML.
+	 */
 	html (value) {
 		if (this.length > 0) {
 			if (typeof value === 'undefined') {
@@ -203,102 +320,175 @@
 		}
 	}
 
-	append (data) {
+	/**
+	 * Append an element to the first element matching the selector
+	 *
+	 * @param  {string} element - String representation of the element to add
+	 */
+	append (element) {
 		if (this.length > 0) {
-			const div = document.createElement('div');
-			div.innerHTML = data;
-			this.collection[0].appendChild(div.firstChild);
+			const div = document.createElement ('div');
+			div.innerHTML = element;
+			this.collection[0].appendChild (div.firstChild);
 		}
 	}
 
-	prepend (data) {
+	/**
+	 * Prepend an element to the first element matching the selector
+	 *
+	 * @param  {string} element - String representation of the element to add
+	 */
+	prepend (element) {
 		if (this.length > 0) {
-			const div = document.createElement('div');
-			div.innerHTML = data;
+			const div = document.createElement ('div');
+			div.innerHTML = element;
 			if (this.collection[0].childNodes.length > 0) {
-				this.collection[0].insertBefore(div.firstChild, this.collection[0].childNodes[0]);
+				this.collection[0].insertBefore (div.firstChild, this.collection[0].childNodes[0]);
 			} else {
-				this.collection[0].appendChild(div.firstChild);
+				this.collection[0].appendChild (div.firstChild);
 			}
 
 		}
 	}
 
+	/**
+	 * Iterate over the collection of elements matching the selector
+	 *
+	 * @param  {function} callback - Callback to run for every element
+	 */
 	each (callback) {
-		for (let i = 0; i &lt; this.collection.length; i++) {
-			callback(this.collection[i]);
+		for (const element of this.collection) {
+			callback (element);
 		}
 	}
 
+	/**
+	 * Get an element from the collection given it's index
+	 *
+	 * @param  {int} index - Index of the element to retrieve
+	 * @return {HTMLElement} - HTML Element in the position indicated by the index
+	 */
 	get (index) {
 		return this.collection[index];
 	}
 
+	/**
+	 * Get the first element in the collection
+	 *
+	 * @return {Artemis} - Artemis instance with the first element
+	 */
 	first () {
 		if (this.length > 0) {
-			return new Artemis(this.collection[0]);
+			return new Artemis (this.collection[0]);
 		}
 	}
 
+	/**
+	 * Check if the elements in the collection are visible by chacking their
+	 * display, offsetWidth and offsetHeight properties
+	 *
+	 * @return {boolean} - Whether the elements are visible or not
+	 */
 	isVisible () {
-		for (let i = 0; i &lt; this.collection.length; i++) {
-			if (this.collection[i].display != 'none' &amp;&amp; this.collection[i].offsetWidth > 0 &amp;&amp; this.collection[i].offsetHeight > 0) {
+		for (const element of this.collection) {
+			if (element.display != 'none' &amp;&amp; element.offsetWidth > 0 &amp;&amp; element.offsetHeight > 0) {
 				return true;
 			}
 		}
 		return false;
 	}
 
+	/**
+	 * Get the parent of the first element matching the selector
+	 *
+	 * @return {Artemis} - Artemis instance of the parent element
+	 */
 	parent () {
 		if (this.collection[0]) {
-			return new Artemis(this.collection[0].parentElement);
+			return new Artemis (this.collection[0].parentElement);
 		}
 	}
 
+	/**
+	 * Find an element that matches the given selector in the first element of the collection
+	 *
+	 * @param  {string} selector - Selector to find the element with
+	 * @return {Artemis} - Aegis instance with the element if found
+	 */
 	find (selector) {
 		if (this.collection[0]) {
-			return new Artemis(this.collection[0].querySelectorAll(selector));
+			return new Artemis (this.collection[0].querySelectorAll (selector));
 		}
 	}
 
+	/**
+	 * Get the top and left offsets of the first element matching the selector
+	 *
+	 * @return {Object} - Object with `top` and `left` offsets
+	 */
 	offset () {
 		if (this.collection[0]) {
-			const rect = this.collection[0].getBoundingClientRect();
-			const offset = {
+			const rect = this.collection[0].getBoundingClientRect ();
+			return {
 				top: rect.top + document.body.scrollTop,
 				left: rect.left + document.body.scrollLeft
 			};
-			return offset;
 		}
 	}
 
-	closest (searchSelector) {
-		let element = this.find(searchSelector);
-		while (typeof element.get(0) == 'undefined' &amp;&amp; typeof this.parent().get(0) != 'undefined') {
-			element = this.parent().find(searchSelector);
+
+	/**
+	 * Find the closest element matching the given selector. This bubbles up
+	 * from the initial object and then follows to its parents.
+	 *
+	 * @param  {string} selector - Selector to match the closest element with
+	 * @return {Artemis} - Artemis instance with the closest HTML element matching the selector
+	 */
+	closest (selector) {
+		let element = this.find (selector);
+		while (typeof element.get (0) == 'undefined' &amp;&amp; typeof this.parent().get (0) != 'undefined') {
+			element = this.parent ().find (selector);
 		}
 		return element;
 	}
 
+	/**
+	 * Get or set the value of a given attribute
+	 *
+	 * @param  {string} attribute - Attribute's name
+	 * @param  {string|Number} [value] - Value to set the attribute to
+	 * @return {type} - If no value is provided, this function returns the current
+	 * value of the provided attribute
+	 */
 	attribute (attribute, value) {
 		if (this.collection[0]) {
 			if (typeof value === 'undefined') {
-				this.collection[0].getAttribute(attribute);
+				this.collection[0].getAttribute (attribute);
 			} else {
-				return this.collection[0].setAttribute(attribute, value);
+				return this.collection[0].setAttribute (attribute, value);
 			}
 		}
 	}
 
+	/**
+	 * Insert content to the `after` property of an element
+	 *
+	 * @param  {string} content - String representation of the content to add
+	 */
 	after (content) {
-		for (let i = 0; i &lt; this.collection.length; i++) {
-			this.collection[i].insertAdjacentHTML('afterend', content);
+		for (const element of this.collection) {
+			element.insertAdjacentHTML ('afterend', content);
 		}
 	}
 
+	/**
+	 * Insert content to the `before` property of an element
+	 *
+	 * @param  {string} content - String representation of the content to add
+	 */
 	before (content) {
-		for (let i = 0; i &lt; this.collection.length; i++) {
-			this.collection[i].insertAdjacentHTML('beforebegin', content);
+		for (const element of this.collection) {
+			element.insertAdjacentHTML ('beforebegin', content);
 		}
 	}
 
@@ -469,13 +659,13 @@ export function $_ready (callback) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Form.html">Form</a></li><li><a href="Platform.html">Platform</a></li><li><a href="Request.html">Request</a></li><li><a href="Space.html">Space</a></li><li><a href="Text.html">Text</a></li></ul><h3>Global</h3><ul><li><a href="global.html#$_">$_</a></li><li><a href="global.html#$_ready">$_ready</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Artemis.html">Artemis</a></li><li><a href="Form.html">Form</a></li><li><a href="Platform.html">Platform</a></li><li><a href="Request.html">Request</a></li><li><a href="Space.html">Space</a></li><li><a href="Text.html">Text</a></li></ul><h3>Global</h3><ul><li><a href="global.html#$_">$_</a></li><li><a href="global.html#$_ready">$_ready</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Jun 08 2018 22:23:52 GMT-0500 (CDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Jun 08 2018 23:26:37 GMT-0500 (CDT)
 </footer>
 
 <script> prettyPrint(); </script>
