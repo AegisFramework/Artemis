@@ -492,6 +492,16 @@ export class Artemis {
 		}
 	}
 
+	/**
+	 * Get or modify the `style` properties of the elements matching the selector
+	 *
+	 * @param  {string|Object} properties - Properties to change or get. Can be
+	 * either an individual property or a JSON object with key-value pairs
+	 * @param  {string} [value] - Value to set the property to when only changing
+	 * one property
+	 * @return {string} - If a peoperty is given but not a value for it, this
+	 * function will return its current value
+	 */
 	style (properties, value) {
 		for (let i = 0; i &lt; this.collection.length; i++) {
 			if (typeof properties === 'string' &amp;&amp; value !== 'undefined') {
@@ -506,6 +516,15 @@ export class Artemis {
 		}
 	}
 
+	/**
+	 * Animate the given `style` properties on all elements in the collection in
+	 * with a given time duration
+	 *
+	 * @param  {Object} style - JSON object with the key-value pairs of properties
+	 * to animate
+	 * @param  {int} time - Time in milliseconds during which the properties will
+	 * be animated
+	 */
 	animate (style, time) {
 		for (let i = 0; i &lt; this.collection.length; i++) {
 			for (const property in style) {
@@ -517,13 +536,13 @@ export class Artemis {
 				if (typeof this.collection[i].style[property] !== 'undefined') {
 					initialValue = this.collection[i].style[property];
 
-					timer = setInterval(function () {
-						const step = Math.min(1, (new Date().getTime() - start) / time);
+					timer = setInterval (() => {
+						const step = Math.min (1, (new Date ().getTime () - start) / time);
 
 						collection[i].style[property] = (initialValue + step * (style[property] - initialValue));
 
 						if (step == 1) {
-							clearInterval(timer);
+							clearInterval (timer);
 						}
 					}, 25);
 					this.collection[i].style[property] = initialValue;
@@ -531,13 +550,13 @@ export class Artemis {
 				} else if (typeof (this.collection[i])[property] !== 'undefined') {
 					initialValue = (this.collection[i])[property];
 
-					timer = setInterval(function () {
-						const step = Math.min(1, (new Date().getTime() - start) / time);
+					timer = setInterval(() => {
+						const step = Math.min (1, (new Date ().getTime () - start) / time);
 
 						(collection[i])[property] = (initialValue + step * (style[property] - initialValue));
 
 						if (step == 1) {
-							clearInterval(timer);
+							clearInterval (timer);
 						}
 					}, 25);
 					(this.collection[i])[property] = initialValue;
@@ -546,6 +565,12 @@ export class Artemis {
 		}
 	}
 
+	/**
+	 * Use a fade in animation i the first element matching the selector
+	 *
+	 * @param  {type} [time=400] - Time duration for the animation
+	 * @param  {type} callback - Callback function to run once the animation is over
+	 */
 	fadeIn (time = 400, callback) {
 		if (this.collection[0]) {
 			const element = this.collection[0];
@@ -570,53 +595,82 @@ export class Artemis {
 		}
 	}
 
+	/**
+	 * Use a fade out animation i the first element matching the selector
+	 *
+	 * @param  {type} [time=400] - Time duration for the animation
+	 * @param  {type} callback - Callback function to run once the animation is over
+	 */
 	fadeOut (time = 400, callback) {
 		if (this.collection[0]) {
-			let last = +new Date();
+			let last = +new Date ();
 			const element = this.collection[0];
 			const tick = function () {
 				element.style.opacity = +element.style.opacity - (new Date() - last) / time;
-				last = +new Date();
+				last = +new Date ();
 
 				if (+element.style.opacity > 0) {
-					(window.requestAnimationFrame &amp;&amp; requestAnimationFrame(tick)) || setTimeout(tick, 16);
+					(window.requestAnimationFrame &amp;&amp; requestAnimationFrame (tick)) || setTimeout(tick, 16);
 				} else {
 					if (typeof callback === 'function') {
-						callback();
+						callback ();
 					}
 				}
 			};
-
-			tick();
+			tick ();
 		}
 	}
 
+	/**	Check if the first element in the collection matches a given selector
+	 *
+	 * @param  {string} selector - Selector to match
+	 * @return {boolean} - Whether the element matches the selector or not
+	 */
 	matches (selector) {
 		const check = Element.prototype;
 		const polyfill = check.matches || check.webkitMatchesSelector || check.mozMatchesSelector || check.msMatchesSelector || function () {
-			return [].indexOf.call(document.querySelectorAll(selector), this) !== -1;
+			return [].indexOf.call (document.querySelectorAll (selector), this) !== -1;
 		};
-		return polyfill.call(this.collection[0], selector);
+		return polyfill.call (this.collection[0], selector);
 	}
 
+	/**
+	 * Remove all elemets in the collection
+	 */
 	remove () {
-		for (let i = 0; i &lt; this.collection.length; i++) {
-			this.collection[i].parentNode.removeChild(this.collection[i]);
+		for (const element of this.collection) {
+			element.parentNode.removeChild (element);
 		}
 	}
 
-	replaceWith (data) {
-		const div = document.createElement('div');
-		div.innerHTML = data;
-		this.collection[0].parentElement.replaceChild(div, this.collection[0]);
+	/**
+	 * Replace the first element in the collection with a new one
+	 *
+	 * @param  {type} element - Element to replace the current one with
+	 */
+	replaceWith (element) {
+		const div = document.createElement ('div');
+		div.innerHTML = element;
+		this.collection[0].parentElement.replaceChild (div, this.collection[0]);
 	}
 
+	/**
+	 * Reset every element in the collection
+	 */
 	reset () {
 		if (this.length > 0) {
-			this.collection[0].reset();
+			this.collection[0].reset ();
 		}
 	}
 
+	/**
+	 * Get or set a property for the first element in the collection
+	 *
+	 * @param  {string} property - Property name to set or get
+	 * @param  {string|Number} [value] - Value to set the property to
+	 * @return {type} - If no value is provided, this funcion will return the
+	 * current value of the indicated property
+	 */
 	property (property, value) {
 		if (this.collection[0]) {
 			if (typeof value !== 'undefined') {
@@ -665,7 +719,7 @@ export function $_ready (callback) {
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Jun 08 2018 23:26:37 GMT-0500 (CDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sat Jun 09 2018 17:53:38 GMT-0500 (CDT)
 </footer>
 
 <script> prettyPrint(); </script>
