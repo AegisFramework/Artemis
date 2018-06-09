@@ -1,0 +1,342 @@
+/**
+* ==============================
+* Space
+* ==============================
+*/
+
+/**
+ * Space provides a simple wrapper for different Storage approaches. It aims to
+ * provide data independence through storage namespaces and versioning, allowing
+ * transparent data formatting and content modifications through versions.
+ * @class
+ */
+export class Space {
+
+	/**
+	 * Create a new Space Object. If no name and version is defined, the global LocalSpace space is used.
+	 *
+	 * @constructor
+	 * @param {string} [name=''] - Space Space Name. If name is empty, the
+	 * @param {string} [version=''] - Space Space Version. Must be a numeric string i.e. '0.1.0'
+	 * @param {Space.Type} [type=Space.Type.Local] - Space Space Type. Determines what storage engine will be used.
+	 */
+	constructor (name = '', version = '', type = Space.Type.Local) {
+		this.name = name;
+		this.type = type;
+		this.version = version;
+
+		this.callbacks = {};
+
+		if (name !== '' && version !== '') {
+			this.numericVersion = parseInt (version.replace (/\./g, ''));
+			this.id = `${this.name}::${this.version}_`;
+		} else if (version !== '') {
+			this.numericVersion = parseInt (version.replace (/\./g, ''));
+			this.id = `${this.name}::${this.version}_`;
+		} else if (type == Space.Type.Local || type == Space.Type.Session) {
+			this.numericVersion = 0;
+			this.id = '';
+		}
+	}
+
+	/**
+	 * Open the Storage Object to be used depending on the Space.Type
+	 *
+	 * @param  {function} [create=null] - Callback for database creation when using an Space.Type.Indexed
+	 * @return {Promise}
+	 */
+	open (create = null) {
+		if (typeof this.storage === 'undefined') {
+			if (this.type === Space.Type.Local) {
+				this.storage = window.localStorage;
+				return Promise.resolve (this);
+			} else if (this.type === Space.Type.Session) {
+				this.storage = window.sessionSpace;
+				return Promise.resolve (this);
+			} else if (this.type === Space.Type.IndexedDB) {
+				return new Promise ((resolve, reject) => {
+					this.storage = window.indexedDB.open (this.name, this.numericVersion);
+
+					this.storage.onerror = (event) => {
+						reject (event);
+					};
+
+					this.storage.onsuccess = (event) => {
+						this.storage = event.target.result;
+						resolve (this);
+					};
+
+					this.storage.onupgradeneeded = (event) => {
+						this.storage = event.target.result;
+						create (this.storage).then (() => {
+							resolve (this);
+						});
+					};
+				});
+			}
+		} else {
+			return Promise.resolve (this);
+		}
+	}
+
+	/**
+	 * Store a key-value pair
+	 *
+	 * @param  {string} key - Key with which this value will be saved
+	 * @param  {Object|string|Number} - Value to save
+	 * @return {Promise}
+	 */
+	set (key, value) {
+		return this.open ().then (() => {
+			if (this.type === Space.Type.Local || this.type === Space.Type.Session) {
+				if (typeof value === 'object') {
+					this.storage.setItem (this.id + key, JSON.stringify (value));
+				} else {
+					this.storage.setItem (this.id + key, value);
+				}
+			}
+
+			if (typeof this.callbacks.onStore !== 'undefined') {
+				this.callbacks.onStore.call (null, key, value);
+			}
+
+			return Promise.resolve (value);
+		});
+	}
+
+	/**
+	 * Retrieves a value from storage given it's key
+	 *
+	 * @param  {string} - Key with which the value was saved
+	 * @return {Promise<Object>|Promise<string>|Promise<Number>} - Resolves to the retreived value
+	 */
+	get (key) {
+		return this.open ().then (() => {
+			return new Promise ((resolve) => {
+				let value;
+				switch (this.type) {
+					case Space.Type.Local:
+					case Space.Type.Session:
+						value = this.storage.getItem (this.id + key);
+						try {
+							const o = JSON.parse (value);
+							if (o && typeof o === 'object') {
+								value = o;
+							}
+						} catch (exception) {
+							// Unable to parse to JSON
+						}
+						break;
+					case Space.Type.IndexedDB:
+
+						break;
+				}
+				resolve (value);
+			});
+		});
+	}
+
+	/**
+	 * Upgrade a Space Version
+	 * @param oldVersion {string} - The version of the storage to be upgraded
+	 * @param newVersion {string} - The version to be upgraded to
+	 * @param callback {function} - Function to transform the old stored values to the new version's format
+	 * @returns {Promise} Result of the upgrade operation
+	 */
+	upgrade (oldVersion, newVersion, callback) {
+		return this.open ().then (() => {
+
+			if (this.type === Space.Type.Local || this.type === Space.Type.Session) {
+
+				// Get all keys from the previous version
+				const keys = Object.keys (this.storage).filter ((key) => {
+					return key.indexOf (`${this.name}::${oldVersion}_`) === 0;
+				}).map ((key) => {
+					return key.replace (`${this.name}::${oldVersion}_`, '');
+				});
+
+				const promises = [];
+
+				for (const key of keys) {
+					// Get the value stored with the previous version
+					let previous = this.storage.getItem (`${this.name}::${oldVersion}_${key}`);
+
+					// Transform string to JSON object if needed
+					try {
+						const o = JSON.parse (previous);
+						if (o && typeof o === 'object') {
+							previous = o;
+						}
+					} catch (exception) {
+						// Unable to parse to JSON
+					}
+
+					// Apply the callback to the value.
+					promises.push (callback.call (null, key, previous).then ((value) => {
+						// Store the new one with the new version key
+						this.set (key, value).then (() => {
+							// Delete the previous element from storage
+							this.storage.removeItem (`${this.name}::${oldVersion}_${key}`);
+						});
+					}));
+				}
+				return Promise.all (promises);
+			}
+			return Promise.reject ();
+		});
+	}
+
+	/**
+	 * Rename a Space
+	 * @param name {string} - New name to be used.
+	 * @returns {Promise} Result of the rename operation
+	 */
+	rename (name) {
+		return this.open ().then (() => {
+
+			// Check if the name is different
+			if (this.name !== name) {
+
+				if (this.type === Space.Type.Local || this.type === Space.Type.Session) {
+					return this.keys ().then ((keys) => {
+
+						// Save the previous Space id
+						const oldId = this.id;
+
+						// Set new object properties with the new name
+						this.name = name;
+						this.id = `${this.name}::${this.version}_`;
+						const promises = [];
+
+						for (const key of keys) {
+							promises.push (this.set (key, this.storage.getItem (`${oldId}${key}`)).then (() => {
+								this.storage.removeItem (`${oldId}${key}`);
+							}));
+						}
+						return Promise.all (promises);
+					});
+				} else {
+					return Promise.reject ();
+				}
+			} else {
+				return Promise.reject ();
+			}
+		});
+	}
+
+
+	/**
+	 * Set the callback function to be run every time a value is stored.
+	 *
+	 * @param  {function} callback - Callback Function. Key and Value pair will be sent as parameters when run.
+	 */
+	onStore (callback) {
+		this.callbacks.onStore = callback;
+	}
+
+	/**
+	 * Set the callback function to be run every time a value is deleted.
+	 *
+	 * @param  {function} callback - Callback Function. Key and Value pair will be sent as parameters when run.
+	 */
+	onDelete (callback) {
+		this.callbacks.onDelete = callback;
+	}
+
+	/**
+	 * Get the key that corresponds to a given index in the storage
+	 *
+	 * @param  {Number} index - Index to get the key from
+	 * @param  {boolean} [full=false] - Whether to return the full key name including space id or just the key name
+	 * @return {Promise<string>} - Resolves to the key's name
+	 */
+	key (index, full = false) {
+		return this.open ().then (() => {
+			if (this.type === Space.Type.Local || this.type === Space.Type.Session) {
+				if (full === true) {
+					return Promise.resolve (this.storage.key (index));
+				} else {
+					return Promise.resolve (this.storage.key (index).replace (this.id, ''));
+				}
+			} else {
+				return Promise.reject ();
+			}
+		});
+	}
+
+	/**
+	 * Return all keys stored in the space.
+	 *
+	 * @param {boolean} [full=false] - Whether to return the full key name including space id or just the key name
+	 * @return {Promise<string[]>}  - Array of keys
+	 */
+	keys (full = false) {
+		return this.open ().then (() => {
+			if (this.type === Space.Type.Local || this.type === Space.Type.Session) {
+				return Promise.resolve (Object.keys (this.storage).filter ((key) => {
+					return key.indexOf (this.id) === 0;
+				}).map ((key) => {
+					if (full === true) {
+						return key;
+					} else {
+						return key.replace (this.id, '');
+					}
+				}));
+			} else {
+				return Promise.reject ();
+			}
+		});
+	}
+
+
+	/**
+	 * Delete a value from the space given it's key
+	 *
+	 * @param  {string} key - Key of the item to delete
+	 * @return {Promise<key, value>} - Resolves to the key and value of the deleted object
+	 */
+	remove (key) {
+		return this.open ().then (() => {
+			if (this.type === Space.Type.Local || this.type === Space.Type.Session) {
+				return this.get (key).then ((value) => {
+					this.storage.removeItem (this.id + key);
+
+					// Run the callback for deletions
+					if (typeof this.callbacks.onDelete !== 'undefined') {
+						this.callbacks.onDelete.call (null, key, value);
+					}
+
+					return Promise.resolve (key, value);
+				});
+			} else {
+				Promise.reject ();
+			}
+		});
+	}
+
+	/**
+	 * Clear the entire space
+	 *
+	 * @return {Promise} - Result of the clear operation
+	 */
+	clear () {
+		return this.open ().then (() => {
+			if (this.type === Space.Type.Local || this.type === Space.Type.Session) {
+				return this.keys ().then ((keys) => {
+					for (const key of keys) {
+						this.remove (key);
+					}
+					return Promise.resolve ();
+				});
+			} else {
+				Promise.reject ();
+			}
+		});
+	}
+}
+
+Space.Type = {
+	Local: 1,
+	Session: 2,
+	Indexed: 3
+};

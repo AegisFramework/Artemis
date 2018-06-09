@@ -2,12 +2,11 @@
 	"name": "artemis",
 	"version": "0.2.0",
 	"description": "Aegis Framework Javascript Library",
-	"main": "index.js",
+	"main": "./index.js",
 	"repository": "https://github.com/AegisFramework/Artemis.git",
 	"homepage": "https://aegisframework.com/",
 	"author": "Diego Islas Ocampo <dev@hyuchia.com>",
 	"license": "MIT",
-	"main": "./index.js",
 	"keywords": [
 		"artemis",
 		"dom",
@@ -15,7 +14,8 @@
 		"library"
 	],
 	"scripts": {
-		"lint": "eslint index.js lib",
+		"eslint": "eslint index.js src",
+		"jsdoc": "jsdoc ./src -c ./.jsdoc.json && jsdoc2md -f ./src/* -c ./.jsdoc.json >> ./docs/README.md",
 		"build": "webpack"
 	},
 	"devDependencies": {
@@ -24,6 +24,7 @@
 		"babel-preset-env": "^1.7.0",
 		"eslint": "^4.19.1",
 		"jsdoc": "^3.5.5",
+		"jsdoc-to-markdown": "^4.0.1",
 		"webpack": "^4.12.0",
 		"webpack-cli": "^3.0.3"
 	},

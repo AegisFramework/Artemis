@@ -51,7 +51,42 @@
 	<body>
 		<h1>Artemis Test</h1>
 		<script>
-			$_("h1").text ("Success!");
+
+			$_("body").append ("<h2>Space Test</h2>");
+			const space = new Space ("Artemis", "0.1.0");
+
+			space.set ("Test", {
+				value: "Some Value"
+			}).then ((value) => {
+				value = JSON.stringify (value);
+				$_("body").append (`<p><b>Test</b> correctly inserted with value [${value}]</p>`);
+			});
+
+			space.get ("Test").then ((value) => {
+				return value;
+			}).then ((value) => {
+				value = JSON.stringify (value);
+				$_("body").append (`<p><b>Test</b> correctly retrieved value [${value}]</p>`);
+			});;
+
+			space.rename ("Aegis");
+
+			space.clear ().then (() => {
+				$_("body").append (`<p>Space Correctly Cleared Up</p>`);
+			});
+
+			/*const newSpace = new Space ("Aegis", "0.1.1");
+			newSpace.upgrade ("0.1.0", "0.1.1", (key, value) => {
+				return new Promise ((resolve, reject) => {
+					console.log (key);
+					resolve (value.value);
+				});
+			});*/
+
+			const global = new Space ();
+
+			global.set ("a", "b");
+
 		</script>
 	</body>
 </html>
