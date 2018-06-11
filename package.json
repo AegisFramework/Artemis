@@ -1,8 +1,8 @@
 {
-	"name": "artemis",
-	"version": "0.2.0",
+	"name": "@aegis-framework/artemis",
+	"version": "0.2.1",
 	"description": "Aegis Framework Javascript Library",
-	"main": "./index.js",
+	"main": "./dist/artemis.min.js",
 	"repository": "https://github.com/AegisFramework/Artemis.git",
 	"homepage": "https://aegisframework.com/",
 	"author": "Diego Islas Ocampo <dev@hyuchia.com>",
