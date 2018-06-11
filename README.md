@@ -1,3 +1,93 @@
 # Artemis
 
-Aegis Framework Javascript library.
+Artemis is a JavaScript Library that aims to provide common utilities needed during development such as DOM manipulation, a wrapper for client based Storage and other functions that may be useful for web app development.
+
+Below are some simple examples but you can read the full [documentation of each class](https://gitlab.com/AegisFramework/Artemis/tree/master/docs) for more details.
+
+## Artemis
+Artemis core library focuses on DOM manipulation, providing a jQuery-like experience and API
+
+```javascript
+$_ready (()=> {
+	$_("body").append ("<h1>Some Title</h1>");
+    $_("h1").text ("A different title");
+    $_("h1").style ("color", "#424242");
+});
+```
+
+### Form
+Artemis also includes a small form utility class that helps with filling and retrieving values from a form.
+
+```html
+<form data-form="MyForm">
+	<input type="text" name="SomeInput">
+	<input type="text" name="OtherInput">
+</form>
+```
+
+```javascript
+Form.fill ("MyForm", {
+	"SomeInput": "Here is some Value",
+    "OtherInput": "And here's another one"
+});
+
+console.log (Form.values ("MyForm"));
+```
+
+## Space
+
+The Space Library is a wrapper for simple storage solutions as Local and Session storage but provides data independence through storage namespaces and versioning.
+
+```javascript
+let space = new Space ("Storage", "0.1.0");
+
+space.set ("Test", {
+    value: "Some Value"
+}).then ((value) => {
+    console.log ("The value was inserted correctly!");
+});
+
+space.get ("Test").then ((value) => {
+    return value;
+}).then ((value) => {
+    console.log (value);
+});
+
+space = new Space ("Storage", "0.1.1");
+space.upgrade ("0.1.0", "0.1.1", (key, value) => {
+    return new Promise ((resolve, reject) => {
+        console.log (key);
+        resolve (value.value);
+    });
+});
+```
+
+## Platform
+The platform library provides several utility classes to obtain information about the platform in which the code is running.
+
+```javascript
+if (Platform.mobile ("Android")) {
+	console.log ("You are running this on Android!");
+} else if (Platform.mobile ()) {
+	console.log ("You are running this on some kind of mobile device!");
+} else if (Platform.desktop ("macOS")) {
+	console.log ("You are running this on a Mac!");
+}
+
+if (Platform.electron ()) {
+	console.log ("You are running this on a Electron!");
+} else if (Platform.cordova ()) {
+	console.log ("You are running this on a Cordova!");
+}
+```
+
+## Text
+The text library provides simple utility classes to perform text transformations or other text related functions.
+
+```javascript
+console.log (Text.capitalize ("is this text capitalized?"));
+
+console.log (Text.suffix ("Hello", "Hello how are you?"));
+
+console.log (Text.prefix ("how are you?", "Hello how are you?"));
+```
