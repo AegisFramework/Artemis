@@ -1,45 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <title>JSDoc: Source: Artemis.js</title>
 
-    <script src="scripts/prettify/prettify.js"> </script>
-    <script src="scripts/prettify/lang-css.js"> </script>
-    <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
-    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
-</head>
-
-<body>
-
-<div id="main">
-
-    <h1 class="page-title">Source: Artemis.js</h1>
-
-    
-
-
-
-    
-    <section>
-        <article>
-            <pre class="prettyprint source linenums"><code>
 /**
  * Simple DOM manipulation functions
  *
  * @class
  */
-export class Artemis {
+export class DOM {
 
 	/**
-	 * Create a new Artemis object
+	 * Create a new DOM object
 	 *
 	 * @constructor
 	 * @param  {string|Object|array} selector - Selector or DOM element to use
-	 * @return {Artemis} - New instance of Artemis
+	 * @return {DOM} - New instance of DOM
 	 */
 	constructor (selector) {
 		if (typeof selector == 'string') {
@@ -116,7 +88,7 @@ export class Artemis {
 	toggleClass (classes) {
 		classes = classes.split (' ');
 		for (const element of this.collection) {
-			for (let j = 0; j &lt; classes.length; j++) {
+			for (let j = 0; j < classes.length; j++) {
 				element.classList.toggle (classes[j]);
 			}
 		}
@@ -130,7 +102,7 @@ export class Artemis {
 	 */
 	hasClass (classToCheck) {
 		if (this.collection[0]) {
-			for (let j = 0; j &lt; this.collection[0].classList.length; j++) {
+			for (let j = 0; j < this.collection[0].classList.length; j++) {
 				if (this.collection[0].classList[j] == classToCheck) {
 					return true;
 				}
@@ -241,11 +213,11 @@ export class Artemis {
 	on (event, callback, target) {
 		event = event.split(' ');
 		for (const element of this.collection) {
-			for (let j = 0; j &lt; event.length; j++) {
-				if (typeof callback === 'string' &amp;&amp; typeof target !== 'undefined') {
+			for (let j = 0; j < event.length; j++) {
+				if (typeof callback === 'string' && typeof target !== 'undefined') {
 
 					element.addEventListener(event[j], function (e) {
-						if (e.target &amp;&amp; $_(e.target).matches(callback)) {
+						if (e.target && $_(e.target).matches(callback)) {
 							target.call(e.target, e);
 						}
 					}, false);
@@ -261,11 +233,11 @@ export class Artemis {
 	 * Filter from the current collection to only those matching the new selector
 	 *
 	 * @param  {string} element - Selector to filter the collection with
-	 * @return {Artemis} - New Artemis instance with the filtered collection
+	 * @return {DOM} - New DOM instance with the filtered collection
 	 */
 	filter (selector) {
 		if (this.length > 0) {
-			return new Artemis (this.collection[0].querySelector (selector));
+			return new DOM (this.collection[0].querySelector (selector));
 		}
 	}
 
@@ -375,11 +347,11 @@ export class Artemis {
 	/**
 	 * Get the first element in the collection
 	 *
-	 * @return {Artemis} - Artemis instance with the first element
+	 * @return {DOM} - DOM instance with the first element
 	 */
 	first () {
 		if (this.length > 0) {
-			return new Artemis (this.collection[0]);
+			return new DOM (this.collection[0]);
 		}
 	}
 
@@ -391,7 +363,7 @@ export class Artemis {
 	 */
 	isVisible () {
 		for (const element of this.collection) {
-			if (element.display != 'none' &amp;&amp; element.offsetWidth > 0 &amp;&amp; element.offsetHeight > 0) {
+			if (element.display != 'none' && element.offsetWidth > 0 && element.offsetHeight > 0) {
 				return true;
 			}
 		}
@@ -401,11 +373,11 @@ export class Artemis {
 	/**
 	 * Get the parent of the first element matching the selector
 	 *
-	 * @return {Artemis} - Artemis instance of the parent element
+	 * @return {DOM} - DOM instance of the parent element
 	 */
 	parent () {
 		if (this.collection[0]) {
-			return new Artemis (this.collection[0].parentElement);
+			return new DOM (this.collection[0].parentElement);
 		}
 	}
 
@@ -413,11 +385,11 @@ export class Artemis {
 	 * Find an element that matches the given selector in the first element of the collection
 	 *
 	 * @param  {string} selector - Selector to find the element with
-	 * @return {Artemis} - Aegis instance with the element if found
+	 * @return {DOM} - Aegis instance with the element if found
 	 */
 	find (selector) {
 		if (this.collection[0]) {
-			return new Artemis (this.collection[0].querySelectorAll (selector));
+			return new DOM (this.collection[0].querySelectorAll (selector));
 		}
 	}
 
@@ -442,11 +414,11 @@ export class Artemis {
 	 * from the initial object and then follows to its parents.
 	 *
 	 * @param  {string} selector - Selector to match the closest element with
-	 * @return {Artemis} - Artemis instance with the closest HTML element matching the selector
+	 * @return {DOM} - DOM instance with the closest HTML element matching the selector
 	 */
 	closest (selector) {
 		let element = this.find (selector);
-		while (typeof element.get (0) == 'undefined' &amp;&amp; typeof this.parent().get (0) != 'undefined') {
+		while (typeof element.get (0) == 'undefined' && typeof this.parent().get (0) != 'undefined') {
 			element = this.parent ().find (selector);
 		}
 		return element;
@@ -503,10 +475,10 @@ export class Artemis {
 	 * function will return its current value
 	 */
 	style (properties, value) {
-		for (let i = 0; i &lt; this.collection.length; i++) {
-			if (typeof properties === 'string' &amp;&amp; value !== 'undefined') {
+		for (let i = 0; i < this.collection.length; i++) {
+			if (typeof properties === 'string' && value !== 'undefined') {
 				this.collection[i].style[properties] = value;
-			} else if (typeof properties === 'string' &amp;&amp; value === 'undefined') {
+			} else if (typeof properties === 'string' && value === 'undefined') {
 				return this.collection[i].style[properties];
 			} else if (typeof properties === 'object') {
 				for (const property in properties) {
@@ -526,7 +498,7 @@ export class Artemis {
 	 * be animated
 	 */
 	animate (style, time) {
-		for (let i = 0; i &lt; this.collection.length; i++) {
+		for (let i = 0; i < this.collection.length; i++) {
 			for (const property in style) {
 
 				const start = new Date().getTime();
@@ -582,8 +554,8 @@ export class Artemis {
 				element.style.opacity = +element.style.opacity + (new Date() - last) / time;
 				last = +new Date();
 
-				if (+element.style.opacity &lt; 1) {
-					(window.requestAnimationFrame &amp;&amp; requestAnimationFrame(tick)) || setTimeout(tick, 16);
+				if (+element.style.opacity < 1) {
+					(window.requestAnimationFrame && requestAnimationFrame(tick)) || setTimeout(tick, 16);
 				} else {
 					if (typeof callback === 'function') {
 						callback();
@@ -610,7 +582,7 @@ export class Artemis {
 				last = +new Date ();
 
 				if (+element.style.opacity > 0) {
-					(window.requestAnimationFrame &amp;&amp; requestAnimationFrame (tick)) || setTimeout(tick, 16);
+					(window.requestAnimationFrame && requestAnimationFrame (tick)) || setTimeout(tick, 16);
 				} else {
 					if (typeof callback === 'function') {
 						callback ();
@@ -681,16 +653,16 @@ export class Artemis {
 }
 
 /**
- * Simple wrapper function to use the Artemis DOM library
+ * Simple wrapper function to use the DOM library
  *
  * @param  {string|Object|array} selector - Selector or DOM element to use
- * @return {Artemis} - Artemis instance or class if no selector is used
+ * @return {DOM} - DOM instance or class if no selector is used
  */
 export function $_ (selector) {
 	if (typeof selector !== 'undefined') {
-		return new Artemis (selector);
+		return new DOM (selector);
 	} else {
-		return Artemis;
+		return DOM;
 	}
 }
 
@@ -701,26 +673,4 @@ export function $_ (selector) {
  */
 export function $_ready (callback) {
 	window.addEventListener ('load', callback);
-}</code></pre>
-        </article>
-    </section>
-
-
-
-
-</div>
-
-<nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Artemis.html">Artemis</a></li><li><a href="Form.html">Form</a></li><li><a href="Platform.html">Platform</a></li><li><a href="Request.html">Request</a></li><li><a href="Space.html">Space</a></li><li><a href="Text.html">Text</a></li></ul><h3>Global</h3><ul><li><a href="global.html#$_">$_</a></li><li><a href="global.html#$_ready">$_ready</a></li></ul>
-</nav>
-
-<br class="clear">
-
-<footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Jun 14 2018 16:32:50 GMT-0500 (CDT)
-</footer>
-
-<script> prettyPrint(); </script>
-<script src="scripts/linenumber.js"> </script>
-</body>
-</html>
+}

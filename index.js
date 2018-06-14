@@ -1,4 +1,4 @@
-export * from './src/Artemis';
+export * from './src/DOM';
 export * from './src/Form';
 export * from './src/Platform';
 export * from './src/Request';
