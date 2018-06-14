@@ -50,8 +50,11 @@
 
 	<body>
 		<h1>Artemis Test</h1>
-		<script>
 
+		<script>
+		console.log ($_);
+
+		$_ready (() => {
 			$_("body").append ("<h2>Space Test</h2>");
 			const space = new Space ("Artemis", "0.1.0");
 
@@ -67,7 +70,7 @@
 			}).then ((value) => {
 				value = JSON.stringify (value);
 				$_("body").append (`<p><b>Test</b> correctly retrieved value [${value}]</p>`);
-			});;
+			});
 
 			space.rename ("Aegis");
 
@@ -86,7 +89,10 @@
 			const global = new Space ();
 
 			global.set ("a", "b");
+		});
 
+
+		console.log ($_);
 		</script>
 	</body>
 </html>
