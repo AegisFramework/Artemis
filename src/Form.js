@@ -4,7 +4,7 @@
 * ==============================
 */
 
-import { $_ } from './Artemis';
+import { $_ } from './DOM';
 
 /**
  * Utility class that provides simple function for filling and retrieving values
