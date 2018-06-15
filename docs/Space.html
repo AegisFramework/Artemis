@@ -300,6 +300,195 @@ transparent data formatting and content modifications through versions.</div>
     
 
     
+    <h4 class="name" id="addTransformation"><span class="type-signature"></span>addTransformation<span class="signature">(id, get, set)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Add a transformation function to the space.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>id</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Unique transformation name or identifier</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>get</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+|
+
+<span class="param-type">null</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Transformation function to apply to the content before
+returning the value when using the get () function .</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>set</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+|
+
+<span class="param-type">null</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Transformation function to apply to the content before
+saving it when using the set () function befo.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line293">line 293</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
     <h4 class="name" id="clear"><span class="type-signature"></span>clear<span class="signature">()</span><span class="type-signature"> &rarr; {Promise}</span></h4>
     
 
@@ -352,7 +541,7 @@ transparent data formatting and content modifications through versions.</div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line322">line 322</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line386">line 386</a>
     </li></ul></dd>
     
 
@@ -380,6 +569,164 @@ transparent data formatting and content modifications through versions.</div>
         
 <div class="param-desc">
     - Result of the clear operation
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="contains"><span class="type-signature"></span>contains<span class="signature">(key)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Check if a space contains a given key.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>key</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Key to look for.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line168">line 168</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Promise gets resolved if it exists and rejected if
+doesn't
 </div>
 
 
@@ -509,7 +856,7 @@ transparent data formatting and content modifications through versions.</div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line113">line 113</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line126">line 126</a>
     </li></ul></dd>
     
 
@@ -537,6 +884,7 @@ transparent data formatting and content modifications through versions.</div>
         
 <div class="param-desc">
     - Resolves to the retreived value
+or its rejected if it doesn't exist
 </div>
 
 
@@ -727,7 +1075,7 @@ transparent data formatting and content modifications through versions.</div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line253">line 253</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line317">line 317</a>
     </li></ul></dd>
     
 
@@ -904,7 +1252,7 @@ transparent data formatting and content modifications through versions.</div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line273">line 273</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line337">line 337</a>
     </li></ul></dd>
     
 
@@ -1061,7 +1409,7 @@ transparent data formatting and content modifications through versions.</div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line242">line 242</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line280">line 280</a>
     </li></ul></dd>
     
 
@@ -1196,7 +1544,7 @@ transparent data formatting and content modifications through versions.</div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line233">line 233</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line271">line 271</a>
     </li></ul></dd>
     
 
@@ -1351,7 +1699,7 @@ transparent data formatting and content modifications through versions.</div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line48">line 48</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line53">line 53</a>
     </li></ul></dd>
     
 
@@ -1504,7 +1852,7 @@ transparent data formatting and content modifications through versions.</div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line298">line 298</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line362">line 362</a>
     </li></ul></dd>
     
 
@@ -1549,6 +1897,141 @@ transparent data formatting and content modifications through versions.</div>
 </dl>
 
     
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="removeTransformation"><span class="type-signature"></span>removeTransformation<span class="signature">(id)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Remove a transformation function given its id
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>id</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Name or identifier of the transformation to remove</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line306">line 306</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1661,7 +2144,7 @@ transparent data formatting and content modifications through versions.</div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line194">line 194</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line233">line 233</a>
     </li></ul></dd>
     
 
@@ -1847,7 +2330,7 @@ transparent data formatting and content modifications through versions.</div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line89">line 89</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line94">line 94</a>
     </li></ul></dd>
     
 
@@ -2046,7 +2529,7 @@ transparent data formatting and content modifications through versions.</div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line146">line 146</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line185">line 185</a>
     </li></ul></dd>
     
 
@@ -2118,7 +2601,7 @@ transparent data formatting and content modifications through versions.</div>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Jun 14 2018 17:45:56 GMT-0500 (CDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Jun 14 2018 21:14:07 GMT-0500 (CDT)
 </footer>
 
 <script> prettyPrint(); </script>

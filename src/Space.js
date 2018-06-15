@@ -25,7 +25,12 @@ export class Space {
 		this.type = type;
 		this.version = version;
 
-		this.callbacks = {};
+		this.callbacks = {
+			'store': [],
+			'delete': []
+		};
+
+		this.transformations = {};
 
 		if (name !== '' && version !== '') {
 			this.numericVersion = parseInt (version.replace (/\./g, ''));
@@ -88,6 +93,13 @@ export class Space {
 	 */
 	set (key, value) {
 		return this.open ().then (() => {
+
+			for (const id of Object.keys (this.transformations)) {
+				if (typeof this.transformations[id].set === 'function') {
+					value = this.transformations[id].set.call (null, key, value);
+				}
+			}
+
 			if (this.type === Space.Type.Local || this.type === Space.Type.Session) {
 				if (typeof value === 'object') {
 					this.storage.setItem (this.id + key, JSON.stringify (value));
@@ -96,8 +108,8 @@ export class Space {
 				}
 			}
 
-			if (typeof this.callbacks.onStore !== 'undefined') {
-				this.callbacks.onStore.call (null, key, value);
+			for (const callback of this.callbacks.store) {
+				callback.call (null, key, value);
 			}
 
 			return Promise.resolve (value);
@@ -109,11 +121,12 @@ export class Space {
 	 *
 	 * @param  {string} - Key with which the value was saved
 	 * @return {Promise<Object>|Promise<string>|Promise<Number>} - Resolves to the retreived value
+	 * or its rejected if it doesn't exist
 	 */
 	get (key) {
 		return this.open ().then (() => {
-			return new Promise ((resolve) => {
-				let value;
+			return new Promise ((resolve, reject) => {
+				let value = null;
 				switch (this.type) {
 					case Space.Type.Local:
 					case Space.Type.Session:
@@ -131,8 +144,34 @@ export class Space {
 
 						break;
 				}
-				resolve (value);
+				if (value !== null) {
+					for (const id of Object.keys (this.transformations)) {
+						if (typeof this.transformations[id].get === 'function') {
+							value = this.transformations[id].get.call (null, key, value);
+						}
+					}
+					resolve (value);
+				} else {
+					reject ();
+				}
 			});
+		});
+	}
+
+	/**
+	 * Check if a space contains a given key.
+	 *
+	 * @param  {string} key - Key to look for.
+	 * @return {Promise} Promise gets resolved if it exists and rejected if
+	 * doesn't
+	 */
+	contains (key) {
+		return this.keys ().then ((keys) => {
+			if (keys.includes (key)) {
+				Promise.resolve ();
+			} else {
+				return Promise.reject ();
+			}
 		});
 	}
 
@@ -224,14 +263,13 @@ export class Space {
 		});
 	}
 
-
 	/**
 	 * Set the callback function to be run every time a value is stored.
 	 *
 	 * @param  {function} callback - Callback Function. Key and Value pair will be sent as parameters when run.
 	 */
 	onStore (callback) {
-		this.callbacks.onStore = callback;
+		this.callbacks.store.push (callback);
 	}
 
 	/**
@@ -240,7 +278,33 @@ export class Space {
 	 * @param  {function} callback - Callback Function. Key and Value pair will be sent as parameters when run.
 	 */
 	onDelete (callback) {
-		this.callbacks.onDelete = callback;
+		this.callbacks.delete.push (callback);
+	}
+
+	/**
+	 * Add a transformation function to the space.
+	 *
+	 * @param  {string} id - Unique transformation name or identifier
+	 * @param  {function|null} get - Transformation function to apply to the content before
+	 * returning the value when using the get () function .
+	 * @param  {function|null} set - Transformation function to apply to the content before
+	 * saving it when using the set () function befo.
+	 */
+	addTransformation ({id, get, set}) {
+		this.transformations[id] = {
+			id,
+			get,
+			set
+		};
+	}
+
+	/**
+	 * Remove a transformation function given its id
+	 *
+	 * @param  {string} id - Name or identifier of the transformation to remove
+	 */
+	removeTransformation (id) {
+		delete this.transformations[id];
 	}
 
 	/**
@@ -302,8 +366,8 @@ export class Space {
 					this.storage.removeItem (this.id + key);
 
 					// Run the callback for deletions
-					if (typeof this.callbacks.onDelete !== 'undefined') {
-						this.callbacks.onDelete.call (null, key, value);
+					for (const callback of this.callbacks.delete) {
+						callback.call (null, key, value);
 					}
 
 					return Promise.resolve (key, value);

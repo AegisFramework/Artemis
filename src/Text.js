@@ -62,32 +62,56 @@ export class Text {
 	 * @return {string} - Friendly URL
 	 */
 	static friendly (text) {
-		const expressions = {
-			'[áàâãªä]'   :   'a',
-			'[ÁÀÂÃÄ]'    :   'A',
-			'[ÍÌÎÏ]'     :   'I',
-			'[íìîï]'     :   'i',
-			'[éèêë]'     :   'e',
-			'[ÉÈÊË]'     :   'E',
-			'[óòôõºö]'   :   'o',
-			'[ÓÒÔÕÖ]'    :   'O',
-			'[úùûü]'     :   'u',
-			'[ÚÙÛÜ]'     :   'U',
-			'ç'          :   'c',
-			'Ç'          :   'C',
-			'ñ'          :   'n',
-			'Ñ'          :   'N',
-			'_'          :   '-',
-			'[’‘‹›<>\']' :   '',
-			'[“”«»„"]'  :   '',
-			'[\(\)\{\}\[\]]' : '',
-			'[?¿!¡#$%&^*´`~\/°\|]' : '',
-			'[,.:;]'     : '',
-			' '         :   '-'
-		};
+		const regex = [
+			/[áàâãªä]/,
+			/[ÁÀÂÃÄ]/,
+			/[ÍÌÎÏ]/,
+			/[íìîï]/,
+			/[éèêë]/,
+			/[ÉÈÊË]/,
+			/[óòôõºö]/,
+			/[ÓÒÔÕÖ]/,
+			/[úùûü]/,
+			/[ÚÙÛÜ]/,
+			/ç/,
+			/Ç/,
+			/ñ/,
+			/Ñ/,
+			/_/,
+			/[’‘‹›<>']/,
+			/[“”«»„"]/,
+			/[(){}[\]]/,
+			/[?¿!¡#$%&^*´`~/°|]/,
+			/[,.:;]/,
+			/ /
+		];
 
-		for (const regex in expressions) {
-			text = text.replace(new RegExp(regex, 'g'), expressions[regex]);
+		const replacements = [
+			'a',
+			'A',
+			'I',
+			'i',
+			'e',
+			'E',
+			'o',
+			'O',
+			'u',
+			'U',
+			'c',
+			'C',
+			'n',
+			'N',
+			'-',
+			'',
+			'',
+			'',
+			'',
+			'',
+			'-'
+		];
+
+		for (const index in regex) {
+			text = text.replace(new RegExp(regex[index], 'g'), replacements[index]);
 		}
 
 		return text;

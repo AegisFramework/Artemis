@@ -53,17 +53,31 @@
 
 		<script>
 		const { $_, $_ready, Space } = Artemis;
-		console.log ($_);
 
 		$_ready (() => {
 			$_("body").append ("<h2>Space Test</h2>");
 			const space = new Space ("Artemis", "0.1.0");
 
+
+			space.addTransformation ({
+				id: "myTransform",
+				get: (key, value) => {
+					if (typeof value === 'object') {
+						value.a = 'b';
+					}
+					return value;
+				}
+			});
+
+			space.onStore ((key, value) => {
+				if (typeof value === 'object') {
+					value = JSON.stringify (value);
+				}
+				$_("body").append (`<p><b>${key}</b> correctly inserted with value [${value}]</p>`);
+			});
+
 			space.set ("Test", {
 				value: "Some Value"
-			}).then ((value) => {
-				value = JSON.stringify (value);
-				$_("body").append (`<p><b>Test</b> correctly inserted with value [${value}]</p>`);
 			});
 
 			space.get ("Test").then ((value) => {
@@ -91,9 +105,6 @@
 
 			global.set ("a", "b");
 		});
-
-
-		console.log ($_);
 		</script>
 	</body>
 </html>
