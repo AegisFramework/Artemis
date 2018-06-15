@@ -1,10 +1,38 @@
 # Artemis
 
-Artemis is a JavaScript Library that aims to provide common utilities needed during development such as DOM manipulation, a wrapper for client based Storage and other functions that may be useful for web app development.
+Artemis is a JavaScript Library that aims to provide common utilities needed during development such as DOM manipulation, a wrapper for client based Storage and other functions that may be useful for web app development. 
+
+## Using it
+Artemis is provided as an UMD, therefore it's possible to use it either on a browser as a global library, using es6 modules or nodejs modules.
+
+### Browser
+
+```html
+<script src='./artemis.min.js'></script>
+```
+
+```javascript
+const { $_, Text } = Artemis;
+```
+
+### ES6 Modules
+
+```javascript
+import { $_, Text } from '@aegis-framework/artemis';
+```
+
+### Node JS
+
+```javascript
+const { $_, Text } = require ('@aegis-framework/artemis');
+```
+
 
 Below are some simple examples but you can read the full [documentation of each class](https://gitlab.com/AegisFramework/Artemis/tree/master/docs) for more details.
 
-## Artemis
+## Classes
+
+### DOM
 Artemis core library focuses on DOM manipulation, providing a jQuery-like experience and API
 
 ```javascript
@@ -34,7 +62,7 @@ Form.fill ("MyForm", {
 console.log (Form.values ("MyForm"));
 ```
 
-## Space
+### Space
 
 The Space Library is a wrapper for simple storage solutions as Local and Session storage but provides data independence through storage namespaces and versioning.
 
@@ -62,7 +90,7 @@ space.upgrade ("0.1.0", "0.1.1", (key, value) => {
 });
 ```
 
-## Platform
+### Platform
 The platform library provides several utility classes to obtain information about the platform in which the code is running.
 
 ```javascript
@@ -81,7 +109,7 @@ if (Platform.electron ()) {
 }
 ```
 
-## Text
+### Text
 The text library provides simple utility classes to perform text transformations or other text related functions.
 
 ```javascript

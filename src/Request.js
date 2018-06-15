@@ -21,27 +21,28 @@ export class Request {
 	 * @return {Promise} - Resolves to the data received from the request
 	 */
 	static get (url, data, responseType = '') {
-		return new Promise(function (resolve, reject) {
-			const encodedData = [];
-			for (const value in data) {
-				encodedData.push(encodeURIComponent(value) + '=' + encodeURIComponent(data[value]));
+		return new Promise ((resolve, reject) => {
+			const query = Object.keys (data).map ((key) => {
+				return encodeURIComponent (key) + '=' + encodeURIComponent (data[key]);
+			}).join ('&');
+
+			if (query !== '') {
+				url = `${url}?${query}`;
 			}
-			const request = new XMLHttpRequest();
-			if (encodedData.length > 0) {
-				url = url + '?' + encodedData.join('&');
-			}
-			request.open('GET', url, true);
+
+			const request = new XMLHttpRequest ();
+			request.open ('GET', url, true);
 			request.responseType = responseType;
 
-			request.onload = function () {
-				resolve(request.response);
+			request.onload = () => {
+				resolve (request.response);
 			};
 
-			request.onerror = function () {
-				reject(request);
+			request.onerror = () => {
+				reject (request);
 			};
 
-			request.send();
+			request.send ();
 		});
 	}
 
@@ -56,18 +57,18 @@ export class Request {
 	 * @return {Promise} - Resolves to the data received from the request
 	 */
 	static post (url, data, responseType = '', contentType = 'application/x-www-form-urlencoded') {
-		return new Promise((resolve, reject) => {
+		return new Promise ((resolve, reject) => {
 			let formData;
 			const request = new XMLHttpRequest ();
 
-			request.open('POST', url, true);
+			request.open ('POST', url, true);
 
 			if (contentType == 'application/x-www-form-urlencoded') {
-				formData = [];
-				for (const value in data) {
-					formData.push (encodeURIComponent (value) + '=' + encodeURIComponent (data[value]));
-				}
-				formData = formData.join ('&');
+
+				formData = Object.keys (data).map ((key) => {
+					return encodeURIComponent (key) + '=' + encodeURIComponent (data[key]);
+				}).join ('&');
+
 				request.setRequestHeader ('Content-type', contentType);
 			} else if (contentType == 'multipart/form-data') {
 				formData = new FormData ();
@@ -97,21 +98,6 @@ export class Request {
 	 * @return {Promise<Object>} - Resolves to the retrieved JSON
 	 */
 	static json (url) {
-		return new Promise((resolve, reject) => {
-			const request = new XMLHttpRequest ();
-
-			request.responseType = 'json';
-
-			request.onload = () => {
-				resolve (request.response);
-			};
-
-			request.onerror = () => {
-				reject (request);
-			};
-
-			request.open ('GET', url, true);
-			request.send ();
-		});
+		return Request.get (url, {}, 'json');
 	}
 }

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: Form</title>
+    <title>JSDoc: Class: Preload</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: Form</h1>
+    <h1 class="page-title">Class: Preload</h1>
 
     
 
@@ -28,10 +28,10 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>Form<span class="signature">()</span><span class="type-signature"></span></h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>Preload<span class="signature">()</span><span class="type-signature"></span></h2>
         
-            <div class="class-description">Utility class that provides simple function for filling and retrieving values
-from froms. This class requires the use of the `data-form` attribute.</div>
+            <div class="class-description">A simple class for asset preloading. This class assumes you have a service
+worker set up that will be caching all requests.</div>
         
     
 </header>
@@ -46,7 +46,7 @@ from froms. This class requires the use of the `data-form` attribute.</div>
     
 
     
-    <h4 class="name" id="Form"><span class="type-signature"></span>new Form<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Preload"><span class="type-signature"></span>new Preload<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
     
@@ -94,7 +94,7 @@ from froms. This class requires the use of the `data-form` attribute.</div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Form.js.html">Form.js</a>, <a href="Form.js.html#line15">line 15</a>
+        <a href="Preload.js.html">Preload.js</a>, <a href="Preload.js.html#line8">line 8</a>
     </li></ul></dd>
     
 
@@ -148,7 +148,7 @@ from froms. This class requires the use of the `data-form` attribute.</div>
     
 
     
-    <h4 class="name" id=".fill"><span class="type-signature">(static) </span>fill<span class="signature">(name, data)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".audio"><span class="type-signature">(static) </span>audio<span class="signature">(route)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
     
 
     
@@ -188,7 +188,7 @@ from froms. This class requires the use of the `data-form` attribute.</div>
 
         <tr>
             
-                <td class="name"><code>name</code></td>
+                <td class="name"><code>route</code></td>
             
 
             <td class="type">
@@ -204,30 +204,7 @@ from froms. This class requires the use of the `data-form` attribute.</div>
 
             
 
-            <td class="description last">Form name. Must match the `data-form` attribute of the Form.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>data</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">JSON object with key-value pairs to fill the inputs.</td>
+            <td class="description last">Route to the audio file</td>
         </tr>
 
     
@@ -268,138 +245,7 @@ from froms. This class requires the use of the `data-form` attribute.</div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Form.js.html">Form.js</a>, <a href="Form.js.html#line24">line 24</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id=".values"><span class="type-signature">(static) </span>values<span class="signature">(name)</span><span class="type-signature"> &rarr; {Object}</span></h4>
-    
-
-    
-
-
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>name</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Form name. Must match the `data-form` attribute of the Form.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Form.js.html">Form.js</a>, <a href="Form.js.html#line50">line 50</a>
+        <a href="Preload.js.html">Preload.js</a>, <a href="Preload.js.html#line39">line 39</a>
     </li></ul></dd>
     
 
@@ -426,7 +272,7 @@ from froms. This class requires the use of the `data-form` attribute.</div>
 
         
 <div class="param-desc">
-    - Key-value JSON object
+    - Resolves or rejects depending on request success
 </div>
 
 
@@ -437,7 +283,161 @@ from froms. This class requires the use of the `data-form` attribute.</div>
     </dt>
     <dd>
         
-<span class="param-type">Object</span>
+<span class="param-type">Promise</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id=".image"><span class="type-signature">(static) </span>image<span class="signature">(route)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
+    
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>route</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Route to the image</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Preload.js.html">Preload.js</a>, <a href="Preload.js.html#line17">line 17</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    - Resolves to the image object or gets rejected with
+the rejection event
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise</span>
 
 
     </dd>

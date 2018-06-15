@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: Preload.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,59 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: Preload.js</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { Request } from './Request';
 
+/**
+ * A simple class for asset preloading. This class assumes you have a service
+ * worker set up that will be caching all requests.
+ * @class
+ */
+export class Preload {
 
-    <h3> </h3>
+	/**
+	 * @static image - Preload an image file
+	 *
+	 * @param  {string} route - Route to the image
+	 * @return {Promise} - Resolves to the image object or gets rejected with
+	 * the rejection event
+	 */
+	static image (route) {
+		return new Promise((resolve, reject) => {
+			const image = new Image ();
 
+			image.onload = () => {
+				resolve (image);
+			};
 
+			image.onerror = (e) => {
+				reject (e);
+			};
 
+			image.src = route;
+		});
+	}
 
-
-
-
-
-
-
-    
-
-
-
-
-
+	/**
+	 * @static audio - Preload an audio file
+	 *
+	 * @param  {string} route - Route to the audio file
+	 * @return {Promise} - Resolves or rejects depending on request success
+	 */
+	static audio (route) {
+		return Request.get (route, null, 'blob');
+	}
+}</code></pre>
+        </article>
+    </section>
 
 
 
