@@ -3,7 +3,6 @@
 	"version": "0.2.4",
 	"description": "Aegis Framework Javascript Library",
 	"main": "./dist/artemis.min.js",
-	"module": "./index.js",
 	"repository": "https://github.com/AegisFramework/Artemis.git",
 	"homepage": "https://aegisframework.com/",
 	"author": "Diego Islas Ocampo <dev@hyuchia.com>",
