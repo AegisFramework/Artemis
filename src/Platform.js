@@ -132,4 +132,19 @@ export class Platform {
 		}
 		return match;
 	}
+
+	/**
+	 * @static serviceWorkers - Check if the platform allows the use of service
+	 * workers
+	 *
+	 * @return {boolean} - Whether they're supported or not
+	 */
+	static serviceWorkers () {
+		if (typeof navigator !== undefined) {
+			if ('serviceWorker' in navigator && location.protocol.indexOf ('http') > -1) {
+				return true;
+			}
+		}
+		return false;
+	}
 }
