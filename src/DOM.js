@@ -207,23 +207,23 @@ export class DOM {
 	 * Add a callback function to a given event
 	 *
 	 * @param  {string} event - Event to add the listener to
-	 * @param  {function} callback - Callback function to run when the event is triggered
 	 * @param  {string} target - Target element on which to detect the event
+	 * @param  {function} callback - Callback function to run when the event is triggered
 	 */
-	on (event, callback, target) {
+	on (event, target, callback) {
 		event = event.split(' ');
 		for (const element of this.collection) {
 			for (let j = 0; j < event.length; j++) {
-				if (typeof callback === 'string' && typeof target !== 'undefined') {
 
-					element.addEventListener(event[j], function (e) {
-						if (e.target && $_(e.target).matches(callback)) {
-							target.call(e.target, e);
+				// Check if no target was defined and just a function was provided
+				if (typeof target === 'function') {
+					element.addEventListener(event[j], target, false);
+				} else if (typeof target === 'string' && typeof callback === 'function') {
+					element.addEventListener(event[j], (e) => {
+						if (e.target && $_(e.target).matches (target)) {
+							target.call (e.target, e);
 						}
 					}, false);
-
-				} else {
-					element.addEventListener (event[j], callback, false);
 				}
 			}
 		}
@@ -550,7 +550,7 @@ export class DOM {
 
 			let last = +new Date();
 
-			const tick = function () {
+			const tick = () => {
 				element.style.opacity = +element.style.opacity + (new Date() - last) / time;
 				last = +new Date();
 
@@ -577,7 +577,7 @@ export class DOM {
 		if (this.collection[0]) {
 			let last = +new Date ();
 			const element = this.collection[0];
-			const tick = function () {
+			const tick = () => {
 				element.style.opacity = +element.style.opacity - (new Date() - last) / time;
 				last = +new Date ();
 

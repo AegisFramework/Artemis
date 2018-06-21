@@ -1,9 +1,15 @@
 {
 	"name": "@aegis-framework/artemis",
-	"version": "0.2.6",
+	"version": "0.2.7",
 	"description": "Aegis Framework Javascript Library",
 	"main": "./dist/artemis.min.js",
-	"repository": "https://gitlab.com/AegisFramework/Artemis.git",
+	"repository": {
+	"type": "git",
+		"url": "https://gitlab.com/AegisFramework/Artemis.git"
+	},
+	"bugs": {
+		"url": "https://gitlab.com/AegisFramework/Artemis/issues"
+	},
 	"homepage": "https://aegisframework.com/",
 	"author": "Diego Islas Ocampo <dev@hyuchia.com>",
 	"license": "MIT",

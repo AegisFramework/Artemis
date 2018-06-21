@@ -140,7 +140,7 @@ export class Platform {
 	 * @return {boolean} - Whether they're supported or not
 	 */
 	static serviceWorkers () {
-		if (typeof navigator !== undefined) {
+		if (typeof navigator !== 'undefined') {
 			if ('serviceWorker' in navigator && location.protocol.indexOf ('http') > -1) {
 				return true;
 			}
