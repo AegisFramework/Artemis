@@ -15,8 +15,11 @@ export class DOM {
 	 */
 	constructor (selector) {
 		if (typeof selector == 'string') {
-			this.collection = document.querySelectorAll(selector);
+			this.collection = document.querySelectorAll (selector);
 			this.length = this.collection.length;
+		} else if (selector instanceof NodeList) {
+			this.collection = selector;
+			this.length = selector.length;
 		} else if (typeof selector == 'object') {
 			if (selector.length >= 1) {
 				this.collection = selector;
@@ -221,7 +224,7 @@ export class DOM {
 				} else if (typeof target === 'string' && typeof callback === 'function') {
 					element.addEventListener(event[j], (e) => {
 						if (e.target && $_(e.target).matches (target)) {
-							target.call (e.target, e);
+							callback.call (e.target, e);
 						}
 					}, false);
 				}
