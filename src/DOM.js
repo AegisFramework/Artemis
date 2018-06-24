@@ -303,7 +303,11 @@ export class DOM {
 	append (element) {
 		if (this.length > 0) {
 			const div = document.createElement ('div');
-			div.innerHTML = element;
+			if (typeof element === 'string') {
+				div.innerHTML = element.trim ();
+			} else {
+				div.innerHTML = element;
+			}
 			this.collection[0].appendChild (div.firstChild);
 		}
 	}
@@ -316,7 +320,11 @@ export class DOM {
 	prepend (element) {
 		if (this.length > 0) {
 			const div = document.createElement ('div');
-			div.innerHTML = element;
+			if (typeof element === 'string') {
+				div.innerHTML = element.trim ();
+			} else {
+				div.innerHTML = element;
+			}
 			if (this.collection[0].childNodes.length > 0) {
 				this.collection[0].insertBefore (div.firstChild, this.collection[0].childNodes[0]);
 			} else {
