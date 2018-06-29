@@ -52,11 +52,14 @@
 		<h1>Artemis Test</h1>
 
 		<script>
-		const { $_, $_ready, Space } = Artemis;
+		const { $_, $_ready, Space, SpaceAdapter } = Artemis;
 
 		$_ready (() => {
 			$_("body").append ("<h2>Space Test</h2>");
-			const space = new Space ("Artemis", "0.1.0");
+			const space = new Space (SpaceAdapter.LocalStorage, {
+				name: 'Artemis',
+				version: '0.1.0'
+			});
 
 
 			space.addTransformation ({
@@ -69,7 +72,7 @@
 				}
 			});
 
-			space.onStore ((key, value) => {
+			space.onCreate((key, value) => {
 				if (typeof value === 'object') {
 					value = JSON.stringify (value);
 				}
@@ -93,17 +96,53 @@
 				$_("body").append (`<p>Space Correctly Cleared Up</p>`);
 			});
 
-			/*const newSpace = new Space ("Aegis", "0.1.1");
-			newSpace.upgrade ("0.1.0", "0.1.1", (key, value) => {
-				return new Promise ((resolve, reject) => {
-					console.log (key);
-					resolve (value.value);
-				});
-			});*/
+			const newSpace = new Space (SpaceAdapter.LocalStorage, {
+				name: 'Artemis',
+				version: '0.1.1'
+			});
+			newSpace.upgrade ("0.1.0", "0.1.1").then ((storage) => {
+				console.log (storage);
+				return storage.each (function (key, value) {
+					return this.set (key, value.value);
+				})
+
+			});
 
 			const global = new Space ();
 
 			global.set ("a", "b");
+
+			const students = new Space (SpaceAdapter.IndexedDB, {
+				name: 'Artemis',
+				version: '0.2.0',
+				store: 'Students',
+				props: {
+					keyPath: 'id',
+					autoIncrement: true
+				},
+				index: {
+					matricula: {
+						name: 'matricula',
+						field: 'matricula',
+						props: {
+							unique: true
+						}
+					}
+				}
+			});
+
+			students.upgrade ('0.2.0', function (event) {
+				console.log (event);
+
+			}).then (function (storage) {
+				return storage.update (1, { matricula: '2'});
+			});
+
+			students.set (null, {matricula: 'A01332956', name: 'Diego', lastName: 'Islas'}).catch ((event) => {
+				console.log (event);
+			});
+
+
 		});
 		</script>
 	</body>

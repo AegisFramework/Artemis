@@ -5,3 +5,4 @@ export * from './src/Preload';
 export * from './src/Request';
 export * from './src/Space';
 export * from './src/Text';
+export * from './src/Util';

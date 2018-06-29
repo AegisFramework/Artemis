@@ -127,7 +127,7 @@ transparent data formatting and content modifications through versions.</div>
                 </td>
             
 
-            <td class="description last">Space Space Name. If name is empty, the</td>
+            <td class="description last">Space Space Name.</td>
         </tr>
 
     
@@ -246,7 +246,7 @@ transparent data formatting and content modifications through versions.</div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line13">line 13</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line25">line 25</a>
     </li></ul></dd>
     
 
@@ -455,7 +455,7 @@ saving it when using the set () function befo.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line293">line 293</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line221">line 221</a>
     </li></ul></dd>
     
 
@@ -541,7 +541,7 @@ saving it when using the set () function befo.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line386">line 386</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line280">line 280</a>
     </li></ul></dd>
     
 
@@ -580,6 +580,172 @@ saving it when using the set () function befo.</td>
     <dd>
         
 <span class="param-type">Promise</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="configuration"><span class="type-signature"></span>configuration<span class="signature">(object)</span><span class="type-signature"> &rarr; {object}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Modify the space configuration, it will also be passed down to the adapter
+using its configuration () function.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>object</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    null
+                
+                </td>
+            
+
+            <td class="description last">Configuration object to set up</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line64">line 64</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    - Configuration object if no param was passed
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">object</span>
 
 
     </dd>
@@ -856,7 +1022,7 @@ doesn't
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line126">line 126</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line127">line 127</a>
     </li></ul></dd>
     
 
@@ -1075,7 +1241,7 @@ or its rejected if it doesn't exist
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line317">line 317</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line245">line 245</a>
     </li></ul></dd>
     
 
@@ -1252,7 +1418,7 @@ or its rejected if it doesn't exist
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line337">line 337</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line255">line 255</a>
     </li></ul></dd>
     
 
@@ -1297,6 +1463,141 @@ or its rejected if it doesn't exist
 </dl>
 
     
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="onCreate"><span class="type-signature"></span>onCreate<span class="signature">(callback)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Set the callback function to be run every time a value is created.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Callback Function. Key and Value pair will be sent as parameters when run.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line199">line 199</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1409,142 +1710,7 @@ or its rejected if it doesn't exist
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line280">line 280</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="onStore"><span class="type-signature"></span>onStore<span class="signature">(callback)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Set the callback function to be run every time a value is stored.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>callback</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">function</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Callback Function. Key and Value pair will be sent as parameters when run.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line271">line 271</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line208">line 208</a>
     </li></ul></dd>
     
 
@@ -1699,7 +1865,7 @@ or its rejected if it doesn't exist
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line53">line 53</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line79">line 79</a>
     </li></ul></dd>
     
 
@@ -1852,7 +2018,7 @@ or its rejected if it doesn't exist
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line362">line 362</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line266">line 266</a>
     </li></ul></dd>
     
 
@@ -2009,7 +2175,7 @@ or its rejected if it doesn't exist
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line306">line 306</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line234">line 234</a>
     </li></ul></dd>
     
 
@@ -2144,7 +2310,7 @@ or its rejected if it doesn't exist
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line233">line 233</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line190">line 190</a>
     </li></ul></dd>
     
 
@@ -2330,7 +2496,7 @@ or its rejected if it doesn't exist
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line94">line 94</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line90">line 90</a>
     </li></ul></dd>
     
 
@@ -2529,7 +2695,7 @@ or its rejected if it doesn't exist
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line185">line 185</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line179">line 179</a>
     </li></ul></dd>
     
 
@@ -2595,13 +2761,13 @@ or its rejected if it doesn't exist
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="DOM.html">DOM</a></li><li><a href="Form.html">Form</a></li><li><a href="Platform.html">Platform</a></li><li><a href="Preload.html">Preload</a></li><li><a href="Request.html">Request</a></li><li><a href="Space.html">Space</a></li><li><a href="Text.html">Text</a></li></ul><h3>Global</h3><ul><li><a href="global.html#$_">$_</a></li><li><a href="global.html#$_ready">$_ready</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="DOM.html">DOM</a></li><li><a href="Form.html">Form</a></li><li><a href="IndexedDB.html">IndexedDB</a></li><li><a href="LocalStorage.html">LocalStorage</a></li><li><a href="Platform.html">Platform</a></li><li><a href="Preload.html">Preload</a></li><li><a href="Request.html">Request</a></li><li><a href="Server.html">Server</a></li><li><a href="SessionStorage.html">SessionStorage</a></li><li><a href="Space.html">Space</a></li><li><a href="Text.html">Text</a></li><li><a href="Util.html">Util</a></li></ul><h3>Global</h3><ul><li><a href="global.html#$_">$_</a></li><li><a href="global.html#$_ready">$_ready</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Jun 22 2018 17:11:48 GMT-0500 (CDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Jun 29 2018 00:30:01 GMT-0500 (CDT)
 </footer>
 
 <script> prettyPrint(); </script>

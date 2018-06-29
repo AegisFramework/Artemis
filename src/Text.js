@@ -39,6 +39,20 @@ export class Text {
 		return suffix;
 	}
 
+
+	/**
+	 * @static selection - Get the currently selected text
+	 *
+	 * @return {string} - Text selection
+	 */
+	static selection () {
+		if (window.getSelection) {
+			return window.getSelection ().toString ();
+		} else if (document.selection && document.selection.type != 'Control') {
+			return document.selection.createRange ().text;
+		}
+	}
+
 	/**
 	 * @static prefix - Gets the prefix of a string given a key
 	 *

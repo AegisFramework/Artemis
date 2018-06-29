@@ -4,43 +4,69 @@
 * ==============================
 */
 
+import { LocalStorage } from './SpaceAdapter/LocalStorage';
+import { SessionStorage } from './SpaceAdapter/SessionStorage';
+import { IndexedDB } from './SpaceAdapter/IndexedDB';
+
+
+export const SpaceAdapter = {
+	LocalStorage,
+	SessionStorage,
+	IndexedDB
+};
+
 /**
  * Space provides a simple wrapper for different Storage approaches. It aims to
  * provide data independence through storage namespaces and versioning, allowing
  * transparent data formatting and content modifications through versions.
  * @class
  */
+
 export class Space {
 
 	/**
 	 * Create a new Space Object. If no name and version is defined, the global LocalSpace space is used.
 	 *
 	 * @constructor
-	 * @param {string} [name=''] - Space Space Name. If name is empty, the
+	 * @param {string} [name=''] - Space Space Name.
 	 * @param {string} [version=''] - Space Space Version. Must be a numeric string i.e. '0.1.0'
 	 * @param {Space.Type} [type=Space.Type.Local] - Space Space Type. Determines what storage engine will be used.
 	 */
-	constructor (name = '', version = '', type = Space.Type.Local) {
-		this.name = name;
-		this.type = type;
-		this.version = version;
+	constructor (adapter = SpaceAdapter.LocalStorage, configuration = {}) {
+		// Assign the provided configuration to the default one
+		this.configuration = Object.assign ({}, {name: '', version: '', store: ''}, configuration);
 
+		// Set up the adapter instance to use
+		this.adapter = new adapter (this.configuration);
+
+		// This object stores all the callbacks the user can define for the
+		// space operations
 		this.callbacks = {
-			'store': [],
+			'create': [],
+			'update': [],
 			'delete': []
 		};
 
-		this.transformations = {};
+		// A transformation is an object that can contain a set and get functions
+		// every transformation will be applied to the val
+		this.transformations = {
 
-		if (name !== '' && version !== '') {
-			this.numericVersion = parseInt (version.replace (/\./g, ''));
-			this.id = `${this.name}::${this.version}_`;
-		} else if (version !== '') {
-			this.numericVersion = parseInt (version.replace (/\./g, ''));
-			this.id = `${this.name}::${this.version}_`;
-		} else if (type == Space.Type.Local || type == Space.Type.Session) {
-			this.numericVersion = 0;
-			this.id = '';
+		};
+	}
+
+	/**
+	 * Modify the space configuration, it will also be passed down to the adapter
+	 * using its configuration () function.
+	 *
+	 * @param  {object} - Configuration object to set up
+	 * @return {object} - Configuration object if no param was passed
+	 */
+	configuration (object = null) {
+		if (object !== null) {
+			this.configuration = Object.assign ({}, this.configuration, object);
+			this.adapter.configuration (object);
+		} else {
+			return this.configuration;
 		}
 	}
 
@@ -51,37 +77,7 @@ export class Space {
 	 * @return {Promise}
 	 */
 	open (create = null) {
-		if (typeof this.storage === 'undefined') {
-			if (this.type === Space.Type.Local) {
-				this.storage = window.localStorage;
-				return Promise.resolve (this);
-			} else if (this.type === Space.Type.Session) {
-				this.storage = window.sessionSpace;
-				return Promise.resolve (this);
-			} else if (this.type === Space.Type.IndexedDB) {
-				return new Promise ((resolve, reject) => {
-					this.storage = window.indexedDB.open (this.name, this.numericVersion);
-
-					this.storage.onerror = (event) => {
-						reject (event);
-					};
-
-					this.storage.onsuccess = (event) => {
-						this.storage = event.target.result;
-						resolve (this);
-					};
-
-					this.storage.onupgradeneeded = (event) => {
-						this.storage = event.target.result;
-						create (this.storage).then (() => {
-							resolve (this);
-						});
-					};
-				});
-			}
-		} else {
-			return Promise.resolve (this);
-		}
+		return this.adapter.open (create);
 	}
 
 	/**
@@ -92,27 +88,32 @@ export class Space {
 	 * @return {Promise}
 	 */
 	set (key, value) {
-		return this.open ().then (() => {
 
-			for (const id of Object.keys (this.transformations)) {
-				if (typeof this.transformations[id].set === 'function') {
-					value = this.transformations[id].set.call (null, key, value);
-				}
+		for (const id of Object.keys (this.transformations)) {
+			if (typeof this.transformations[id].set === 'function') {
+				value = this.transformations[id].set.call (null, key, value);
 			}
+		}
 
-			if (this.type === Space.Type.Local || this.type === Space.Type.Session) {
-				if (typeof value === 'object') {
-					this.storage.setItem (this.id + key, JSON.stringify (value));
-				} else {
-					this.storage.setItem (this.id + key, value);
-				}
-			}
-
-			for (const callback of this.callbacks.store) {
+		return this.adapter.set (key, value).then (() => {
+			for (const callback of this.callbacks.create) {
 				callback.call (null, key, value);
 			}
+		});
+	}
 
-			return Promise.resolve (value);
+	update (key, value) {
+
+		for (const id of Object.keys (this.transformations)) {
+			if (typeof this.transformations[id].set === 'function') {
+				value = this.transformations[id].set.call (null, key, value);
+			}
+		}
+
+		return this.adapter.update (key, value).then (() => {
+			for (const callback of this.callbacks.update) {
+				callback.call (null, key, value);
+			}
 		});
 	}
 
@@ -124,37 +125,36 @@ export class Space {
 	 * or its rejected if it doesn't exist
 	 */
 	get (key) {
-		return this.open ().then (() => {
-			return new Promise ((resolve, reject) => {
-				let value = null;
-				switch (this.type) {
-					case Space.Type.Local:
-					case Space.Type.Session:
-						value = this.storage.getItem (this.id + key);
-						try {
-							const o = JSON.parse (value);
-							if (o && typeof o === 'object') {
-								value = o;
-							}
-						} catch (exception) {
-							// Unable to parse to JSON
-						}
-						break;
-					case Space.Type.IndexedDB:
+		return this.adapter.get (key).then ((value) => {
+			for (const id of Object.keys (this.transformations)) {
+				if (typeof this.transformations[id].get === 'function') {
+					value = this.transformations[id].get.call (null, key, value);
+				}
+			}
+			return value;
+		});
+	}
 
-						break;
-				}
-				if (value !== null) {
-					for (const id of Object.keys (this.transformations)) {
-						if (typeof this.transformations[id].get === 'function') {
-							value = this.transformations[id].get.call (null, key, value);
-						}
+	getAll () {
+		return this.adapter.getAll ().then ((values) => {
+			for (const key of Object.keys (values)) {
+				for (const id of Object.keys (this.transformations)) {
+					if (typeof this.transformations[id].get === 'function') {
+						values[key] = this.transformations[id].get.call (null, key, values[key]);
 					}
-					resolve (value);
-				} else {
-					reject ();
 				}
-			});
+			}
+			return values;
+		});
+	}
+
+	each (callback) {
+		return this.getAll ().then ((values) => {
+			const promises = [];
+			for (const i of Object.keys (values)) {
+				promises.push (callback.call (this, i, values[i]));
+			}
+			return Promise.all (promises);
 		});
 	}
 
@@ -166,13 +166,7 @@ export class Space {
 	 * doesn't
 	 */
 	contains (key) {
-		return this.keys ().then ((keys) => {
-			if (keys.includes (key)) {
-				Promise.resolve ();
-			} else {
-				return Promise.reject ();
-			}
-		});
+		return this.adapter.contains (key);
 	}
 
 	/**
@@ -182,46 +176,9 @@ export class Space {
 	 * @param callback {function} - Function to transform the old stored values to the new version's format
 	 * @returns {Promise} Result of the upgrade operation
 	 */
-	upgrade (oldVersion, newVersion, callback) {
-		return this.open ().then (() => {
-
-			if (this.type === Space.Type.Local || this.type === Space.Type.Session) {
-
-				// Get all keys from the previous version
-				const keys = Object.keys (this.storage).filter ((key) => {
-					return key.indexOf (`${this.name}::${oldVersion}_`) === 0;
-				}).map ((key) => {
-					return key.replace (`${this.name}::${oldVersion}_`, '');
-				});
-
-				const promises = [];
-
-				for (const key of keys) {
-					// Get the value stored with the previous version
-					let previous = this.storage.getItem (`${this.name}::${oldVersion}_${key}`);
-
-					// Transform string to JSON object if needed
-					try {
-						const o = JSON.parse (previous);
-						if (o && typeof o === 'object') {
-							previous = o;
-						}
-					} catch (exception) {
-						// Unable to parse to JSON
-					}
-
-					// Apply the callback to the value.
-					promises.push (callback.call (null, key, previous).then ((value) => {
-						// Store the new one with the new version key
-						this.set (key, value).then (() => {
-							// Delete the previous element from storage
-							this.storage.removeItem (`${this.name}::${oldVersion}_${key}`);
-						});
-					}));
-				}
-				return Promise.all (promises);
-			}
-			return Promise.reject ();
+	upgrade (oldVersion, newVersion) {
+		return this.adapter.upgrade (oldVersion, newVersion).then (() => {
+			return Promise.resolve (this);
 		});
 	}
 
@@ -231,45 +188,16 @@ export class Space {
 	 * @returns {Promise} Result of the rename operation
 	 */
 	rename (name) {
-		return this.open ().then (() => {
-
-			// Check if the name is different
-			if (this.name !== name) {
-
-				if (this.type === Space.Type.Local || this.type === Space.Type.Session) {
-					return this.keys ().then ((keys) => {
-
-						// Save the previous Space id
-						const oldId = this.id;
-
-						// Set new object properties with the new name
-						this.name = name;
-						this.id = `${this.name}::${this.version}_`;
-						const promises = [];
-
-						for (const key of keys) {
-							promises.push (this.set (key, this.storage.getItem (`${oldId}${key}`)).then (() => {
-								this.storage.removeItem (`${oldId}${key}`);
-							}));
-						}
-						return Promise.all (promises);
-					});
-				} else {
-					return Promise.reject ();
-				}
-			} else {
-				return Promise.reject ();
-			}
-		});
+		return this.adapter.rename (name);
 	}
 
 	/**
-	 * Set the callback function to be run every time a value is stored.
+	 * Set the callback function to be run every time a value is created.
 	 *
 	 * @param  {function} callback - Callback Function. Key and Value pair will be sent as parameters when run.
 	 */
-	onStore (callback) {
-		this.callbacks.store.push (callback);
+	onCreate (callback) {
+		this.callbacks.create.push (callback);
 	}
 
 	/**
@@ -315,17 +243,7 @@ export class Space {
 	 * @return {Promise<string>} - Resolves to the key's name
 	 */
 	key (index, full = false) {
-		return this.open ().then (() => {
-			if (this.type === Space.Type.Local || this.type === Space.Type.Session) {
-				if (full === true) {
-					return Promise.resolve (this.storage.key (index));
-				} else {
-					return Promise.resolve (this.storage.key (index).replace (this.id, ''));
-				}
-			} else {
-				return Promise.reject ();
-			}
-		});
+		return this.adapter.key (index, full);
 	}
 
 	/**
@@ -335,21 +253,7 @@ export class Space {
 	 * @return {Promise<string[]>}  - Array of keys
 	 */
 	keys (full = false) {
-		return this.open ().then (() => {
-			if (this.type === Space.Type.Local || this.type === Space.Type.Session) {
-				return Promise.resolve (Object.keys (this.storage).filter ((key) => {
-					return key.indexOf (this.id) === 0;
-				}).map ((key) => {
-					if (full === true) {
-						return key;
-					} else {
-						return key.replace (this.id, '');
-					}
-				}));
-			} else {
-				return Promise.reject ();
-			}
-		});
+		return this.adapter.keys (full);
 	}
 
 
@@ -360,20 +264,10 @@ export class Space {
 	 * @return {Promise<key, value>} - Resolves to the key and value of the deleted object
 	 */
 	remove (key) {
-		return this.open ().then (() => {
-			if (this.type === Space.Type.Local || this.type === Space.Type.Session) {
-				return this.get (key).then ((value) => {
-					this.storage.removeItem (this.id + key);
-
-					// Run the callback for deletions
-					for (const callback of this.callbacks.delete) {
-						callback.call (null, key, value);
-					}
-
-					return Promise.resolve (key, value);
-				});
-			} else {
-				Promise.reject ();
+		return this.adapter.remove (key).then ((value) => {
+			// Run the callback for deletions
+			for (const callback of this.callbacks.delete) {
+				callback.call (null, key, value);
 			}
 		});
 	}
@@ -384,23 +278,6 @@ export class Space {
 	 * @return {Promise} - Result of the clear operation
 	 */
 	clear () {
-		return this.open ().then (() => {
-			if (this.type === Space.Type.Local || this.type === Space.Type.Session) {
-				return this.keys ().then ((keys) => {
-					for (const key of keys) {
-						this.remove (key);
-					}
-					return Promise.resolve ();
-				});
-			} else {
-				Promise.reject ();
-			}
-		});
+		return this.adapter.clear ();
 	}
 }
-
-Space.Type = {
-	Local: 1,
-	Session: 2,
-	Indexed: 3
-};

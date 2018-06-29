@@ -22,7 +22,7 @@
 	"scripts": {
 		"eslint": "eslint index.js src",
 		"jsdoc": "jsdoc ./src -c ./.jsdoc.json && jsdoc2md -f ./src/* -c ./.jsdoc.json >> ./docs/README.md",
-		"build": "parcel build ./index.js --global Artemis --out-file artemis.min.js"
+		"build": "parcel build ./index.js --global Artemis --out-file artemis.min.js --no-cache"
 	},
 	"devDependencies": {
 		"eslint": "^4.19.1",

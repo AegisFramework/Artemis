@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: Util.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,50 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: Util.js</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+* ==============================
+* Util
+* ==============================
+*/
 
+/**
+ * Provides diverse utility functions
+ * @class
+ */
+export class Util {
 
-    <h3> </h3>
+	static callAsync (callable, context, ...args) {
+		// Create our own promise
+		return new Promise ((resolve, reject) => {
+			// Use a try catch so we can reject the promise in case of an error
+			// while running the function
+			try {
+				// Call the provided function using the context and arguments given
+				const result = callable.apply (context, args);
 
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
+				// Check if the function returned a simple value or a Promise
+				if (result instanceof Promise) {
+					return result;
+				} else {
+					resolve (result);
+				}
+			} catch (e) {
+				reject (e);
+			}
+		});
+	}
+}</code></pre>
+        </article>
+    </section>
 
 
 
