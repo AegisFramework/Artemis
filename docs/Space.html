@@ -28,11 +28,14 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>Space<span class="signature">(name<span class="signature-attributes">opt</span>, version<span class="signature-attributes">opt</span>, type<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>Space<span class="signature">(adapter<span class="signature-attributes">opt</span>, configuration<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
         
-            <div class="class-description">Space provides a simple wrapper for different Storage approaches. It aims to
+            <div class="class-description">Space provides a simple wrapper for different Storage APIs. It aims to
 provide data independence through storage namespaces and versioning, allowing
-transparent data formatting and content modifications through versions.</div>
+transparent data formatting and content modifications through versions.
+
+While this class documentation provides some information, specific details may
+be addressed on the documentation of each adapter.</div>
         
     
 </header>
@@ -47,7 +50,7 @@ transparent data formatting and content modifications through versions.</div>
     
 
     
-    <h4 class="name" id="Space"><span class="type-signature"></span>new Space<span class="signature">(name<span class="signature-attributes">opt</span>, version<span class="signature-attributes">opt</span>, type<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Space"><span class="type-signature"></span>new Space<span class="signature">(adapter<span class="signature-attributes">opt</span>, configuration<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -95,13 +98,13 @@ transparent data formatting and content modifications through versions.</div>
 
         <tr>
             
-                <td class="name"><code>name</code></td>
+                <td class="name"><code>adapter</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type"><a href="global.html#SpaceAdapter">SpaceAdapter</a></span>
 
 
             
@@ -122,12 +125,97 @@ transparent data formatting and content modifications through versions.</div>
             
                 <td class="default">
                 
-                    ''
+                    SpaceAdapter.LocalStorage
                 
                 </td>
             
 
-            <td class="description last">Space Space Name.</td>
+            <td class="description last">Space Adapter
+to use. Currently LocalStorage, SessionStorage, IndexedDB and Server are
+available</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>configuration</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    {}
+                
+                </td>
+            
+
+            <td class="description last">Configuration object for the space.
+This configuration may change depending on the adapter used, however all
+adapters have support for a name, version and store properties.
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Name of the Space</td>
         </tr>
 
     
@@ -147,65 +235,40 @@ transparent data formatting and content modifications through versions.</div>
             </td>
 
             
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
 
             
-                <td class="default">
-                
-                    ''
-                
-                </td>
-            
 
-            <td class="description last">Space Space Version. Must be a numeric string i.e. '0.1.0'</td>
+            <td class="description last">Version of the Space in Semantic versioning syntax</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>type</code></td>
+                <td class="name"><code>store</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Space.Type</span>
+<span class="param-type">string</span>
 
 
             
             </td>
 
             
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
 
             
-                <td class="default">
-                
-                    Space.Type.Local
-                
-                </td>
-            
 
-            <td class="description last">Space Space Type. Determines what storage engine will be used.</td>
+            <td class="description last">Name of the Object Store to use</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -246,7 +309,7 @@ transparent data formatting and content modifications through versions.</div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line25">line 25</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line32">line 32</a>
     </li></ul></dd>
     
 
@@ -455,7 +518,7 @@ saving it when using the set () function befo.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line221">line 221</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line269">line 269</a>
     </li></ul></dd>
     
 
@@ -541,7 +604,7 @@ saving it when using the set () function befo.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line280">line 280</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line327">line 327</a>
     </li></ul></dd>
     
 
@@ -707,7 +770,7 @@ using its configuration () function.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line64">line 64</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line78">line 78</a>
     </li></ul></dd>
     
 
@@ -771,7 +834,7 @@ using its configuration () function.
 
 
 <div class="description">
-    Check if a space contains a given key.
+    Check if a space contains a given key. Not all adapters may give this information
 </div>
 
 
@@ -864,7 +927,7 @@ using its configuration () function.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line168">line 168</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line206">line 206</a>
     </li></ul></dd>
     
 
@@ -891,8 +954,166 @@ using its configuration () function.
 
         
 <div class="param-desc">
-    Promise gets resolved if it exists and rejected if
+    - Promise gets resolved if it exists and rejected if
 doesn't
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="each"><span class="type-signature"></span>each<span class="signature">(callback)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Iterate over every value in the space
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">A callback function receiving the
+key and value of a value. Must return a callback</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line189">line 189</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    - Resolves when all callbacks have been resolved.
 </div>
 
 
@@ -1022,7 +1243,7 @@ doesn't
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line127">line 127</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line151">line 151</a>
     </li></ul></dd>
     
 
@@ -1050,7 +1271,7 @@ doesn't
         
 <div class="param-desc">
     - Resolves to the retreived value
-or its rejected if it doesn't exist
+or its rejected if it doesn't exist.
 </div>
 
 
@@ -1085,6 +1306,114 @@ or its rejected if it doesn't exist
     
 
     
+    <h4 class="name" id="getAll"><span class="type-signature"></span>getAll<span class="signature">()</span><span class="type-signature"> &rarr; {Promise.&lt;Object>}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Retrieves all the values in the space in a key-value JSON object
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line168">line 168</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    - Resolves to the retreived values
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;Object></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
     <h4 class="name" id="key"><span class="type-signature"></span>key<span class="signature">(index, full<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Promise.&lt;string>}</span></h4>
     
 
@@ -1093,7 +1422,7 @@ or its rejected if it doesn't exist
 
 
 <div class="description">
-    Get the key that corresponds to a given index in the storage
+    Get the key that corresponds to a given index in the storage. Not all adapters may provide this functionality
 </div>
 
 
@@ -1241,7 +1570,7 @@ or its rejected if it doesn't exist
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line245">line 245</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line293">line 293</a>
     </li></ul></dd>
     
 
@@ -1305,7 +1634,7 @@ or its rejected if it doesn't exist
 
 
 <div class="description">
-    Return all keys stored in the space.
+    Return all keys stored in the space. Not all adapters may provide this functionality
 </div>
 
 
@@ -1418,7 +1747,7 @@ or its rejected if it doesn't exist
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line255">line 255</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line303">line 303</a>
     </li></ul></dd>
     
 
@@ -1482,7 +1811,7 @@ or its rejected if it doesn't exist
 
 
 <div class="description">
-    Set the callback function to be run every time a value is created.
+    Add a callback function to be run every time a value is created.
 </div>
 
 
@@ -1575,7 +1904,7 @@ or its rejected if it doesn't exist
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line199">line 199</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line238">line 238</a>
     </li></ul></dd>
     
 
@@ -1617,7 +1946,7 @@ or its rejected if it doesn't exist
 
 
 <div class="description">
-    Set the callback function to be run every time a value is deleted.
+    Add a callback function to be run every time a value is deleted.
 </div>
 
 
@@ -1710,7 +2039,7 @@ or its rejected if it doesn't exist
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line208">line 208</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line256">line 256</a>
     </li></ul></dd>
     
 
@@ -1744,7 +2073,7 @@ or its rejected if it doesn't exist
     
 
     
-    <h4 class="name" id="open"><span class="type-signature"></span>open<span class="signature">(create<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
+    <h4 class="name" id="onUpdate"><span class="type-signature"></span>onUpdate<span class="signature">(callback)</span><span class="type-signature"></span></h4>
     
 
     
@@ -1752,7 +2081,7 @@ or its rejected if it doesn't exist
 
 
 <div class="description">
-    Open the Storage Object to be used depending on the Space.Type
+    Add a callback function to be run every time a value is updated.
 </div>
 
 
@@ -1776,11 +2105,7 @@ or its rejected if it doesn't exist
         <th>Type</th>
 
         
-        <th>Attributes</th>
-        
 
-        
-        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -1792,7 +2117,7 @@ or its rejected if it doesn't exist
 
         <tr>
             
-                <td class="name"><code>create</code></td>
+                <td class="name"><code>callback</code></td>
             
 
             <td class="type">
@@ -1805,26 +2130,10 @@ or its rejected if it doesn't exist
             </td>
 
             
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
 
             
-                <td class="default">
-                
-                    null
-                
-                </td>
-            
 
-            <td class="description last">Callback for database creation when using an Space.Type.Indexed</td>
+            <td class="description last">Callback Function. Key and Value pair will be sent as parameters when run.</td>
         </tr>
 
     
@@ -1865,7 +2174,93 @@ or its rejected if it doesn't exist
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line79">line 79</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line247">line 247</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="open"><span class="type-signature"></span>open<span class="signature">()</span><span class="type-signature"> &rarr; {Promise}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Open the Storage Object to be used depending on the SpaceAdapter
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line92">line 92</a>
     </li></ul></dd>
     
 
@@ -2018,7 +2413,7 @@ or its rejected if it doesn't exist
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line266">line 266</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line313">line 313</a>
     </li></ul></dd>
     
 
@@ -2175,7 +2570,7 @@ or its rejected if it doesn't exist
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line234">line 234</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line282">line 282</a>
     </li></ul></dd>
     
 
@@ -2217,7 +2612,7 @@ or its rejected if it doesn't exist
 
 
 <div class="description">
-    Rename a Space
+    Rename a Space. Not all adapters may provide this functionality
 </div>
 
 
@@ -2310,7 +2705,7 @@ or its rejected if it doesn't exist
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line190">line 190</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line229">line 229</a>
     </li></ul></dd>
     
 
@@ -2496,7 +2891,7 @@ or its rejected if it doesn't exist
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line90">line 90</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line105">line 105</a>
     </li></ul></dd>
     
 
@@ -2548,7 +2943,7 @@ or its rejected if it doesn't exist
     
 
     
-    <h4 class="name" id="upgrade"><span class="type-signature"></span>upgrade<span class="signature">(oldVersion, newVersion, callback)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
+    <h4 class="name" id="update"><span class="type-signature"></span>update<span class="signature">(key, value)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
     
 
     
@@ -2556,7 +2951,191 @@ or its rejected if it doesn't exist
 
 
 <div class="description">
-    Upgrade a Space Version
+    Update a key-value pair. In difference with the set () method, the update
+method will use an Object.assign () in the case of objects so no value is
+lost.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>key</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Key with which this value will be saved</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>value</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+|
+
+<span class="param-type">string</span>
+|
+
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Value to save</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line129">line 129</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="upgrade"><span class="type-signature"></span>upgrade<span class="signature">(oldVersion, newVersion)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Upgrade a Space Version. Not all adapters may provide this functionality
 </div>
 
 
@@ -2635,29 +3214,6 @@ or its rejected if it doesn't exist
         </tr>
 
     
-
-        <tr>
-            
-                <td class="name"><code>callback</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">function</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Function to transform the old stored values to the new version's format</td>
-        </tr>
-
-    
     </tbody>
 </table>
 
@@ -2695,7 +3251,7 @@ or its rejected if it doesn't exist
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line179">line 179</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line217">line 217</a>
     </li></ul></dd>
     
 
@@ -2722,7 +3278,7 @@ or its rejected if it doesn't exist
 
         
 <div class="param-desc">
-    Result of the upgrade operation
+    - Result of the upgrade operation
 </div>
 
 
@@ -2761,13 +3317,13 @@ or its rejected if it doesn't exist
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="DOM.html">DOM</a></li><li><a href="Form.html">Form</a></li><li><a href="IndexedDB.html">IndexedDB</a></li><li><a href="LocalStorage.html">LocalStorage</a></li><li><a href="Platform.html">Platform</a></li><li><a href="Preload.html">Preload</a></li><li><a href="Request.html">Request</a></li><li><a href="Server.html">Server</a></li><li><a href="SessionStorage.html">SessionStorage</a></li><li><a href="Space.html">Space</a></li><li><a href="Text.html">Text</a></li><li><a href="Util.html">Util</a></li></ul><h3>Global</h3><ul><li><a href="global.html#$_">$_</a></li><li><a href="global.html#$_ready">$_ready</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="DOM.html">DOM</a></li><li><a href="FileSystem.html">FileSystem</a></li><li><a href="Form.html">Form</a></li><li><a href="IndexedDB.html">IndexedDB</a></li><li><a href="LocalStorage.html">LocalStorage</a></li><li><a href="Platform.html">Platform</a></li><li><a href="Preload.html">Preload</a></li><li><a href="Request.html">Request</a></li><li><a href="Server.html">Server</a></li><li><a href="SessionStorage.html">SessionStorage</a></li><li><a href="Space.html">Space</a></li><li><a href="Text.html">Text</a></li><li><a href="Util.html">Util</a></li></ul><h3>Global</h3><ul><li><a href="global.html#$_">$_</a></li><li><a href="global.html#$_ready">$_ready</a></li><li><a href="global.html#SpaceAdapter">SpaceAdapter</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Jun 29 2018 00:30:01 GMT-0500 (CDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Jun 29 2018 16:30:41 GMT-0500 (CDT)
 </footer>
 
 <script> prettyPrint(); </script>

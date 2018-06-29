@@ -1,4 +1,5 @@
 export * from './src/DOM';
+export * from './src/FileSystem';
 export * from './src/Form';
 export * from './src/Platform';
 export * from './src/Preload';

@@ -82,7 +82,11 @@ export class LocalStorage {
 		return this.get (key).then ((currentValue) => {
 
 			if (typeof currentValue === 'object') {
-				this.storage.setItem (this.id + key, Object.assign ({}, currentValue, JSON.stringify (value)));
+				if (typeof value === 'object') {
+					this.storage.setItem (this.id + key, Object.assign ({}, currentValue, value));
+				} else {
+					this.storage.setItem (this.id + key, value);
+				}
 			} else {
 				this.storage.setItem (this.id + key, value);
 			}

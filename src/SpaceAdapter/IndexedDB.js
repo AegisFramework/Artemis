@@ -46,6 +46,17 @@ export class IndexedDB {
 	 * @return {Promise}
 	 */
 	open () {
+
+		if (this.name === '') {
+			console.error ('No name has been defined for IndexedDB space.');
+			return Promise.reject ();
+		}
+
+		if (this.store === '') {
+			console.error ('No store has been defined for IndexedDB space.');
+			return Promise.reject ();
+		}
+
 		if (this.storage instanceof IDBDatabase) {
 			return Promise.resolve (this);
 		} else if (this.storage instanceof Promise) {
@@ -186,30 +197,8 @@ export class IndexedDB {
 	 * @param name {string} - New name to be used.
 	 * @returns {Promise} Result of the rename operation
 	 */
-	rename (name) {
-
-		// Check if the name is different
-		if (this.name !== name) {
-			return this.keys ().then ((keys) => {
-
-				// Save the previous Space id
-				const oldId = this.id;
-
-				// Set new object properties with the new name
-				this.name = name;
-				this.id = `${this.name}::${this.version}_`;
-				const promises = [];
-
-				for (const key of keys) {
-					promises.push (this.set (key, this.storage.getItem (`${oldId}${key}`)).then (() => {
-						this.storage.removeItem (`${oldId}${key}`);
-					}));
-				}
-				return Promise.all (promises);
-			});
-		} else {
-			return Promise.reject ();
-		}
+	rename () {
+		return Promise.reject ();
 	}
 
 	/**

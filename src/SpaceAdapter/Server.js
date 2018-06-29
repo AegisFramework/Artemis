@@ -4,6 +4,8 @@
 * ==============================
 */
 
+import { Request } from './../Request';
+
 /**
  * The Local Storage Adapter provides the Space Class the ability to interact
  * with the localStorage api found in most modern browsers.
@@ -23,26 +25,12 @@ export class Server {
 	 * @param {string} configuration.store - Name of the Object Store to use
 	 *
 	 */
-	constructor ({name = '', version = '', store = '', endpoint = ''}) {
+	constructor ({name = '', version = '', store = '', endpoint = '', headers = {}}) {
 		this.name = name;
 		this.version = version;
 		this.store = store;
-
-		if (this.version === '') {
-			this.numericVersion = 0;
-		} else {
-			this.numericVersion = parseInt (version.replace (/\./g, ''));
-		}
-
-		if (name !== '' && version !== '' && store !== '') {
-			this.id = `${this.name}::${this.store}::${this.version}_`;
-		} else if (name !== '' && version !== '') {
-			this.id = `${this.name}::${this.version}_`;
-		} else if (name !== '') {
-			this.id = `${this.name}::_`;
-		} else {
-			this.id = '';
-		}
+		this.endpoint = `${endpoint}${store}/`;
+		this.headers = headers;
 	}
 
 	/**
@@ -53,7 +41,7 @@ export class Server {
 	 */
 	open () {
 		if (typeof this.storage === 'undefined') {
-			this.storage = window.localStorage;
+			this.storage = Request;
 		}
 		return Promise.resolve (this);
 	}
@@ -67,26 +55,16 @@ export class Server {
 	 */
 	set (key, value) {
 		return this.open ().then (() => {
-
-			if (typeof value === 'object') {
-				this.storage.setItem (this.id + key, JSON.stringify (value));
-			} else {
-				this.storage.setItem (this.id + key, value);
-			}
-
-			return Promise.resolve (value);
+			return this.storage.post (this.endpoint + key, value, this.headers);
 		});
 	}
 
 	update (key, value) {
 		return this.get (key).then ((currentValue) => {
 
-			if (typeof currentValue === 'object') {
-				this.storage.setItem (this.id + key, Object.assign ({}, currentValue, JSON.stringify (value)));
-			} else {
-				this.storage.setItem (this.id + key, value);
-			}
-			return Promise.resolve (value);
+			return this.storage.put (this.endpoint + key, Object.assign ({}, currentValue, value), this.headers).then ((response) => {
+				return response.json ();
+			});
 		});
 	}
 
@@ -99,39 +77,16 @@ export class Server {
 	 */
 	get (key) {
 		return this.open ().then (() => {
-			return new Promise ((resolve, reject) => {
-				let value = null;
-				value = this.storage.getItem (this.id + key);
-				try {
-					const o = JSON.parse (value);
-					if (o && typeof o === 'object') {
-						value = o;
-					}
-				} catch (exception) {
-					// Unable to parse to JSON
-				}
-
-				if (value !== null) {
-					resolve (value);
-				} else {
-					reject ();
-				}
-
+			return this.storage.get (this.endpoint + key, {}, this.headers).then ((response) => {
+				return response.json ();
 			});
 		});
 	}
 
 	getAll () {
-		return this.keys ().then ((keys) => {
-			const values = {};
-			const promises = [];
-			for (const key of keys) {
-				promises.push (this.get (key).then ((value) => {
-					values[key] = value;
-				}));
-			}
-			return Promise.all (promises).then (() => {
-				return values;
+		return this.open ().then (() => {
+			return this.storage.get (this.endpoint, {}, this.headers).then ((response) => {
+				return response.json ();
 			});
 		});
 	}
@@ -160,41 +115,8 @@ export class Server {
 	 * @param callback {function} - Function to transform the old stored values to the new version's format
 	 * @returns {Promise} Result of the upgrade operation
 	 */
-	upgrade (oldVersion, newVersion) {
-		return this.open ().then (() => {
-
-			// Get all keys from the previous version
-			const keys = Object.keys (this.storage).filter ((key) => {
-				return key.indexOf (`${this.name}::${oldVersion}_`) === 0;
-			}).map ((key) => {
-				return key.replace (`${this.name}::${oldVersion}_`, '');
-			});
-
-			const promises = [];
-
-			for (const key of keys) {
-				// Get the value stored with the previous version
-				let previous = this.storage.getItem (`${this.name}::${oldVersion}_${key}`);
-
-				// Transform string to JSON object if needed
-				try {
-					const o = JSON.parse (previous);
-					if (o && typeof o === 'object') {
-						previous = o;
-					}
-				} catch (exception) {
-					// Unable to parse to JSON
-				}
-
-				promises.push (this.set (key, previous).then (() => {
-					// Delete the previous element from storage
-					return this.storage.removeItem (`${this.name}::${oldVersion}_${key}`);
-				}));
-
-				return Promise.all (promises);
-			}
-			return Promise.reject ();
-		});
+	upgrade () {
+		return Promise.reject ();
 	}
 
 	/**
@@ -203,29 +125,7 @@ export class Server {
 	 * @returns {Promise} Result of the rename operation
 	 */
 	rename (name) {
-
-		// Check if the name is different
-		if (this.name !== name) {
-			return this.keys ().then ((keys) => {
-
-				// Save the previous Space id
-				const oldId = this.id;
-
-				// Set new object properties with the new name
-				this.name = name;
-				this.id = `${this.name}::${this.version}_`;
-				const promises = [];
-
-				for (const key of keys) {
-					promises.push (this.set (key, this.storage.getItem (`${oldId}${key}`)).then (() => {
-						this.storage.removeItem (`${oldId}${key}`);
-					}));
-				}
-				return Promise.all (promises);
-			});
-		} else {
-			return Promise.reject ();
-		}
+		return Promise.reject ();
 	}
 
 	/**
@@ -235,14 +135,8 @@ export class Server {
 	 * @param  {boolean} [full=false] - Whether to return the full key name including space id or just the key name
 	 * @return {Promise<string>} - Resolves to the key's name
 	 */
-	key (index, full = false) {
-		return this.open ().then (() => {
-			if (full === true) {
-				return Promise.resolve (this.storage.key (index));
-			} else {
-				return Promise.resolve (this.storage.key (index).replace (this.id, ''));
-			}
-		});
+	key () {
+		return Promise.reject ();
 	}
 
 	/**
@@ -273,9 +167,10 @@ export class Server {
 	 * @return {Promise<key, value>} - Resolves to the key and value of the deleted object
 	 */
 	remove (key) {
-		return this.get (key).then ((value) => {
-			this.storage.removeItem (this.id + key);
-			return Promise.resolve (key, value);
+		return this.open ().then (() => {
+			return this.storage.delete (this.endpoint + key, {}, this.headers).then ((response) => {
+				return response.json ();
+			});
 		});
 	}
 
@@ -285,11 +180,8 @@ export class Server {
 	 * @return {Promise} - Result of the clear operation
 	 */
 	clear () {
-		return this.keys ().then ((keys) => {
-			for (const key of keys) {
-				this.remove (key);
-			}
-			return Promise.resolve ();
+		return this.open ().then (() => {
+			return this.storage.delete (this.endpoint, {}, this.headers);
 		});
 	}
 }

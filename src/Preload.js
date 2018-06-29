@@ -1,3 +1,9 @@
+/**
+ * ==============================
+ * Preload
+ * ==============================
+ */
+
 import { Request } from './Request';
 
 /**
@@ -31,12 +37,12 @@ export class Preload {
 	}
 
 	/**
-	 * @static audio - Preload an audio file
+	 * @static file - Preload any kind of file
 	 *
-	 * @param  {string} route - Route to the audio file
+	 * @param  {string} route - Route to the file
 	 * @return {Promise} - Resolves or rejects depending on request success
 	 */
-	static audio (route) {
-		return Request.get (route, null, 'blob');
+	static file (route) {
+		return Request.blob (route);
 	}
 }

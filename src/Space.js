@@ -7,30 +7,43 @@
 import { LocalStorage } from './SpaceAdapter/LocalStorage';
 import { SessionStorage } from './SpaceAdapter/SessionStorage';
 import { IndexedDB } from './SpaceAdapter/IndexedDB';
+import { Server } from './SpaceAdapter/Server';
 
-
+/**
+ * List of Adapters Available
+ */
 export const SpaceAdapter = {
 	LocalStorage,
 	SessionStorage,
-	IndexedDB
+	IndexedDB,
+	Server
 };
 
 /**
- * Space provides a simple wrapper for different Storage approaches. It aims to
+ * Space provides a simple wrapper for different Storage APIs. It aims to
  * provide data independence through storage namespaces and versioning, allowing
  * transparent data formatting and content modifications through versions.
+ *
+ * While this class documentation provides some information, specific details may
+ * be addressed on the documentation of each adapter.
+ *
  * @class
  */
-
 export class Space {
 
 	/**
 	 * Create a new Space Object. If no name and version is defined, the global LocalSpace space is used.
 	 *
 	 * @constructor
-	 * @param {string} [name=''] - Space Space Name.
-	 * @param {string} [version=''] - Space Space Version. Must be a numeric string i.e. '0.1.0'
-	 * @param {Space.Type} [type=Space.Type.Local] - Space Space Type. Determines what storage engine will be used.
+	 * @param {SpaceAdapter} [adapter = SpaceAdapter.LocalStorage] - Space Adapter
+	 * to use. Currently LocalStorage, SessionStorage, IndexedDB and Server are
+	 * available
+	 * @param {Object} [configuration = {}] - Configuration object for the space.
+	 * This configuration may change depending on the adapter used, however all
+	 * adapters have support for a name, version and store properties.
+	 * @param {string} configuration.name - Name of the Space
+	 * @param {string} configuration.version - Version of the Space in Semantic versioning syntax
+	 * @param {string} configuration.store - Name of the Object Store to use
 	 */
 	constructor (adapter = SpaceAdapter.LocalStorage, configuration = {}) {
 		// Assign the provided configuration to the default one
@@ -48,7 +61,8 @@ export class Space {
 		};
 
 		// A transformation is an object that can contain a set and get functions
-		// every transformation will be applied to the val
+		// every transformation will be applied to the retrieved value or to the
+		// value before storing it.
 		this.transformations = {
 
 		};
@@ -71,13 +85,14 @@ export class Space {
 	}
 
 	/**
-	 * Open the Storage Object to be used depending on the Space.Type
+	 * Open the Storage Object to be used depending on the SpaceAdapter
 	 *
-	 * @param  {function} [create=null] - Callback for database creation when using an Space.Type.Indexed
 	 * @return {Promise}
 	 */
-	open (create = null) {
-		return this.adapter.open (create);
+	open () {
+		return this.adapter.open ().then (() => {
+			return Promise.resolve (this);
+		});
 	}
 
 	/**
@@ -88,7 +103,7 @@ export class Space {
 	 * @return {Promise}
 	 */
 	set (key, value) {
-
+		// Apply all set transformations to the value
 		for (const id of Object.keys (this.transformations)) {
 			if (typeof this.transformations[id].set === 'function') {
 				value = this.transformations[id].set.call (null, key, value);
@@ -102,8 +117,17 @@ export class Space {
 		});
 	}
 
+	/**
+	 * Update a key-value pair. In difference with the set () method, the update
+	 * method will use an Object.assign () in the case of objects so no value is
+	 * lost.
+	 *
+	 * @param  {string} key - Key with which this value will be saved
+	 * @param  {Object|string|Number} - Value to save
+	 * @return {Promise}
+	 */
 	update (key, value) {
-
+		// Apply all set transformations to the value
 		for (const id of Object.keys (this.transformations)) {
 			if (typeof this.transformations[id].set === 'function') {
 				value = this.transformations[id].set.call (null, key, value);
@@ -122,10 +146,11 @@ export class Space {
 	 *
 	 * @param  {string} - Key with which the value was saved
 	 * @return {Promise<Object>|Promise<string>|Promise<Number>} - Resolves to the retreived value
-	 * or its rejected if it doesn't exist
+	 * or its rejected if it doesn't exist.
 	 */
 	get (key) {
 		return this.adapter.get (key).then ((value) => {
+			// Apply all get transformations to the value
 			for (const id of Object.keys (this.transformations)) {
 				if (typeof this.transformations[id].get === 'function') {
 					value = this.transformations[id].get.call (null, key, value);
@@ -135,8 +160,14 @@ export class Space {
 		});
 	}
 
+	/**
+	 * Retrieves all the values in the space in a key-value JSON object
+	 *
+	 * @return {Promise<Object>} - Resolves to the retreived values
+	 */
 	getAll () {
 		return this.adapter.getAll ().then ((values) => {
+			// Apply all get transformations to the value
 			for (const key of Object.keys (values)) {
 				for (const id of Object.keys (this.transformations)) {
 					if (typeof this.transformations[id].get === 'function') {
@@ -148,6 +179,13 @@ export class Space {
 		});
 	}
 
+	/**
+	 * Iterate over every value in the space
+	 *
+	 * @param  {function (key, value)} callback - A callback function receiving the
+	 * key and value of a value. Must return a callback
+	 * @return {Promise} - Resolves when all callbacks have been resolved.
+	 */
 	each (callback) {
 		return this.getAll ().then ((values) => {
 			const promises = [];
@@ -159,10 +197,10 @@ export class Space {
 	}
 
 	/**
-	 * Check if a space contains a given key.
+	 * Check if a space contains a given key. Not all adapters may give this information
 	 *
 	 * @param  {string} key - Key to look for.
-	 * @return {Promise} Promise gets resolved if it exists and rejected if
+	 * @return {Promise} - Promise gets resolved if it exists and rejected if
 	 * doesn't
 	 */
 	contains (key) {
@@ -170,11 +208,11 @@ export class Space {
 	}
 
 	/**
-	 * Upgrade a Space Version
+	 * Upgrade a Space Version. Not all adapters may provide this functionality
+	 *
 	 * @param oldVersion {string} - The version of the storage to be upgraded
 	 * @param newVersion {string} - The version to be upgraded to
-	 * @param callback {function} - Function to transform the old stored values to the new version's format
-	 * @returns {Promise} Result of the upgrade operation
+	 * @returns {Promise} - Result of the upgrade operation
 	 */
 	upgrade (oldVersion, newVersion) {
 		return this.adapter.upgrade (oldVersion, newVersion).then (() => {
@@ -183,8 +221,9 @@ export class Space {
 	}
 
 	/**
-	 * Rename a Space
-	 * @param name {string} - New name to be used.
+	 * Rename a Space. Not all adapters may provide this functionality
+	 *
+	 * @param {string} name - New name to be used.
 	 * @returns {Promise} Result of the rename operation
 	 */
 	rename (name) {
@@ -192,18 +231,27 @@ export class Space {
 	}
 
 	/**
-	 * Set the callback function to be run every time a value is created.
+	 * Add a callback function to be run every time a value is created.
 	 *
-	 * @param  {function} callback - Callback Function. Key and Value pair will be sent as parameters when run.
+	 * @param  {function (key, value)} callback - Callback Function. Key and Value pair will be sent as parameters when run.
 	 */
 	onCreate (callback) {
 		this.callbacks.create.push (callback);
 	}
 
 	/**
-	 * Set the callback function to be run every time a value is deleted.
+	 * Add a callback function to be run every time a value is updated.
 	 *
-	 * @param  {function} callback - Callback Function. Key and Value pair will be sent as parameters when run.
+	 * @param  {function (key, value)} callback - Callback Function. Key and Value pair will be sent as parameters when run.
+	 */
+	onUpdate (callback) {
+		this.callbacks.update.push (callback);
+	}
+
+	/**
+	 * Add a callback function to be run every time a value is deleted.
+	 *
+	 * @param  {function (key, value)} callback - Callback Function. Key and Value pair will be sent as parameters when run.
 	 */
 	onDelete (callback) {
 		this.callbacks.delete.push (callback);
@@ -213,9 +261,9 @@ export class Space {
 	 * Add a transformation function to the space.
 	 *
 	 * @param  {string} id - Unique transformation name or identifier
-	 * @param  {function|null} get - Transformation function to apply to the content before
+	 * @param  {function (key, value)|null} get - Transformation function to apply to the content before
 	 * returning the value when using the get () function .
-	 * @param  {function|null} set - Transformation function to apply to the content before
+	 * @param  {function (key, value)|null} set - Transformation function to apply to the content before
 	 * saving it when using the set () function befo.
 	 */
 	addTransformation ({id, get, set}) {
@@ -236,10 +284,10 @@ export class Space {
 	}
 
 	/**
-	 * Get the key that corresponds to a given index in the storage
+	 * Get the key that corresponds to a given index in the storage. Not all adapters may provide this functionality
 	 *
 	 * @param  {Number} index - Index to get the key from
-	 * @param  {boolean} [full=false] - Whether to return the full key name including space id or just the key name
+	 * @param  {boolean} [full = false] - Whether to return the full key name including space id or just the key name
 	 * @return {Promise<string>} - Resolves to the key's name
 	 */
 	key (index, full = false) {
@@ -247,15 +295,14 @@ export class Space {
 	}
 
 	/**
-	 * Return all keys stored in the space.
+	 * Return all keys stored in the space. Not all adapters may provide this functionality
 	 *
-	 * @param {boolean} [full=false] - Whether to return the full key name including space id or just the key name
-	 * @return {Promise<string[]>}  - Array of keys
+	 * @param {boolean} [full = false] - Whether to return the full key name including space id or just the key name
+	 * @return {Promise<string[]>} - Array of keys
 	 */
 	keys (full = false) {
 		return this.adapter.keys (full);
 	}
-
 
 	/**
 	 * Delete a value from the space given it's key

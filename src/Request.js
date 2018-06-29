@@ -5,99 +5,148 @@
 */
 
 /**
- * Simple Wrapper for the XMLHttpRequest object. This class will be removed as
- * soon as fetch gets more widely adopted.
+ * Simple Wrapper for the fetch API, providing simple functions to handle requests
+ *
  * @class
  */
 export class Request {
 
 	/**
-	 * @static get - Make a GET request to a given URL with the provided parameters
-	 * and responseType header.
+	 * @static serialize - Serialize an object of data into a URI encoded format
 	 *
-	 * @param  {string} url - URL to make the request
-	 * @param  {Object} data - Parameters to send in the URL, represented as a JSON object
-	 * @param  {string} [responseType = ''] - Response Type header value
-	 * @return {Promise} - Resolves to the data received from the request
+	 * @param  {Object} data - Key-value object of data to serialize
+	 * @return {string} - Serialized Data
 	 */
-	static get (url, data, responseType = '') {
-		return new Promise ((resolve, reject) => {
-			const query = Object.keys (data).map ((key) => {
-				return encodeURIComponent (key) + '=' + encodeURIComponent (data[key]);
-			}).join ('&');
-
-			if (query !== '') {
-				url = `${url}?${query}`;
-			}
-
-			const request = new XMLHttpRequest ();
-			request.open ('GET', url, true);
-			request.responseType = responseType;
-
-			request.onload = () => {
-				resolve (request.response);
-			};
-
-			request.onerror = () => {
-				reject (request);
-			};
-
-			request.send ();
-		});
+	static serialize (data) {
+		return Object.keys (data).map ((key) => {
+			return encodeURIComponent (key) + '=' + encodeURIComponent (data[key]);
+		}).join ('&');
 	}
 
 	/**
-	 * @static post - Make a POST request to a given URL with the provided data,
-	 * responseType and contentType headers
+	 * @static get - Make a GET request to a given URL with the provided data
+	 * parameters and an optional configuration object for the request.
+	 *
+	 * @param  {string} url - URL to make the request to
+	 * @param  {Object} [data = {}] - Parameters to send in the URL, represented
+	 * as a JSON object. These parameters will be sent as a query in the URL
+	 * @param  {Object} [options = {}] - Options object for configurations you want
+	 * to use in the fetch () request made.
+	 * @return {Promise<Response>} - Resolves to the response of the request
+	 */
+	static get (url, data = {}, options = {}) {
+		const query = Request.serialize (data);
+
+		// Check if there is actually any data parameters and join them to the
+		// url as query parameters
+		if (query !== '') {
+			url = `${url}?${query}`;
+		}
+
+		return fetch (url, options);
+	}
+
+	/**
+	 * @static post - Make a POST request to a given URL with the provided data
+	 * and an optional configuration object for the request.
 	 *
 	 * @param  {string} url - URL to make the request
-	 * @param  {Object} data - Key-value pairs to send in the request
-	 * @param  {string} responseType = '' - Response Type header value
-	 * @param  {type} contentType = 'application/x-www-form-urlencoded' - Content Type Header value
-	 * @return {Promise} - Resolves to the data received from the request
+	 * @param  {Object} [data = {}] - Set of data to send in the URL, represented
+	 * as a JSON object
+ 	 * @param  {Object} [options = {}] - Options object for configurations you want
+	 * to use in the fetch () request made. The Content-Type header is used to
+	 * serialize data in the correct format and defaults to application/x-www-form-urlencoded
+	 * @return {Promise<Response>} - Resolves to the response of the request
 	 */
-	static post (url, data, responseType = '', contentType = 'application/x-www-form-urlencoded') {
-		return new Promise ((resolve, reject) => {
-			let formData;
-			const request = new XMLHttpRequest ();
-
-			request.open ('POST', url, true);
-
-			if (contentType == 'application/x-www-form-urlencoded') {
-
-				formData = Object.keys (data).map ((key) => {
-					return encodeURIComponent (key) + '=' + encodeURIComponent (data[key]);
-				}).join ('&');
-
-				request.setRequestHeader ('Content-type', contentType);
-			} else if (contentType == 'multipart/form-data') {
-				formData = new FormData ();
-				for (const value in data) {
-					formData.append (value, data[value]);
+	static post (url, data, options = {}) {
+		let formData;
+		if (typeof options.headers !== 'undefined') {
+			const contentType = options.headers['Content-Type'];
+			if (typeof contentType !== 'undefined') {
+				if (contentType == 'multipart/form-data') {
+					formData = new FormData ();
+					for (const value in data) {
+						formData.append (value, data[value]);
+					}
+				} else if (contentType == 'application/json') {
+					formData = JSON.stringify (data);
+				} else {
+					formData = Request.serialize (data);
 				}
 			}
+		} else {
+			formData = Request.serialize (data);
+		}
 
-			request.responseType = responseType;
+		return fetch (url, Object.assign ({}, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded'
+			}
+		}, options));
+	}
 
-			request.onload = () => {
-				resolve (request.response);
-			};
+	/**
+	 * @static put - Make a PUT request to a given URL with the provided data
+	 * and an optional configuration object for the request.
+	 *
+	 * @param  {string} url - URL to make the request
+	 * @param  {Object} [data = {}] - Set of data to send in the URL, represented
+	 * as a JSON object
+ 	 * @param  {Object} [options = {}] - Options object for configurations you want
+	 * to use in the fetch () request made. The Content-Type header is used to
+	 * serialize data in the correct format and defaults to application/x-www-form-urlencoded
+	 * @return {Promise<Response>} - Resolves to the response of the request
+	 */
+	static put (url, data, options = {}) {
+		return Request.post (url, data, Object.assign ({}, {method: 'PUT'}, options));
+	}
 
-			request.onerror = () => {
-				reject (request);
-			};
+	/**
+	 * @static delete - Make a DELETE request to a given URL with the provided data
+	 * and an optional configuration object for the request.
+	 *
+	 * @param  {string} url - URL to make the request
+	 * @param  {Object} [data = {}] - Parameters to send in the URL, represented
+	 * as a JSON object. These parameters will be sent as a query in the URL
+ 	 * @param  {Object} [options = {}] - Options object for configurations you want
+	 * to use in the fetch () request made. The Content-Type header is used to
+	 * serialize data in the correct format and defaults to application/x-www-form-urlencoded
+	 * @return {Promise<Response>} - Resolves to the response of the request
+	 */
+	static delete (url, data, options = {}) {
+		return Request.get (url, data, Object.assign ({}, {method: 'DELETE'}, options));
+	}
 
-			request.send (formData);
+	/**
+ 	 * @static json - Request a JSON object from a given URL through a GET request
+ 	 *
+ 	 * @param  {string} url - URL to make the request to
+ 	 * @param  {Object} [data = {}] - Parameters to send in the URL, represented
+ 	 * as a JSON object. These parameters will be sent as a query in the URL
+ 	 * @param  {Object} [options = {}] - Options object for configurations you want
+ 	 * to use in the fetch () request made.
+ 	 * @return {Promise<Object>} - Resolves to the json object obtained from the request response
+ 	 */
+	static json (url, data = {}, options = {}) {
+		return Request.get (url, data, options).then ((response) => {
+			return response.json ();
 		});
 	}
 
 	/**
-	 * @static json - Request a JSON object from a given URL through a GET request
-	 *
-	 * @param  {string} url - URL to request the JSON from
-	 * @return {Promise<Object>} - Resolves to the retrieved JSON
-	 */
-	static json (url) {
-		return Request.get (url, {}, 'json');
+ 	 * @static blob - Request a Blob from a given URL through a GET request
+ 	 *
+ 	 * @param  {string} url - URL to make the request to
+ 	 * @param  {Object} [data = {}] - Parameters to send in the URL, represented
+ 	 * as a JSON object. These parameters will be sent as a query in the URL
+ 	 * @param  {Object} [options = {}] - Options object for configurations you want
+ 	 * to use in the fetch () request made.
+ 	 * @return {Promise<Blob>} - Resolves to the blob obtained from the request response
+ 	 */
+	static blob (url, data = {}, options = {}) {
+		return Request.get (url, data, options).then ((response) => {
+			return response.blob ();
+		});
 	}
 }

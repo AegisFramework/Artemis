@@ -52,9 +52,13 @@
 		<h1>Artemis Test</h1>
 
 		<script>
-		const { $_, $_ready, Space, SpaceAdapter } = Artemis;
+		const { $_, $_ready, Space, SpaceAdapter, FileSystem } = Artemis;
 
 		$_ready (() => {
+			FileSystem.readRemote ('./index.js').then ((content) => {
+				console.log (content);
+			});
+
 			$_("body").append ("<h2>Space Test</h2>");
 			const space = new Space (SpaceAdapter.LocalStorage, {
 				name: 'Artemis',
