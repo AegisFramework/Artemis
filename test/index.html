@@ -55,7 +55,7 @@
 		const { $_, $_ready, Space, SpaceAdapter, FileSystem } = Artemis;
 
 		$_ready (() => {
-			FileSystem.readRemote ('./index.js').then ((content) => {
+			FileSystem.readRemote ('./index.js', 'text', {mode: 'no-cors'}).then ((content) => {
 				console.log (content);
 			});
 
@@ -144,6 +144,26 @@
 
 			students.set (null, {key: '018279', name: 'Diego', lastName: 'Islas'}).catch ((event) => {
 				console.log (event);
+			});
+
+
+			const remoteSpace = new Space (SpaceAdapter.RemoteStorage, {
+				name: 'myRemote',
+				version: '0.1.0',
+				endpoint: 'https://hyuchia.com/',
+				store: 'post'
+			});
+
+			remoteSpace.get ('Something').then ((value) => {
+				console.log (value);
+			}).catch ((error) => {
+				console.error (error);
+			});
+
+			remoteSpace.set ('Something', {hey: 'This works!'}).then ((value) => {
+				console.log (value);
+			}).catch ((error) => {
+				console.error (error);
 			});
 		});
 		</script>

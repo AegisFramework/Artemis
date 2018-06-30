@@ -21,14 +21,15 @@ export class FileSystem {
 	 * function will fetch the file blob using the Request class and then use the
 	 * read () function to read the blob in the format required.
 	 *
-	 * @param  {type} url - URL to fetch the file from
-	 * @param  {type} [type = 'base64'] - Type of data to be read, values can be
+	 * @param {type} url - URL to fetch the file from
+	 * @param {type} [type = 'base64'] - Type of data to be read, values can be
 	 * 'text', 'base64' and 'buffer'. This parameter is used for the read () function.
+	 * @param {Object} [props = {}] - Props to send to the Request object
 	 * @return {Promise<ArrayBuffer|string>} - Content of the file. The format
 	 * depends on the type parameter used.
 	 */
-	static readRemote (url, type = 'base64') {
-		return Request.blob (url).then ((file) => {
+	static readRemote (url, type = 'base64', props = {}) {
+		return Request.blob (url, {}, props).then ((file) => {
 			return FileSystem.read (file, type);
 		});
 	}
