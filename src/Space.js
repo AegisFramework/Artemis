@@ -7,7 +7,7 @@
 import { LocalStorage } from './SpaceAdapter/LocalStorage';
 import { SessionStorage } from './SpaceAdapter/SessionStorage';
 import { IndexedDB } from './SpaceAdapter/IndexedDB';
-import { Server } from './SpaceAdapter/Server';
+import { RemoteStorage } from './SpaceAdapter/RemoteStorage';
 
 /**
  * List of Adapters Available
@@ -16,7 +16,7 @@ export const SpaceAdapter = {
 	LocalStorage,
 	SessionStorage,
 	IndexedDB,
-	Server
+	RemoteStorage
 };
 
 /**

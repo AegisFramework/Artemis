@@ -125,9 +125,9 @@
 					autoIncrement: true
 				},
 				index: {
-					matricula: {
-						name: 'matricula',
-						field: 'matricula',
+					key: {
+						name: 'Key Index',
+						field: 'key',
 						props: {
 							unique: true
 						}
@@ -139,14 +139,12 @@
 				console.log (event);
 
 			}).then (function (storage) {
-				return storage.update (1, { matricula: '2'});
+				return storage.update (1, { key: '2'});
 			});
 
-			students.set (null, {matricula: 'A01332956', name: 'Diego', lastName: 'Islas'}).catch ((event) => {
+			students.set (null, {key: '018279', name: 'Diego', lastName: 'Islas'}).catch ((event) => {
 				console.log (event);
 			});
-
-
 		});
 		</script>
 	</body>

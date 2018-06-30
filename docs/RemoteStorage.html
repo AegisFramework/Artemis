@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: LocalStorage</title>
+    <title>JSDoc: Class: RemoteStorage</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: LocalStorage</h1>
+    <h1 class="page-title">Class: RemoteStorage</h1>
 
     
 
@@ -28,10 +28,12 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>LocalStorage<span class="signature">(configuration<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>RemoteStorage<span class="signature">(configuration<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
         
-            <div class="class-description">The Local Storage Adapter provides the Space Class the ability to interact
-with the localStorage api found in most modern browsers.</div>
+            <div class="class-description">The Remote Storage Adapter provides the Space Class the ability to interact
+with a server in order to handle data persistance. The server's implementation
+is up to the developer but it will need to respond to this adapter's request
+formatting. This adapter uses the Request class to perfom its tasks.</div>
         
     
 </header>
@@ -46,7 +48,7 @@ with the localStorage api found in most modern browsers.</div>
     
 
     
-    <h4 class="name" id="LocalStorage"><span class="type-signature"></span>new LocalStorage<span class="signature">(configuration<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="RemoteStorage"><span class="type-signature"></span>new RemoteStorage<span class="signature">(configuration<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -54,9 +56,27 @@ with the localStorage api found in most modern browsers.</div>
 
 
 <div class="description">
-    Create a new LocalStorage. If no configuration is provided, the LocalStorage
-global object is used. The LocalStorage Adapter can provide independency
-by store name and space name.
+    Create a new Remote Storage. This adapter requires an endpoint url where
+it will make the requests. If a store is defined, the request will be made
+using the store as an URL, for example, let's assume the following endpoint:
+
+https://example.com/api/v1/
+
+If no store is defined, then the requests will be made to that simple route,
+with a store definition, requests will be made to:
+
+ https://example.com/api/v1/{myStore}/
+
+The key of each item in this store represents another part of the request
+
+https://example.com/api/v1/{key}/
+
+Or:
+
+https://example.com/api/v1/{myStore}/{key}/
+
+This adapter just as the IndexedDB, works with JSON objects instead of string or
+numeric values.
 </div>
 
 
@@ -102,7 +122,7 @@ by store name and space name.
             <td class="type">
             
                 
-<span class="param-type">Object</span>
+<span class="param-type">object</span>
 
 
             
@@ -123,7 +143,7 @@ by store name and space name.
             
                 <td class="default">
                 
-                    {name = '', version = '', store = ''}
+                    {name = '', version = '', store = '', endpoint = '', props = {}
                 
                 </td>
             
@@ -220,6 +240,52 @@ by store name and space name.
         </tr>
 
     
+
+        <tr>
+            
+                <td class="name"><code>endpoint</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Endpoint URL where the requests will be made</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>props</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Properties object to use for the fetch requests</td>
+        </tr>
+
+    
     </tbody>
 </table>
 
@@ -264,7 +330,7 @@ by store name and space name.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpaceAdapter_LocalStorage.js.html">SpaceAdapter/LocalStorage.js</a>, <a href="SpaceAdapter_LocalStorage.js.html#line13">line 13</a>
+        <a href="SpaceAdapter_RemoteStorage.js.html">SpaceAdapter/RemoteStorage.js</a>, <a href="SpaceAdapter_RemoteStorage.js.html#line17">line 17</a>
     </li></ul></dd>
     
 
@@ -326,7 +392,9 @@ by store name and space name.
 
 
 <div class="description">
-    Clear the entire space
+    Clear the entire space. This function sends a DELETE request to the server.
+The difference between a clear () and remove () operation is that the clear
+operation does not uses a key in the URL where the request is made.
 </div>
 
 
@@ -370,7 +438,7 @@ by store name and space name.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpaceAdapter_LocalStorage.js.html">SpaceAdapter/LocalStorage.js</a>, <a href="SpaceAdapter_LocalStorage.js.html#line309">line 309</a>
+        <a href="SpaceAdapter_RemoteStorage.js.html">SpaceAdapter/RemoteStorage.js</a>, <a href="SpaceAdapter_RemoteStorage.js.html#line213">line 213</a>
     </li></ul></dd>
     
 
@@ -434,7 +502,7 @@ by store name and space name.
 
 
 <div class="description">
-    Check if the space contains a given key.
+    Check if a space contains a given key.
 </div>
 
 
@@ -527,7 +595,7 @@ by store name and space name.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpaceAdapter_LocalStorage.js.html">SpaceAdapter/LocalStorage.js</a>, <a href="SpaceAdapter_LocalStorage.js.html#line164">line 164</a>
+        <a href="SpaceAdapter_RemoteStorage.js.html">SpaceAdapter/RemoteStorage.js</a>, <a href="SpaceAdapter_RemoteStorage.js.html#line132">line 132</a>
     </li></ul></dd>
     
 
@@ -554,7 +622,7 @@ by store name and space name.
 
         
 <div class="param-desc">
-    Promise gets resolved if it exists and rejected if
+    Promise gets resolved if it exists and rejected if it
 doesn't
 </div>
 
@@ -584,7 +652,7 @@ doesn't
     
 
     
-    <h4 class="name" id="get"><span class="type-signature"></span>get<span class="signature">(key)</span><span class="type-signature"> &rarr; {Promise.&lt;Object>|Promise.&lt;string>|Promise.&lt;Number>}</span></h4>
+    <h4 class="name" id="get"><span class="type-signature"></span>get<span class="signature">(key)</span><span class="type-signature"> &rarr; {Promise.&lt;Object>}</span></h4>
     
 
     
@@ -685,7 +753,7 @@ doesn't
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpaceAdapter_LocalStorage.js.html">SpaceAdapter/LocalStorage.js</a>, <a href="SpaceAdapter_LocalStorage.js.html#line113">line 113</a>
+        <a href="SpaceAdapter_RemoteStorage.js.html">SpaceAdapter/RemoteStorage.js</a>, <a href="SpaceAdapter_RemoteStorage.js.html#line108">line 108</a>
     </li></ul></dd>
     
 
@@ -712,8 +780,8 @@ doesn't
 
         
 <div class="param-desc">
-    - Resolves to the retreived value
-or its rejected if it doesn't exist
+    - Resolves to the retreived value or its rejected
+if it doesn't exist
 </div>
 
 
@@ -725,12 +793,6 @@ or its rejected if it doesn't exist
     <dd>
         
 <span class="param-type">Promise.&lt;Object></span>
-|
-
-<span class="param-type">Promise.&lt;string></span>
-|
-
-<span class="param-type">Promise.&lt;Number></span>
 
 
     </dd>
@@ -800,7 +862,7 @@ or its rejected if it doesn't exist
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpaceAdapter_LocalStorage.js.html">SpaceAdapter/LocalStorage.js</a>, <a href="SpaceAdapter_LocalStorage.js.html#line142">line 142</a>
+        <a href="SpaceAdapter_RemoteStorage.js.html">SpaceAdapter/RemoteStorage.js</a>, <a href="SpaceAdapter_RemoteStorage.js.html#line119">line 119</a>
     </li></ul></dd>
     
 
@@ -856,7 +918,7 @@ or its rejected if it doesn't exist
     
 
     
-    <h4 class="name" id="key"><span class="type-signature"></span>key<span class="signature">(index, full<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Promise.&lt;string>}</span></h4>
+    <h4 class="name" id="key"><span class="type-signature"></span>key<span class="signature">()</span><span class="type-signature"> &rarr; {Promise}</span></h4>
     
 
     
@@ -864,7 +926,8 @@ or its rejected if it doesn't exist
 
 
 <div class="description">
-    Get the key that corresponds to a given index in the storage
+    Getting a key by its index is not possible in this adapter, therefore this
+function always gets rejected.
 </div>
 
 
@@ -873,110 +936,6 @@ or its rejected if it doesn't exist
 
 
 
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-        <th>Default</th>
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>index</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">Index to get the key from</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>full</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    false
-                
-                </td>
-            
-
-            <td class="description last">Whether to return the full key name including space id or just the key name</td>
-        </tr>
-
-    
-    </tbody>
-</table>
 
 
 
@@ -1012,7 +971,7 @@ or its rejected if it doesn't exist
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpaceAdapter_LocalStorage.js.html">SpaceAdapter/LocalStorage.js</a>, <a href="SpaceAdapter_LocalStorage.js.html#line261">line 261</a>
+        <a href="SpaceAdapter_RemoteStorage.js.html">SpaceAdapter/RemoteStorage.js</a>, <a href="SpaceAdapter_RemoteStorage.js.html#line168">line 168</a>
     </li></ul></dd>
     
 
@@ -1039,7 +998,7 @@ or its rejected if it doesn't exist
 
         
 <div class="param-desc">
-    - Resolves to the key's name
+    - Promise Rejection
 </div>
 
 
@@ -1050,7 +1009,7 @@ or its rejected if it doesn't exist
     </dt>
     <dd>
         
-<span class="param-type">Promise.&lt;string></span>
+<span class="param-type">Promise</span>
 
 
     </dd>
@@ -1068,7 +1027,7 @@ or its rejected if it doesn't exist
     
 
     
-    <h4 class="name" id="keys"><span class="type-signature"></span>keys<span class="signature">(full<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Promise.&lt;Array.&lt;string>>}</span></h4>
+    <h4 class="name" id="keys"><span class="type-signature"></span>keys<span class="signature">()</span><span class="type-signature"> &rarr; {Promise.&lt;Array.&lt;string>>}</span></h4>
     
 
     
@@ -1076,7 +1035,15 @@ or its rejected if it doesn't exist
 
 
 <div class="description">
-    Return all keys stored in the space.
+    Return all keys stored in the space. This makes a GET request to the full
+endpoint (the URL of the endpoint and store name) with a keys query
+parameter:
+
+https://example.com/api/v1/?keys=true
+
+Or:
+
+https://example.com/api/v1/{myStore}/?keys=true
 </div>
 
 
@@ -1085,75 +1052,6 @@ or its rejected if it doesn't exist
 
 
 
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-        <th>Default</th>
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>full</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    false
-                
-                </td>
-            
-
-            <td class="description last">Whether to return the full key name including space id or just the key name</td>
-        </tr>
-
-    
-    </tbody>
-</table>
 
 
 
@@ -1189,7 +1087,7 @@ or its rejected if it doesn't exist
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpaceAdapter_LocalStorage.js.html">SpaceAdapter/LocalStorage.js</a>, <a href="SpaceAdapter_LocalStorage.js.html#line277">line 277</a>
+        <a href="SpaceAdapter_RemoteStorage.js.html">SpaceAdapter/RemoteStorage.js</a>, <a href="SpaceAdapter_RemoteStorage.js.html#line185">line 185</a>
     </li></ul></dd>
     
 
@@ -1245,7 +1143,7 @@ or its rejected if it doesn't exist
     
 
     
-    <h4 class="name" id="open"><span class="type-signature"></span>open<span class="signature">()</span><span class="type-signature"> &rarr; {Promise}</span></h4>
+    <h4 class="name" id="open"><span class="type-signature"></span>open<span class="signature">()</span><span class="type-signature"> &rarr; {Promise.&lt;<a href="RemoteStorage.html">RemoteStorage</a>>}</span></h4>
     
 
     
@@ -1297,7 +1195,7 @@ or its rejected if it doesn't exist
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpaceAdapter_LocalStorage.js.html">SpaceAdapter/LocalStorage.js</a>, <a href="SpaceAdapter_LocalStorage.js.html#line54">line 54</a>
+        <a href="SpaceAdapter_RemoteStorage.js.html">SpaceAdapter/RemoteStorage.js</a>, <a href="SpaceAdapter_RemoteStorage.js.html#line63">line 63</a>
     </li></ul></dd>
     
 
@@ -1331,7 +1229,7 @@ or its rejected if it doesn't exist
     </dt>
     <dd>
         
-<span class="param-type">Promise</span>
+<span class="param-type">Promise.&lt;<a href="RemoteStorage.html">RemoteStorage</a>></span>
 
 
     </dd>
@@ -1357,7 +1255,8 @@ or its rejected if it doesn't exist
 
 
 <div class="description">
-    Delete a value from the space given its key
+    Delete a value from the space given it's key. This function sends a DELETE
+request to the server.
 </div>
 
 
@@ -1450,7 +1349,7 @@ or its rejected if it doesn't exist
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpaceAdapter_LocalStorage.js.html">SpaceAdapter/LocalStorage.js</a>, <a href="SpaceAdapter_LocalStorage.js.html#line297">line 297</a>
+        <a href="SpaceAdapter_RemoteStorage.js.html">SpaceAdapter/RemoteStorage.js</a>, <a href="SpaceAdapter_RemoteStorage.js.html#line198">line 198</a>
     </li></ul></dd>
     
 
@@ -1506,7 +1405,7 @@ or its rejected if it doesn't exist
     
 
     
-    <h4 class="name" id="rename"><span class="type-signature"></span>rename<span class="signature">(name)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
+    <h4 class="name" id="rename"><span class="type-signature"></span>rename<span class="signature">()</span><span class="type-signature"> &rarr; {Promise}</span></h4>
     
 
     
@@ -1514,7 +1413,8 @@ or its rejected if it doesn't exist
 
 
 <div class="description">
-    Rename a Space
+    Renaming the Storage must be done on the server side, therefore this function
+always gets rejected.
 </div>
 
 
@@ -1523,55 +1423,6 @@ or its rejected if it doesn't exist
 
 
 
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>name</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">New name to be used.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
 
 
 
@@ -1607,7 +1458,7 @@ or its rejected if it doesn't exist
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpaceAdapter_LocalStorage.js.html">SpaceAdapter/LocalStorage.js</a>, <a href="SpaceAdapter_LocalStorage.js.html#line228">line 228</a>
+        <a href="SpaceAdapter_RemoteStorage.js.html">SpaceAdapter/RemoteStorage.js</a>, <a href="SpaceAdapter_RemoteStorage.js.html#line158">line 158</a>
     </li></ul></dd>
     
 
@@ -1633,10 +1484,6 @@ or its rejected if it doesn't exist
 <h5>Returns:</h5>
 
         
-<div class="param-desc">
-    - Result of the rename operation
-</div>
-
 
 
 <dl>
@@ -1663,7 +1510,7 @@ or its rejected if it doesn't exist
     
 
     
-    <h4 class="name" id="set"><span class="type-signature"></span>set<span class="signature">(key, value)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
+    <h4 class="name" id="set"><span class="type-signature"></span>set<span class="signature">(key, value)</span><span class="type-signature"> &rarr; {Promise.&lt;Response>}</span></h4>
     
 
     
@@ -1671,7 +1518,7 @@ or its rejected if it doesn't exist
 
 
 <div class="description">
-    Store a key-value pair
+    Store a key-value pair. This function sends a POST request to the server
 </div>
 
 
@@ -1737,12 +1584,6 @@ or its rejected if it doesn't exist
             
                 
 <span class="param-type">Object</span>
-|
-
-<span class="param-type">string</span>
-|
-
-<span class="param-type">Number</span>
 
 
             
@@ -1793,7 +1634,7 @@ or its rejected if it doesn't exist
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpaceAdapter_LocalStorage.js.html">SpaceAdapter/LocalStorage.js</a>, <a href="SpaceAdapter_LocalStorage.js.html#line68">line 68</a>
+        <a href="SpaceAdapter_RemoteStorage.js.html">SpaceAdapter/RemoteStorage.js</a>, <a href="SpaceAdapter_RemoteStorage.js.html#line77">line 77</a>
     </li></ul></dd>
     
 
@@ -1827,7 +1668,7 @@ or its rejected if it doesn't exist
     </dt>
     <dd>
         
-<span class="param-type">Promise</span>
+<span class="param-type">Promise.&lt;Response></span>
 
 
     </dd>
@@ -1845,7 +1686,7 @@ or its rejected if it doesn't exist
     
 
     
-    <h4 class="name" id="update"><span class="type-signature"></span>update<span class="signature">(key, value)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
+    <h4 class="name" id="update"><span class="type-signature"></span>update<span class="signature">(key, value)</span><span class="type-signature"> &rarr; {Promise.&lt;Object>}</span></h4>
     
 
     
@@ -1855,7 +1696,7 @@ or its rejected if it doesn't exist
 <div class="description">
     Update a key-value pair. In difference with the set () method, the update
 method will use an Object.assign () in the case of objects so no value is
-lost.
+lost. This function sends a PUT request to the server.
 </div>
 
 
@@ -1921,12 +1762,6 @@ lost.
             
                 
 <span class="param-type">Object</span>
-|
-
-<span class="param-type">string</span>
-|
-
-<span class="param-type">Number</span>
 
 
             
@@ -1977,7 +1812,7 @@ lost.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpaceAdapter_LocalStorage.js.html">SpaceAdapter/LocalStorage.js</a>, <a href="SpaceAdapter_LocalStorage.js.html#line90">line 90</a>
+        <a href="SpaceAdapter_RemoteStorage.js.html">SpaceAdapter/RemoteStorage.js</a>, <a href="SpaceAdapter_RemoteStorage.js.html#line92">line 92</a>
     </li></ul></dd>
     
 
@@ -2011,7 +1846,7 @@ lost.
     </dt>
     <dd>
         
-<span class="param-type">Promise</span>
+<span class="param-type">Promise.&lt;Object></span>
 
 
     </dd>
@@ -2029,7 +1864,7 @@ lost.
     
 
     
-    <h4 class="name" id="upgrade"><span class="type-signature"></span>upgrade<span class="signature">(oldVersion, newVersion, callback)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
+    <h4 class="name" id="upgrade"><span class="type-signature"></span>upgrade<span class="signature">()</span><span class="type-signature"> &rarr; {Promise}</span></h4>
     
 
     
@@ -2037,7 +1872,8 @@ lost.
 
 
 <div class="description">
-    Upgrade a Space Version
+    Upgrading the Storage must be done on the server side, therefore this function
+always gets rejected.
 </div>
 
 
@@ -2046,101 +1882,6 @@ lost.
 
 
 
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>oldVersion</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The version of the storage to be upgraded</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>newVersion</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The version to be upgraded to</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>callback</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">function</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Function to transform the old stored values to the new version's format</td>
-        </tr>
-
-    
-    </tbody>
-</table>
 
 
 
@@ -2176,7 +1917,7 @@ lost.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpaceAdapter_LocalStorage.js.html">SpaceAdapter/LocalStorage.js</a>, <a href="SpaceAdapter_LocalStorage.js.html#line182">line 182</a>
+        <a href="SpaceAdapter_RemoteStorage.js.html">SpaceAdapter/RemoteStorage.js</a>, <a href="SpaceAdapter_RemoteStorage.js.html#line148">line 148</a>
     </li></ul></dd>
     
 
@@ -2202,10 +1943,6 @@ lost.
 <h5>Returns:</h5>
 
         
-<div class="param-desc">
-    Result of the upgrade operation
-</div>
-
 
 
 <dl>

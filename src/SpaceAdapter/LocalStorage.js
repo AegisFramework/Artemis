@@ -14,10 +14,11 @@ export class LocalStorage {
 
 	/**
 	 * Create a new LocalStorage. If no configuration is provided, the LocalStorage
-	 * global object is used.
+	 * global object is used. The LocalStorage Adapter can provide independency
+	 * by store name and space name.
 	 *
 	 * @constructor
-	 * @param {object} [configuration={name = '', version = '', store = ''}] - Configuration Object for the Adapter
+	 * @param {Object} [configuration={name = '', version = '', store = ''}] - Configuration Object for the Adapter
 	 * @param {string} configuration.name - Name of the Space
 	 * @param {string} configuration.version - Version of the Space in Semantic versioning syntax
 	 * @param {string} configuration.store - Name of the Object Store to use
@@ -48,7 +49,6 @@ export class LocalStorage {
 	/**
 	 * Open the Storage Object
 	 *
-	 * @param  {function} [create=null] - Callback for database creation when using an Space.Type.Indexed
 	 * @return {Promise}
 	 */
 	open () {
@@ -78,6 +78,15 @@ export class LocalStorage {
 		});
 	}
 
+	/**
+	 * Update a key-value pair. In difference with the set () method, the update
+	 * method will use an Object.assign () in the case of objects so no value is
+	 * lost.
+	 *
+	 * @param  {string} key - Key with which this value will be saved
+	 * @param  {Object|string|Number} - Value to save
+	 * @return {Promise}
+	 */
 	update (key, value) {
 		return this.get (key).then ((currentValue) => {
 
@@ -125,6 +134,11 @@ export class LocalStorage {
 		});
 	}
 
+	/**
+	 * Retrieves all the values in the space in a key-value JSON object
+	 *
+	 * @return {Promise<Object>} - Resolves to the retreived values
+	 */
 	getAll () {
 		return this.keys ().then ((keys) => {
 			const values = {};
@@ -141,7 +155,7 @@ export class LocalStorage {
 	}
 
 	/**
-	 * Check if a space contains a given key.
+	 * Check if the space contains a given key.
 	 *
 	 * @param  {string} key - Key to look for.
 	 * @return {Promise} Promise gets resolved if it exists and rejected if
@@ -159,6 +173,7 @@ export class LocalStorage {
 
 	/**
 	 * Upgrade a Space Version
+	 *
 	 * @param oldVersion {string} - The version of the storage to be upgraded
 	 * @param newVersion {string} - The version to be upgraded to
 	 * @param callback {function} - Function to transform the old stored values to the new version's format
@@ -166,6 +181,9 @@ export class LocalStorage {
 	 */
 	upgrade (oldVersion, newVersion) {
 		return this.open ().then (() => {
+			if (this.version !== newVersion) {
+				this.version = newVersion;
+			}
 
 			// Get all keys from the previous version
 			const keys = Object.keys (this.storage).filter ((key) => {
@@ -203,8 +221,9 @@ export class LocalStorage {
 
 	/**
 	 * Rename a Space
-	 * @param name {string} - New name to be used.
-	 * @returns {Promise} Result of the rename operation
+	 *
+	 * @param {string} name - New name to be used.
+	 * @returns {Promise} - Result of the rename operation
 	 */
 	rename (name) {
 
@@ -253,7 +272,7 @@ export class LocalStorage {
 	 * Return all keys stored in the space.
 	 *
 	 * @param {boolean} [full=false] - Whether to return the full key name including space id or just the key name
-	 * @return {Promise<string[]>}  - Array of keys
+	 * @return {Promise<string[]>} - Array of keys
 	 */
 	keys (full = false) {
 		return this.open ().then (() => {
@@ -269,9 +288,8 @@ export class LocalStorage {
 		});
 	}
 
-
 	/**
-	 * Delete a value from the space given it's key
+	 * Delete a value from the space given its key
 	 *
 	 * @param  {string} key - Key of the item to delete
 	 * @return {Promise<key, value>} - Resolves to the key and value of the deleted object

@@ -30,8 +30,8 @@
     
         <h2><span class="attribs"><span class="type-signature"></span></span>IndexedDB<span class="signature">(configuration<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
         
-            <div class="class-description">The Local Storage Adapter provides the Space Class the ability to interact
-with the localStorage api found in most modern browsers.</div>
+            <div class="class-description">The IndexedDB Adapter provides the Space Class the ability to interact
+with the IndexedDB API found in most modern browsers.</div>
         
     
 </header>
@@ -54,8 +54,8 @@ with the localStorage api found in most modern browsers.</div>
 
 
 <div class="description">
-    Create a new LocalStorage. If no configuration is provided, the LocalStorage
-global object is used.
+    Create a new IndexedDB. Differently from Local and Session Storages, the
+IndexedDB Adapter requires a mandatory name, version and store name.
 </div>
 
 
@@ -101,7 +101,7 @@ global object is used.
             <td class="type">
             
                 
-<span class="param-type">object</span>
+<span class="param-type">Object</span>
 
 
             
@@ -122,7 +122,7 @@ global object is used.
             
                 <td class="default">
                 
-                    {name = '', version = '', store = ''}
+                    {name = '', version = '', store = '', props = {}, index = {}}
                 
                 </td>
             
@@ -216,6 +216,122 @@ global object is used.
             
 
             <td class="description last">Name of the Object Store to use</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>props</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Optional Parameters for the Object Store</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>index</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Object of the indexes to declare for
+the  Object Store. Each index is a JSON object with the following properties:</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>index[...].name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Name for the Index</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>index[...].field</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Field on the store to apply the index to</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>index[...].props</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Index properties object</td>
         </tr>
 
     
@@ -369,7 +485,7 @@ global object is used.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpaceAdapter_IndexedDB.js.html">SpaceAdapter/IndexedDB.js</a>, <a href="SpaceAdapter_IndexedDB.js.html#line261">line 261</a>
+        <a href="SpaceAdapter_IndexedDB.js.html">SpaceAdapter/IndexedDB.js</a>, <a href="SpaceAdapter_IndexedDB.js.html#line271">line 271</a>
     </li></ul></dd>
     
 
@@ -433,7 +549,7 @@ global object is used.
 
 
 <div class="description">
-    Check if a space contains a given key.
+    Check if the space contains a given key.
 </div>
 
 
@@ -526,7 +642,7 @@ global object is used.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpaceAdapter_IndexedDB.js.html">SpaceAdapter/IndexedDB.js</a>, <a href="SpaceAdapter_IndexedDB.js.html#line173">line 173</a>
+        <a href="SpaceAdapter_IndexedDB.js.html">SpaceAdapter/IndexedDB.js</a>, <a href="SpaceAdapter_IndexedDB.js.html#line190">line 190</a>
     </li></ul></dd>
     
 
@@ -553,7 +669,7 @@ global object is used.
 
         
 <div class="param-desc">
-    Promise gets resolved if it exists and rejected if
+    - Promise gets resolved if it exists and rejected if it
 doesn't
 </div>
 
@@ -583,7 +699,7 @@ doesn't
     
 
     
-    <h4 class="name" id="get"><span class="type-signature"></span>get<span class="signature">(key)</span><span class="type-signature"> &rarr; {Promise.&lt;Object>|Promise.&lt;string>|Promise.&lt;Number>}</span></h4>
+    <h4 class="name" id="get"><span class="type-signature"></span>get<span class="signature">(key)</span><span class="type-signature"> &rarr; {Promise.&lt;Object>}</span></h4>
     
 
     
@@ -684,7 +800,7 @@ doesn't
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpaceAdapter_IndexedDB.js.html">SpaceAdapter/IndexedDB.js</a>, <a href="SpaceAdapter_IndexedDB.js.html#line142">line 142</a>
+        <a href="SpaceAdapter_IndexedDB.js.html">SpaceAdapter/IndexedDB.js</a>, <a href="SpaceAdapter_IndexedDB.js.html#line154">line 154</a>
     </li></ul></dd>
     
 
@@ -711,8 +827,8 @@ doesn't
 
         
 <div class="param-desc">
-    - Resolves to the retreived value
-or its rejected if it doesn't exist
+    - Resolves to the retreived value or its rejected
+if it doesn't exist
 </div>
 
 
@@ -724,12 +840,6 @@ or its rejected if it doesn't exist
     <dd>
         
 <span class="param-type">Promise.&lt;Object></span>
-|
-
-<span class="param-type">Promise.&lt;string></span>
-|
-
-<span class="param-type">Promise.&lt;Number></span>
 
 
     </dd>
@@ -747,7 +857,7 @@ or its rejected if it doesn't exist
     
 
     
-    <h4 class="name" id="key"><span class="type-signature"></span>key<span class="signature">(index, full<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Promise.&lt;string>}</span></h4>
+    <h4 class="name" id="getAll"><span class="type-signature"></span>getAll<span class="signature">()</span><span class="type-signature"> &rarr; {Promise.&lt;Object>}</span></h4>
     
 
     
@@ -755,7 +865,7 @@ or its rejected if it doesn't exist
 
 
 <div class="description">
-    Get the key that corresponds to a given index in the storage
+    Retrieves all the values in the space in a key-value JSON object
 </div>
 
 
@@ -764,110 +874,6 @@ or its rejected if it doesn't exist
 
 
 
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-        <th>Default</th>
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>index</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">Index to get the key from</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>full</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    false
-                
-                </td>
-            
-
-            <td class="description last">Whether to return the full key name including space id or just the key name</td>
-        </tr>
-
-    
-    </tbody>
-</table>
 
 
 
@@ -903,7 +909,7 @@ or its rejected if it doesn't exist
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpaceAdapter_IndexedDB.js.html">SpaceAdapter/IndexedDB.js</a>, <a href="SpaceAdapter_IndexedDB.js.html#line211">line 211</a>
+        <a href="SpaceAdapter_IndexedDB.js.html">SpaceAdapter/IndexedDB.js</a>, <a href="SpaceAdapter_IndexedDB.js.html#line171">line 171</a>
     </li></ul></dd>
     
 
@@ -930,7 +936,7 @@ or its rejected if it doesn't exist
 
         
 <div class="param-desc">
-    - Resolves to the key's name
+    - Resolves to the retreived values
 </div>
 
 
@@ -941,7 +947,7 @@ or its rejected if it doesn't exist
     </dt>
     <dd>
         
-<span class="param-type">Promise.&lt;string></span>
+<span class="param-type">Promise.&lt;Object></span>
 
 
     </dd>
@@ -959,7 +965,116 @@ or its rejected if it doesn't exist
     
 
     
-    <h4 class="name" id="keys"><span class="type-signature"></span>keys<span class="signature">(full<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Promise.&lt;Array.&lt;string>>}</span></h4>
+    <h4 class="name" id="key"><span class="type-signature"></span>key<span class="signature">()</span><span class="type-signature"> &rarr; {Promise}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Getting a key by its index is not possible in this adapter, therefore this
+function always gets rejected.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="SpaceAdapter_IndexedDB.js.html">SpaceAdapter/IndexedDB.js</a>, <a href="SpaceAdapter_IndexedDB.js.html#line229">line 229</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    - Promise Rejection
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="keys"><span class="type-signature"></span>keys<span class="signature">()</span><span class="type-signature"> &rarr; {Promise.&lt;Array.&lt;string>>}</span></h4>
     
 
     
@@ -978,75 +1093,6 @@ or its rejected if it doesn't exist
 
 
 
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-        <th>Default</th>
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>full</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    false
-                
-                </td>
-            
-
-            <td class="description last">Whether to return the full key name including space id or just the key name</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
 
 
 
@@ -1080,7 +1126,7 @@ or its rejected if it doesn't exist
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpaceAdapter_IndexedDB.js.html">SpaceAdapter/IndexedDB.js</a>, <a href="SpaceAdapter_IndexedDB.js.html#line227">line 227</a>
+        <a href="SpaceAdapter_IndexedDB.js.html">SpaceAdapter/IndexedDB.js</a>, <a href="SpaceAdapter_IndexedDB.js.html#line238">line 238</a>
     </li></ul></dd>
     
 
@@ -1188,7 +1234,7 @@ or its rejected if it doesn't exist
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpaceAdapter_IndexedDB.js.html">SpaceAdapter/IndexedDB.js</a>, <a href="SpaceAdapter_IndexedDB.js.html#line48">line 48</a>
+        <a href="SpaceAdapter_IndexedDB.js.html">SpaceAdapter/IndexedDB.js</a>, <a href="SpaceAdapter_IndexedDB.js.html#line52">line 52</a>
     </li></ul></dd>
     
 
@@ -1248,7 +1294,7 @@ or its rejected if it doesn't exist
 
 
 <div class="description">
-    Delete a value from the space given it's key
+    Delete a value from the space given its key
 </div>
 
 
@@ -1341,7 +1387,7 @@ or its rejected if it doesn't exist
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpaceAdapter_IndexedDB.js.html">SpaceAdapter/IndexedDB.js</a>, <a href="SpaceAdapter_IndexedDB.js.html#line245">line 245</a>
+        <a href="SpaceAdapter_IndexedDB.js.html">SpaceAdapter/IndexedDB.js</a>, <a href="SpaceAdapter_IndexedDB.js.html#line255">line 255</a>
     </li></ul></dd>
     
 
@@ -1397,7 +1443,7 @@ or its rejected if it doesn't exist
     
 
     
-    <h4 class="name" id="rename"><span class="type-signature"></span>rename<span class="signature">(name)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
+    <h4 class="name" id="rename"><span class="type-signature"></span>rename<span class="signature">()</span><span class="type-signature"> &rarr; {Promise}</span></h4>
     
 
     
@@ -1405,7 +1451,8 @@ or its rejected if it doesn't exist
 
 
 <div class="description">
-    Rename a Space
+    Renaming the space is not possible with the IndexedDB adapter therefore
+this function always gets a rejection.
 </div>
 
 
@@ -1414,55 +1461,6 @@ or its rejected if it doesn't exist
 
 
 
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>name</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">New name to be used.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
 
 
 
@@ -1498,7 +1496,7 @@ or its rejected if it doesn't exist
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpaceAdapter_IndexedDB.js.html">SpaceAdapter/IndexedDB.js</a>, <a href="SpaceAdapter_IndexedDB.js.html#line200">line 200</a>
+        <a href="SpaceAdapter_IndexedDB.js.html">SpaceAdapter/IndexedDB.js</a>, <a href="SpaceAdapter_IndexedDB.js.html#line219">line 219</a>
     </li></ul></dd>
     
 
@@ -1525,7 +1523,7 @@ or its rejected if it doesn't exist
 
         
 <div class="param-desc">
-    Result of the rename operation
+    - Result of the rename operation
 </div>
 
 
@@ -1562,7 +1560,8 @@ or its rejected if it doesn't exist
 
 
 <div class="description">
-    Store a key-value pair
+    Store a key-value pair. Because of the nature of a IndexedDB Database, the
+stored values must be JSON objects.
 </div>
 
 
@@ -1636,12 +1635,6 @@ or its rejected if it doesn't exist
             
                 
 <span class="param-type">Object</span>
-|
-
-<span class="param-type">string</span>
-|
-
-<span class="param-type">Number</span>
 
 
             
@@ -1696,7 +1689,7 @@ or its rejected if it doesn't exist
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpaceAdapter_IndexedDB.js.html">SpaceAdapter/IndexedDB.js</a>, <a href="SpaceAdapter_IndexedDB.js.html#line105">line 105</a>
+        <a href="SpaceAdapter_IndexedDB.js.html">SpaceAdapter/IndexedDB.js</a>, <a href="SpaceAdapter_IndexedDB.js.html#line110">line 110</a>
     </li></ul></dd>
     
 
@@ -1748,7 +1741,7 @@ or its rejected if it doesn't exist
     
 
     
-    <h4 class="name" id="upgrade"><span class="type-signature"></span>upgrade<span class="signature">(oldVersion, newVersion, callback)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
+    <h4 class="name" id="update"><span class="type-signature"></span>update<span class="signature">(key, value)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
     
 
     
@@ -1756,7 +1749,9 @@ or its rejected if it doesn't exist
 
 
 <div class="description">
-    Upgrade a Space Version
+    Update a key-value pair. In difference with the set () method, the update
+method will use an Object.assign () in the case of objects so no value is
+lost.
 </div>
 
 
@@ -1792,7 +1787,7 @@ or its rejected if it doesn't exist
 
         <tr>
             
-                <td class="name"><code>oldVersion</code></td>
+                <td class="name"><code>key</code></td>
             
 
             <td class="type">
@@ -1808,9 +1803,163 @@ or its rejected if it doesn't exist
 
             
 
-            <td class="description last">The version of the storage to be upgraded</td>
+            <td class="description last">Key with which this value will be saved</td>
         </tr>
 
+    
+
+        <tr>
+            
+                <td class="name"><code>value</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Value to save</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="SpaceAdapter_IndexedDB.js.html">SpaceAdapter/IndexedDB.js</a>, <a href="SpaceAdapter_IndexedDB.js.html#line136">line 136</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="upgrade"><span class="type-signature"></span>upgrade<span class="signature">(newVersion, callback)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Upgrade a Space Version. Upgrades must be declared before the open ()
+method is executed.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
     
 
         <tr>
@@ -1895,7 +2044,7 @@ or its rejected if it doesn't exist
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpaceAdapter_IndexedDB.js.html">SpaceAdapter/IndexedDB.js</a>, <a href="SpaceAdapter_IndexedDB.js.html#line190">line 190</a>
+        <a href="SpaceAdapter_IndexedDB.js.html">SpaceAdapter/IndexedDB.js</a>, <a href="SpaceAdapter_IndexedDB.js.html#line208">line 208</a>
     </li></ul></dd>
     
 
@@ -1922,7 +2071,7 @@ or its rejected if it doesn't exist
 
         
 <div class="param-desc">
-    Result of the upgrade operation
+    - Result of the upgrade operation
 </div>
 
 
@@ -1961,13 +2110,13 @@ or its rejected if it doesn't exist
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="DOM.html">DOM</a></li><li><a href="FileSystem.html">FileSystem</a></li><li><a href="Form.html">Form</a></li><li><a href="IndexedDB.html">IndexedDB</a></li><li><a href="LocalStorage.html">LocalStorage</a></li><li><a href="Platform.html">Platform</a></li><li><a href="Preload.html">Preload</a></li><li><a href="Request.html">Request</a></li><li><a href="Server.html">Server</a></li><li><a href="SessionStorage.html">SessionStorage</a></li><li><a href="Space.html">Space</a></li><li><a href="Text.html">Text</a></li><li><a href="Util.html">Util</a></li></ul><h3>Global</h3><ul><li><a href="global.html#$_">$_</a></li><li><a href="global.html#$_ready">$_ready</a></li><li><a href="global.html#SpaceAdapter">SpaceAdapter</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="DOM.html">DOM</a></li><li><a href="FileSystem.html">FileSystem</a></li><li><a href="Form.html">Form</a></li><li><a href="IndexedDB.html">IndexedDB</a></li><li><a href="LocalStorage.html">LocalStorage</a></li><li><a href="Platform.html">Platform</a></li><li><a href="Preload.html">Preload</a></li><li><a href="RemoteStorage.html">RemoteStorage</a></li><li><a href="Request.html">Request</a></li><li><a href="SessionStorage.html">SessionStorage</a></li><li><a href="Space.html">Space</a></li><li><a href="Text.html">Text</a></li><li><a href="Util.html">Util</a></li></ul><h3>Global</h3><ul><li><a href="global.html#$_">$_</a></li><li><a href="global.html#$_ready">$_ready</a></li><li><a href="global.html#SpaceAdapter">SpaceAdapter</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Jun 29 2018 16:30:41 GMT-0500 (CDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Jun 29 2018 21:01:23 GMT-0500 (CDT)
 </footer>
 
 <script> prettyPrint(); </script>

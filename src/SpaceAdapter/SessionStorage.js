@@ -18,10 +18,11 @@ export class SessionStorage extends LocalStorage {
 
 	/**
 	 * Create a new SessionStorage. If no configuration is provided, the SessionStorage
-	 * global object is used.
+	 * global object is used.The SessionStorage Adapter can provide independency
+	 * by store name and space name.
 	 *
 	 * @constructor
-	 * @param {object} [configuration={name = '', version = '', store = ''}] - Configuration Object for the Adapter
+	 * @param {Object} [configuration={name = '', version = '', store = ''}] - Configuration Object for the Adapter
 	 * @param {string} configuration.name - Name of the Space
 	 * @param {string} configuration.version - Version of the Space in Semantic versioning syntax
 	 * @param {string} configuration.store - Name of the Object Store to use

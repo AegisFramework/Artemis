@@ -28,34 +28,38 @@
         <article>
             <pre class="prettyprint source linenums"><code>/**
 * ==============================
-* Local Storage Adapter
+* IndexedDB Adapter
 * ==============================
 */
 
 /**
- * The Local Storage Adapter provides the Space Class the ability to interact
- * with the localStorage api found in most modern browsers.
+ * The IndexedDB Adapter provides the Space Class the ability to interact
+ * with the IndexedDB API found in most modern browsers.
  *
  * @class
  */
 export class IndexedDB {
 
 	/**
-	 * Create a new LocalStorage. If no configuration is provided, the LocalStorage
-	 * global object is used.
+	 * Create a new IndexedDB. Differently from Local and Session Storages, the
+	 * IndexedDB Adapter requires a mandatory name, version and store name.
 	 *
 	 * @constructor
-	 * @param {object} [configuration={name = '', version = '', store = ''}] - Configuration Object for the Adapter
+	 * @param {Object} [configuration={name = '', version = '', store = '', props = {}, index = {}}] - Configuration Object for the Adapter
 	 * @param {string} configuration.name - Name of the Space
 	 * @param {string} configuration.version - Version of the Space in Semantic versioning syntax
 	 * @param {string} configuration.store - Name of the Object Store to use
-	 *
+	 * @param {Object} configuration.props - Optional Parameters for the Object Store
+	 * @param {Object} configuration.index - Object of the indexes to declare for
+	 * the  Object Store. Each index is a JSON object with the following properties:
+	 * @param {String} configuration.index[...].name - Name for the Index
+	 * @param {String} configuration.index[...].field - Field on the store to apply the index to
+	 * @param {Object} configuration.index[...].props - Index properties object
 	 */
-	constructor ({name = '', version = '', store = '', schema = {}, props = {}, index = {}}) {
+	constructor ({name = '', version = '', store = '', props = {}, index = {}}) {
 		this.name = name;
 		this.version = version;
 		this.store = store;
-		this.schema = schema;
 		this.props = props;
 		this.index = index;
 
@@ -124,10 +128,11 @@ export class IndexedDB {
 	}
 
 	/**
-	 * Store a key-value pair
+	 * Store a key-value pair. Because of the nature of a IndexedDB Database, the
+	 * stored values must be JSON objects.
 	 *
 	 * @param  {string} key - Key with which this value will be saved
-	 * @param  {Object|string|Number} - Value to save
+	 * @param  {Object} - Value to save
 	 * @return {Promise}
 	 */
 	set (key = null, value) {
@@ -147,6 +152,15 @@ export class IndexedDB {
 		});
 	}
 
+	/**
+	 * Update a key-value pair. In difference with the set () method, the update
+	 * method will use an Object.assign () in the case of objects so no value is
+	 * lost.
+	 *
+	 * @param  {string} key - Key with which this value will be saved
+	 * @param  {Object} - Value to save
+	 * @return {Promise}
+	 */
 	update (key, value) {
 		return this.get (key).then ((currentValue) => {
 			return new Promise ((resolve, reject) => {
@@ -158,14 +172,12 @@ export class IndexedDB {
 		});
 	}
 
-
-
 	/**
 	 * Retrieves a value from storage given it's key
 	 *
 	 * @param  {string} - Key with which the value was saved
-	 * @return {Promise&lt;Object>|Promise&lt;string>|Promise&lt;Number>} - Resolves to the retreived value
-	 * or its rejected if it doesn't exist
+	 * @return {Promise&lt;Object>} - Resolves to the retreived value or its rejected
+	 * if it doesn't exist
 	 */
 	get (key) {
 		return this.open ().then (() => {
@@ -179,6 +191,11 @@ export class IndexedDB {
 		});
 	}
 
+	/**
+	 * Retrieves all the values in the space in a key-value JSON object
+	 *
+	 * @return {Promise&lt;Object>} - Resolves to the retreived values
+	 */
 	getAll () {
 		return this.open ().then (() => {
 			return new Promise ((resolve, reject) => {
@@ -192,14 +209,14 @@ export class IndexedDB {
 	}
 
 	/**
-	 * Check if a space contains a given key.
+	 * Check if the space contains a given key.
 	 *
 	 * @param  {string} key - Key to look for.
-	 * @return {Promise} Promise gets resolved if it exists and rejected if
+	 * @return {Promise} - Promise gets resolved if it exists and rejected if it
 	 * doesn't
 	 */
 	contains (key) {
-		return this.keys ().then ((keys) => {
+		return this.get (key).then ((keys) => {
 			if (keys.includes (key)) {
 				Promise.resolve ();
 			} else {
@@ -209,11 +226,12 @@ export class IndexedDB {
 	}
 
 	/**
-	 * Upgrade a Space Version
-	 * @param oldVersion {string} - The version of the storage to be upgraded
-	 * @param newVersion {string} - The version to be upgraded to
-	 * @param callback {function} - Function to transform the old stored values to the new version's format
-	 * @returns {Promise} Result of the upgrade operation
+	 * Upgrade a Space Version. Upgrades must be declared before the open ()
+	 * method is executed.
+	 *
+	 * @param {string} newVersion - The version to be upgraded to
+	 * @param {function} callback - Function to transform the old stored values to the new version's format
+	 * @returns {Promise} - Result of the upgrade operation
 	 */
 	upgrade (newVersion, callback) {
 		this.upgrades[parseInt (newVersion.replace (/\./g, ''))] = callback;
@@ -221,35 +239,28 @@ export class IndexedDB {
 	}
 
 	/**
-	 * Rename a Space
-	 * @param name {string} - New name to be used.
-	 * @returns {Promise} Result of the rename operation
+	 * Renaming the space is not possible with the IndexedDB adapter therefore
+	 * this function always gets a rejection.
+	 *
+	 * @returns {Promise} - Result of the rename operation
 	 */
 	rename () {
 		return Promise.reject ();
 	}
 
 	/**
-	 * Get the key that corresponds to a given index in the storage
+	 * Getting a key by its index is not possible in this adapter, therefore this
+	 * function always gets rejected.
 	 *
-	 * @param  {Number} index - Index to get the key from
-	 * @param  {boolean} [full=false] - Whether to return the full key name including space id or just the key name
-	 * @return {Promise&lt;string>} - Resolves to the key's name
+	 * @return {Promise} - Promise Rejection
 	 */
-	key (index, full = false) {
-		return this.open ().then (() => {
-			if (full === true) {
-				return Promise.resolve (this.storage.key (index));
-			} else {
-				return Promise.resolve (this.storage.key (index).replace (this.id, ''));
-			}
-		});
+	key () {
+		return Promise.reject ();
 	}
 
 	/**
 	 * Return all keys stored in the space.
 	 *
-	 * @param {boolean} [full=false] - Whether to return the full key name including space id or just the key name
 	 * @return {Promise&lt;string[]>}  - Array of keys
 	 */
 	keys () {
@@ -263,9 +274,8 @@ export class IndexedDB {
 		});
 	}
 
-
 	/**
-	 * Delete a value from the space given it's key
+	 * Delete a value from the space given its key
 	 *
 	 * @param  {string} key - Key of the item to delete
 	 * @return {Promise&lt;key, value>} - Resolves to the key and value of the deleted object
@@ -306,13 +316,13 @@ export class IndexedDB {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="DOM.html">DOM</a></li><li><a href="FileSystem.html">FileSystem</a></li><li><a href="Form.html">Form</a></li><li><a href="IndexedDB.html">IndexedDB</a></li><li><a href="LocalStorage.html">LocalStorage</a></li><li><a href="Platform.html">Platform</a></li><li><a href="Preload.html">Preload</a></li><li><a href="Request.html">Request</a></li><li><a href="Server.html">Server</a></li><li><a href="SessionStorage.html">SessionStorage</a></li><li><a href="Space.html">Space</a></li><li><a href="Text.html">Text</a></li><li><a href="Util.html">Util</a></li></ul><h3>Global</h3><ul><li><a href="global.html#$_">$_</a></li><li><a href="global.html#$_ready">$_ready</a></li><li><a href="global.html#SpaceAdapter">SpaceAdapter</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="DOM.html">DOM</a></li><li><a href="FileSystem.html">FileSystem</a></li><li><a href="Form.html">Form</a></li><li><a href="IndexedDB.html">IndexedDB</a></li><li><a href="LocalStorage.html">LocalStorage</a></li><li><a href="Platform.html">Platform</a></li><li><a href="Preload.html">Preload</a></li><li><a href="RemoteStorage.html">RemoteStorage</a></li><li><a href="Request.html">Request</a></li><li><a href="SessionStorage.html">SessionStorage</a></li><li><a href="Space.html">Space</a></li><li><a href="Text.html">Text</a></li><li><a href="Util.html">Util</a></li></ul><h3>Global</h3><ul><li><a href="global.html#$_">$_</a></li><li><a href="global.html#$_ready">$_ready</a></li><li><a href="global.html#SpaceAdapter">SpaceAdapter</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Jun 29 2018 16:30:41 GMT-0500 (CDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Jun 29 2018 21:01:23 GMT-0500 (CDT)
 </footer>
 
 <script> prettyPrint(); </script>
