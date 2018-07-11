@@ -63,7 +63,7 @@ export class LocalStorage {
 	 *
 	 * @param  {string} key - Key with which this value will be saved
 	 * @param  {Object|string|Number} - Value to save
-	 * @return {Promise}
+	 * @return {Promise<{key, value}>}
 	 */
 	set (key, value) {
 		return this.open ().then (() => {
@@ -74,7 +74,7 @@ export class LocalStorage {
 				this.storage.setItem (this.id + key, value);
 			}
 
-			return Promise.resolve (value);
+			return Promise.resolve ({key, value});
 		});
 	}
 
@@ -85,21 +85,19 @@ export class LocalStorage {
 	 *
 	 * @param  {string} key - Key with which this value will be saved
 	 * @param  {Object|string|Number} - Value to save
-	 * @return {Promise}
+	 * @return {Promise<{key, value}>}
 	 */
 	update (key, value) {
 		return this.get (key).then ((currentValue) => {
-
 			if (typeof currentValue === 'object') {
 				if (typeof value === 'object') {
-					this.storage.setItem (this.id + key, Object.assign ({}, currentValue, value));
-				} else {
-					this.storage.setItem (this.id + key, value);
+					value = Object.assign ({}, currentValue, value);
 				}
+				this.storage.setItem (this.id + key, JSON.stringify (value));
 			} else {
 				this.storage.setItem (this.id + key, value);
 			}
-			return Promise.resolve (value);
+			return Promise.resolve ({key, value});
 		});
 	}
 
@@ -124,7 +122,7 @@ export class LocalStorage {
 					// Unable to parse to JSON
 				}
 
-				if (value !== null) {
+				if (typeof value !== 'undefined' && value !== null) {
 					resolve (value);
 				} else {
 					reject ();
@@ -292,12 +290,12 @@ export class LocalStorage {
 	 * Delete a value from the space given its key
 	 *
 	 * @param  {string} key - Key of the item to delete
-	 * @return {Promise<key, value>} - Resolves to the key and value of the deleted object
+	 * @return {Promise<value>} - Resolves to the value of the deleted object
 	 */
 	remove (key) {
 		return this.get (key).then ((value) => {
 			this.storage.removeItem (this.id + key);
-			return Promise.resolve (key, value);
+			return Promise.resolve (value);
 		});
 	}
 

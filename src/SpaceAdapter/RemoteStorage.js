@@ -91,7 +91,6 @@ export class RemoteStorage {
 	 */
 	update (key, value) {
 		return this.get (key).then ((currentValue) => {
-
 			return this.storage.put (this.endpoint + key, Object.assign ({}, currentValue, value), this.props).then ((response) => {
 				return response.json ();
 			});

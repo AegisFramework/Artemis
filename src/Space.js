@@ -100,7 +100,7 @@ export class Space {
 	 *
 	 * @param  {string} key - Key with which this value will be saved
 	 * @param  {Object|string|Number} - Value to save
-	 * @return {Promise}
+	 * @return {Promise<{key, value}>}
 	 */
 	set (key, value) {
 		// Apply all set transformations to the value
@@ -110,10 +110,11 @@ export class Space {
 			}
 		}
 
-		return this.adapter.set (key, value).then (() => {
+		return this.adapter.set (key, value).then (({key, value}) => {
 			for (const callback of this.callbacks.create) {
 				callback.call (null, key, value);
 			}
+			return Promise.resolve ({key, value});
 		});
 	}
 
@@ -124,7 +125,7 @@ export class Space {
 	 *
 	 * @param  {string} key - Key with which this value will be saved
 	 * @param  {Object|string|Number} - Value to save
-	 * @return {Promise}
+	 * @return {Promise<{key, value}>}
 	 */
 	update (key, value) {
 		// Apply all set transformations to the value
@@ -134,10 +135,11 @@ export class Space {
 			}
 		}
 
-		return this.adapter.update (key, value).then (() => {
+		return this.adapter.update (key, value).then (({key, value}) => {
 			for (const callback of this.callbacks.update) {
 				callback.call (null, key, value);
 			}
+			return Promise.resolve ({key, value});
 		});
 	}
 

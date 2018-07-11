@@ -23,7 +23,7 @@ export class Platform {
 	 * @returns {boolean}
 	 */
 	static portrait () {
-		return window.innerHeight > window.innerWidth;
+		return window.orientation === 0 || window.orientation === 180;
 	}
 
 	/**

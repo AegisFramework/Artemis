@@ -485,7 +485,7 @@ the  Object Store. Each index is a JSON object with the following properties:</t
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpaceAdapter_IndexedDB.js.html">SpaceAdapter/IndexedDB.js</a>, <a href="SpaceAdapter_IndexedDB.js.html#line271">line 271</a>
+        <a href="SpaceAdapter_IndexedDB.js.html">SpaceAdapter/IndexedDB.js</a>, <a href="SpaceAdapter_IndexedDB.js.html#line272">line 272</a>
     </li></ul></dd>
     
 
@@ -642,7 +642,7 @@ the  Object Store. Each index is a JSON object with the following properties:</t
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpaceAdapter_IndexedDB.js.html">SpaceAdapter/IndexedDB.js</a>, <a href="SpaceAdapter_IndexedDB.js.html#line190">line 190</a>
+        <a href="SpaceAdapter_IndexedDB.js.html">SpaceAdapter/IndexedDB.js</a>, <a href="SpaceAdapter_IndexedDB.js.html#line191">line 191</a>
     </li></ul></dd>
     
 
@@ -800,7 +800,7 @@ doesn't
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpaceAdapter_IndexedDB.js.html">SpaceAdapter/IndexedDB.js</a>, <a href="SpaceAdapter_IndexedDB.js.html#line154">line 154</a>
+        <a href="SpaceAdapter_IndexedDB.js.html">SpaceAdapter/IndexedDB.js</a>, <a href="SpaceAdapter_IndexedDB.js.html#line155">line 155</a>
     </li></ul></dd>
     
 
@@ -909,7 +909,7 @@ if it doesn't exist
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpaceAdapter_IndexedDB.js.html">SpaceAdapter/IndexedDB.js</a>, <a href="SpaceAdapter_IndexedDB.js.html#line171">line 171</a>
+        <a href="SpaceAdapter_IndexedDB.js.html">SpaceAdapter/IndexedDB.js</a>, <a href="SpaceAdapter_IndexedDB.js.html#line172">line 172</a>
     </li></ul></dd>
     
 
@@ -1018,7 +1018,7 @@ function always gets rejected.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpaceAdapter_IndexedDB.js.html">SpaceAdapter/IndexedDB.js</a>, <a href="SpaceAdapter_IndexedDB.js.html#line229">line 229</a>
+        <a href="SpaceAdapter_IndexedDB.js.html">SpaceAdapter/IndexedDB.js</a>, <a href="SpaceAdapter_IndexedDB.js.html#line230">line 230</a>
     </li></ul></dd>
     
 
@@ -1126,7 +1126,7 @@ function always gets rejected.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpaceAdapter_IndexedDB.js.html">SpaceAdapter/IndexedDB.js</a>, <a href="SpaceAdapter_IndexedDB.js.html#line238">line 238</a>
+        <a href="SpaceAdapter_IndexedDB.js.html">SpaceAdapter/IndexedDB.js</a>, <a href="SpaceAdapter_IndexedDB.js.html#line239">line 239</a>
     </li></ul></dd>
     
 
@@ -1387,7 +1387,7 @@ function always gets rejected.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpaceAdapter_IndexedDB.js.html">SpaceAdapter/IndexedDB.js</a>, <a href="SpaceAdapter_IndexedDB.js.html#line255">line 255</a>
+        <a href="SpaceAdapter_IndexedDB.js.html">SpaceAdapter/IndexedDB.js</a>, <a href="SpaceAdapter_IndexedDB.js.html#line256">line 256</a>
     </li></ul></dd>
     
 
@@ -1496,7 +1496,7 @@ this function always gets a rejection.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpaceAdapter_IndexedDB.js.html">SpaceAdapter/IndexedDB.js</a>, <a href="SpaceAdapter_IndexedDB.js.html#line219">line 219</a>
+        <a href="SpaceAdapter_IndexedDB.js.html">SpaceAdapter/IndexedDB.js</a>, <a href="SpaceAdapter_IndexedDB.js.html#line220">line 220</a>
     </li></ul></dd>
     
 
@@ -1552,7 +1552,7 @@ this function always gets a rejection.
     
 
     
-    <h4 class="name" id="set"><span class="type-signature"></span>set<span class="signature">(key, value)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
+    <h4 class="name" id="set"><span class="type-signature"></span>set<span class="signature">(key, value)</span><span class="type-signature"> &rarr; {Promise.&lt;Object>}</span></h4>
     
 
     
@@ -1689,7 +1689,7 @@ stored values must be JSON objects.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpaceAdapter_IndexedDB.js.html">SpaceAdapter/IndexedDB.js</a>, <a href="SpaceAdapter_IndexedDB.js.html#line110">line 110</a>
+        <a href="SpaceAdapter_IndexedDB.js.html">SpaceAdapter/IndexedDB.js</a>, <a href="SpaceAdapter_IndexedDB.js.html#line111">line 111</a>
     </li></ul></dd>
     
 
@@ -1715,6 +1715,11 @@ stored values must be JSON objects.
 <h5>Returns:</h5>
 
         
+<div class="param-desc">
+    - When resolved, a {key, value} object is handed
+down, when it's rejected, the event is handed down.
+</div>
+
 
 
 <dl>
@@ -1723,7 +1728,7 @@ stored values must be JSON objects.
     </dt>
     <dd>
         
-<span class="param-type">Promise</span>
+<span class="param-type">Promise.&lt;Object></span>
 
 
     </dd>
@@ -1741,7 +1746,7 @@ stored values must be JSON objects.
     
 
     
-    <h4 class="name" id="update"><span class="type-signature"></span>update<span class="signature">(key, value)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
+    <h4 class="name" id="update"><span class="type-signature"></span>update<span class="signature">(key, value)</span><span class="type-signature"> &rarr; {Promise.&lt;Object>}</span></h4>
     
 
     
@@ -1867,7 +1872,7 @@ lost.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpaceAdapter_IndexedDB.js.html">SpaceAdapter/IndexedDB.js</a>, <a href="SpaceAdapter_IndexedDB.js.html#line136">line 136</a>
+        <a href="SpaceAdapter_IndexedDB.js.html">SpaceAdapter/IndexedDB.js</a>, <a href="SpaceAdapter_IndexedDB.js.html#line137">line 137</a>
     </li></ul></dd>
     
 
@@ -1893,6 +1898,11 @@ lost.
 <h5>Returns:</h5>
 
         
+<div class="param-desc">
+    - When resolved, a {key, value} object is handed
+down, when it's rejected, the event is handed down.
+</div>
+
 
 
 <dl>
@@ -1901,7 +1911,7 @@ lost.
     </dt>
     <dd>
         
-<span class="param-type">Promise</span>
+<span class="param-type">Promise.&lt;Object></span>
 
 
     </dd>
@@ -2044,7 +2054,7 @@ method is executed.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpaceAdapter_IndexedDB.js.html">SpaceAdapter/IndexedDB.js</a>, <a href="SpaceAdapter_IndexedDB.js.html#line208">line 208</a>
+        <a href="SpaceAdapter_IndexedDB.js.html">SpaceAdapter/IndexedDB.js</a>, <a href="SpaceAdapter_IndexedDB.js.html#line209">line 209</a>
     </li></ul></dd>
     
 
@@ -2116,7 +2126,7 @@ method is executed.
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Jun 29 2018 21:21:17 GMT-0500 (CDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Tue Jul 10 2018 19:23:20 GMT-0500 (CDT)
 </footer>
 
 <script> prettyPrint(); </script>

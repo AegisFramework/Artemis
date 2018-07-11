@@ -105,7 +105,8 @@ export class IndexedDB {
 	 *
 	 * @param  {string} key - Key with which this value will be saved
 	 * @param  {Object} - Value to save
-	 * @return {Promise}
+	 * @return {Promise<Object>} - When resolved, a {key, value} object is handed
+	 * down, when it's rejected, the event is handed down.
 	 */
 	set (key = null, value) {
 		return this.open ().then (() => {
@@ -117,8 +118,7 @@ export class IndexedDB {
 				} else {
 					op = transaction.add (value);
 				}
-
-				op.addEventListener ('success', () => {resolve (value);});
+				op.addEventListener ('success', (event) => { resolve ({key: event.target.result, value: value});});
 				op.addEventListener ('error', (event) => {reject (event);});
 			});
 		});
@@ -131,14 +131,15 @@ export class IndexedDB {
 	 *
 	 * @param  {string} key - Key with which this value will be saved
 	 * @param  {Object} - Value to save
-	 * @return {Promise}
+	 * @return {Promise<Object>} - When resolved, a {key, value} object is handed
+	 * down, when it's rejected, the event is handed down.
 	 */
 	update (key, value) {
 		return this.get (key).then ((currentValue) => {
 			return new Promise ((resolve, reject) => {
 				const transaction = this.storage.transaction (this.store, 'readwrite').objectStore (this.store);
 				const op = transaction.put (Object.assign ({}, currentValue, value));
-				op.addEventListener ('success', () => {resolve (value);});
+				op.addEventListener ('success', (event) => {resolve ({key: event.target.result, value: value});});
 				op.addEventListener ('error', (event) => {reject (event);});
 			});
 		});
