@@ -1,6 +1,6 @@
 # Artemis
 
-Artemis is a JavaScript Library that aims to provide common utilities needed during development such as DOM manipulation, a wrapper for client based Storage and other functions that may be useful for web app development. 
+Artemis is a JavaScript Library that aims to provide common utilities needed during development such as DOM manipulation, a wrapper for client based Storage and other functions that may be useful for web app development.
 
 ## Using it
 Artemis is provided as an UMD, therefore it's possible to use it either on a browser as a global library, using es6 modules or nodejs modules.
@@ -67,21 +67,27 @@ console.log (Form.values ("MyForm"));
 The Space Library is a wrapper for simple storage solutions as Local and Session storage but provides data independence through storage namespaces and versioning.
 
 ```javascript
-let space = new Space ("Storage", "0.1.0");
+let space = new Space (SpaceAdapter.LocalStorage, {
+	name: "Storage",
+	version: "0.1.0"
+});
 
 space.set ("Test", {
     value: "Some Value"
-}).then ((value) => {
+}).then (({key, value}) => {
     console.log ("The value was inserted correctly!");
 });
 
 space.get ("Test").then ((value) => {
     return value;
-}).then ((value) => {
+}).then (({key, value}) => {
     console.log (value);
 });
 
-space = new Space ("Storage", "0.1.1");
+space = new Space (SpaceAdapter.LocalStorage, {
+	name: "Storage",
+	version: "0.1.1"
+});
 space.upgrade ("0.1.0", "0.1.1", (key, value) => {
     return new Promise ((resolve, reject) => {
         console.log (key);
