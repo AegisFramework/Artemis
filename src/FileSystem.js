@@ -80,4 +80,26 @@ export class FileSystem {
 	static create (name, content, type = 'text/plain') {
 		return Promise.resolve (new File ([content], name, {type}));
 	}
+
+	/**
+	 * @static extension - Returns the extension of a file given its file name.
+	 *
+	 * @param  {string} name - Name or full path of the file
+	 * @return {string} - File extension without the leading dot (.)
+	 */
+	static extension (name) {
+		return name.split ('.').pop ();
+	}
+
+	/**
+	 * @static isImage - Check if a file is an image by its extension.
+	 *
+	 * @param  {string} name - Name or full path of the file
+	 * @return {boolean}
+	 */
+	static isImage (name) {
+		const extensions = ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp', 'bmp'];
+		return extensions.indexOf (FileSystem.extension (name).toLowerCase ()) > -1;
+	}
+
 }

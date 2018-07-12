@@ -72008,3 +72008,8262 @@ Utility function to attach the 'load' listener to the window
 | --- | --- | --- |
 | callback | <code>function</code> | Callback function to run when the window is ready |
 
+## Classes
+
+<dl>
+<dt><a href="#DOM">DOM</a></dt>
+<dd><p>Simple DOM manipulation functions</p>
+</dd>
+<dt><a href="#FileSystem">FileSystem</a></dt>
+<dd><p>A simple class wrapper for the File and FileReader web API, while this class
+doesn&#39;t actually provide acces to the host file system, it does provide useful
+utilities for form file inputs and remote content loading.</p>
+</dd>
+<dt><a href="#Form">Form</a></dt>
+<dd><p>Utility class that provides simple function for filling and retrieving values
+from froms. This class requires the use of the <code>data-form</code> attribute.</p>
+</dd>
+<dt><a href="#Platform">Platform</a></dt>
+<dd><p>General checks for what kind of platform is the being used to run the app.</p>
+</dd>
+<dt><a href="#Preload">Preload</a></dt>
+<dd><p>A simple class for asset preloading. This class assumes you have a service
+worker set up that will be caching all requests.</p>
+</dd>
+<dt><a href="#Request">Request</a></dt>
+<dd><p>Simple Wrapper for the fetch API, providing simple functions to handle requests</p>
+</dd>
+<dt><a href="#Space">Space</a></dt>
+<dd><p>Space provides a simple wrapper for different Storage APIs. It aims to
+provide data independence through storage namespaces and versioning, allowing
+transparent data formatting and content modifications through versions.</p>
+<p>While this class documentation provides some information, specific details may
+be addressed on the documentation of each adapter.</p>
+</dd>
+<dt><a href="#Text">Text</a></dt>
+<dd><p>Provides utility functions for texts</p>
+</dd>
+<dt><a href="#Util">Util</a></dt>
+<dd><p>Provides diverse utility functions</p>
+</dd>
+<dt><a href="#DOM">DOM</a></dt>
+<dd><p>Simple DOM manipulation functions</p>
+</dd>
+</dl>
+
+## Constants
+
+<dl>
+<dt><a href="#SpaceAdapter">SpaceAdapter</a></dt>
+<dd><p>List of Adapters Available</p>
+</dd>
+</dl>
+
+## Functions
+
+<dl>
+<dt><a href="#$_">$_(selector)</a> ⇒ <code><a href="#DOM">DOM</a></code></dt>
+<dd><p>Simple wrapper function to use the DOM library</p>
+</dd>
+<dt><a href="#$_ready">$_ready(callback)</a></dt>
+<dd><p>Utility function to attach the &#39;load&#39; listener to the window</p>
+</dd>
+<dt><a href="#$_">$_(selector)</a> ⇒ <code><a href="#DOM">DOM</a></code></dt>
+<dd><p>Simple wrapper function to use the DOM library</p>
+</dd>
+<dt><a href="#$_ready">$_ready(callback)</a></dt>
+<dd><p>Utility function to attach the &#39;load&#39; listener to the window</p>
+</dd>
+</dl>
+
+<a name="DOM"></a>
+
+## DOM
+Simple DOM manipulation functions
+
+**Kind**: global class  
+
+* [DOM](#DOM)
+    * [new exports.DOM(selector)](#new_DOM_new)
+    * [new exports.DOM(selector)](#new_DOM_new)
+    * [.hide()](#DOM+hide)
+    * [.show([display])](#DOM+show)
+    * [.addClass(newClass)](#DOM+addClass)
+    * [.removeClass([oldClass])](#DOM+removeClass)
+    * [.toggleClass(classes)](#DOM+toggleClass)
+    * [.hasClass(classToCheck)](#DOM+hasClass) ⇒ <code>boolean</code>
+    * [.value(value)](#DOM+value) ⇒ <code>string</code>
+    * [.focus()](#DOM+focus)
+    * [.click(callback)](#DOM+click)
+    * [.keyup(callback)](#DOM+keyup)
+    * [.keydown(callback)](#DOM+keydown)
+    * [.submit(callback)](#DOM+submit)
+    * [.change(callback)](#DOM+change)
+    * [.scroll(callback)](#DOM+scroll)
+    * [.on(event, target, callback)](#DOM+on)
+    * [.filter(element)](#DOM+filter) ⇒ [<code>DOM</code>](#DOM)
+    * [.data(name, [value])](#DOM+data) ⇒ <code>string</code>
+    * [.text([value])](#DOM+text) ⇒ <code>type</code>
+    * [.html([value])](#DOM+html) ⇒ <code>type</code>
+    * [.append(element)](#DOM+append)
+    * [.prepend(element)](#DOM+prepend)
+    * [.each(callback)](#DOM+each)
+    * [.get(index)](#DOM+get) ⇒ <code>HTMLElement</code>
+    * [.first()](#DOM+first) ⇒ [<code>DOM</code>](#DOM)
+    * [.isVisible()](#DOM+isVisible) ⇒ <code>boolean</code>
+    * [.parent()](#DOM+parent) ⇒ [<code>DOM</code>](#DOM)
+    * [.find(selector)](#DOM+find) ⇒ [<code>DOM</code>](#DOM)
+    * [.offset()](#DOM+offset) ⇒ <code>Object</code>
+    * [.closest(selector)](#DOM+closest) ⇒ [<code>DOM</code>](#DOM)
+    * [.attribute(attribute, [value])](#DOM+attribute) ⇒ <code>type</code>
+    * [.after(content)](#DOM+after)
+    * [.before(content)](#DOM+before)
+    * [.style(properties, [value])](#DOM+style) ⇒ <code>string</code>
+    * [.animate(style, time)](#DOM+animate)
+    * [.fadeIn([time], callback)](#DOM+fadeIn)
+    * [.fadeOut([time], callback)](#DOM+fadeOut)
+    * [.matches(selector)](#DOM+matches) ⇒ <code>boolean</code>
+    * [.remove()](#DOM+remove)
+    * [.replaceWith()](#DOM+replaceWith)
+    * [.reset()](#DOM+reset)
+    * [.property(property, [value])](#DOM+property) ⇒ <code>string</code> \| <code>Number</code>
+    * [.hide()](#DOM+hide)
+    * [.show([display])](#DOM+show)
+    * [.addClass(newClass)](#DOM+addClass)
+    * [.removeClass([oldClass])](#DOM+removeClass)
+    * [.toggleClass(classes)](#DOM+toggleClass)
+    * [.hasClass(classToCheck)](#DOM+hasClass) ⇒ <code>boolean</code>
+    * [.value(value)](#DOM+value) ⇒ <code>string</code>
+    * [.focus()](#DOM+focus)
+    * [.click(callback)](#DOM+click)
+    * [.keyup(callback)](#DOM+keyup)
+    * [.keydown(callback)](#DOM+keydown)
+    * [.submit(callback)](#DOM+submit)
+    * [.change(callback)](#DOM+change)
+    * [.scroll(callback)](#DOM+scroll)
+    * [.on(event, target, callback)](#DOM+on)
+    * [.filter(element)](#DOM+filter) ⇒ [<code>DOM</code>](#DOM)
+    * [.data(name, [value])](#DOM+data) ⇒ <code>string</code>
+    * [.text([value])](#DOM+text) ⇒ <code>type</code>
+    * [.html([value])](#DOM+html) ⇒ <code>type</code>
+    * [.append(element)](#DOM+append)
+    * [.prepend(element)](#DOM+prepend)
+    * [.each(callback)](#DOM+each)
+    * [.get(index)](#DOM+get) ⇒ <code>HTMLElement</code>
+    * [.first()](#DOM+first) ⇒ [<code>DOM</code>](#DOM)
+    * [.isVisible()](#DOM+isVisible) ⇒ <code>boolean</code>
+    * [.parent()](#DOM+parent) ⇒ [<code>DOM</code>](#DOM)
+    * [.find(selector)](#DOM+find) ⇒ [<code>DOM</code>](#DOM)
+    * [.offset()](#DOM+offset) ⇒ <code>Object</code>
+    * [.closest(selector)](#DOM+closest) ⇒ [<code>DOM</code>](#DOM)
+    * [.attribute(attribute, [value])](#DOM+attribute) ⇒ <code>type</code>
+    * [.after(content)](#DOM+after)
+    * [.before(content)](#DOM+before)
+    * [.style(properties, [value])](#DOM+style) ⇒ <code>string</code>
+    * [.animate(style, time)](#DOM+animate)
+    * [.fadeIn([time], callback)](#DOM+fadeIn)
+    * [.fadeOut([time], callback)](#DOM+fadeOut)
+    * [.matches(selector)](#DOM+matches) ⇒ <code>boolean</code>
+    * [.remove()](#DOM+remove)
+    * [.replaceWith()](#DOM+replaceWith)
+    * [.reset()](#DOM+reset)
+    * [.property(property, [value])](#DOM+property) ⇒ <code>string</code> \| <code>Number</code>
+
+<a name="new_DOM_new"></a>
+
+### new exports.DOM(selector)
+Create a new DOM object
+
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> \| <code>Object</code> \| <code>array</code> | Selector or DOM element to use |
+
+<a name="new_DOM_new"></a>
+
+### new exports.DOM(selector)
+Create a new DOM object
+
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> \| <code>Object</code> \| <code>array</code> | Selector or DOM element to use |
+
+<a name="DOM+hide"></a>
+
+### doM.hide()
+Hide elements by setting their `display` property to 'none'.
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+show"></a>
+
+### doM.show([display])
+Show elements by setting their `display` property to the given value.
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [display] | <code>string</code> | <code>&quot;&#x27;block&#x27;&quot;</code> | Display property to set |
+
+<a name="DOM+addClass"></a>
+
+### doM.addClass(newClass)
+Add a class to the classList object
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| newClass | <code>string</code> | Class name to add |
+
+<a name="DOM+removeClass"></a>
+
+### doM.removeClass([oldClass])
+Remove a given class from the classList object
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [oldClass] | <code>string</code> | <code>null</code> | Class to remove. If it's empty or null, all classes will be removed |
+
+<a name="DOM+toggleClass"></a>
+
+### doM.toggleClass(classes)
+Toggle between two classes
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| classes | <code>string</code> | Space separated class names |
+
+<a name="DOM+hasClass"></a>
+
+### doM.hasClass(classToCheck) ⇒ <code>boolean</code>
+Check if the first element matching the selector has the given class
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>boolean</code> - - Whether the class is present or not  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| classToCheck | <code>string</code> | Class name to check for |
+
+<a name="DOM+value"></a>
+
+### doM.value(value) ⇒ <code>string</code>
+Get or set the value from the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>string</code> - - If no value was provided, this returns the value of the
+element instead of setting it  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| value | <code>string</code> | Value to set to the element. |
+
+<a name="DOM+focus"></a>
+
+### doM.focus()
+Focus on the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+click"></a>
+
+### doM.click(callback)
+Add a callback for the 'click' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+keyup"></a>
+
+### doM.keyup(callback)
+Add a callback for the 'keyup' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+keydown"></a>
+
+### doM.keydown(callback)
+Add a callback for the 'keydown' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+submit"></a>
+
+### doM.submit(callback)
+Add a callback for the 'submit' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+change"></a>
+
+### doM.change(callback)
+Add a callback for the 'change' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+scroll"></a>
+
+### doM.scroll(callback)
+Add a callback for the 'scroll' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+on"></a>
+
+### doM.on(event, target, callback)
+Add a callback function to a given event
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| event | <code>string</code> | Event to add the listener to |
+| target | <code>string</code> | Target element on which to detect the event |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+filter"></a>
+
+### doM.filter(element) ⇒ [<code>DOM</code>](#DOM)
+Filter from the current collection to only those matching the new selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - New DOM instance with the filtered collection  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>string</code> | Selector to filter the collection with |
+
+<a name="DOM+data"></a>
+
+### doM.data(name, [value]) ⇒ <code>string</code>
+Get or set a `data` property
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>string</code> - - If no value is set, this function returns it's current value  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>string</code> | Name of the data property |
+| [value] | <code>string</code> | Value of the property |
+
+<a name="DOM+text"></a>
+
+### doM.text([value]) ⇒ <code>type</code>
+Get or set the text of the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>type</code> - - If no value is present, this function returns its the
+element's current text.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [value] | <code>string</code> | Value to set the text to |
+
+<a name="DOM+html"></a>
+
+### doM.html([value]) ⇒ <code>type</code>
+Get or set the inner HTML of the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>type</code> - - If no value is present, this function returns its the
+element's current HTML.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [value] | <code>string</code> | Value to set the HTML to |
+
+<a name="DOM+append"></a>
+
+### doM.append(element)
+Append an element to the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>string</code> | String representation of the element to add |
+
+<a name="DOM+prepend"></a>
+
+### doM.prepend(element)
+Prepend an element to the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>string</code> | String representation of the element to add |
+
+<a name="DOM+each"></a>
+
+### doM.each(callback)
+Iterate over the collection of elements matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback to run for every element |
+
+<a name="DOM+get"></a>
+
+### doM.get(index) ⇒ <code>HTMLElement</code>
+Get an element from the collection given it's index
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>HTMLElement</code> - - HTML Element in the position indicated by the index  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| index | <code>int</code> | Index of the element to retrieve |
+
+<a name="DOM+first"></a>
+
+### doM.first() ⇒ [<code>DOM</code>](#DOM)
+Get the first element in the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - DOM instance with the first element  
+<a name="DOM+isVisible"></a>
+
+### doM.isVisible() ⇒ <code>boolean</code>
+Check if the elements in the collection are visible by chacking their
+display, offsetWidth and offsetHeight properties
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>boolean</code> - - Whether the elements are visible or not  
+<a name="DOM+parent"></a>
+
+### doM.parent() ⇒ [<code>DOM</code>](#DOM)
+Get the parent of the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - DOM instance of the parent element  
+<a name="DOM+find"></a>
+
+### doM.find(selector) ⇒ [<code>DOM</code>](#DOM)
+Find an element that matches the given selector in the first element of the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - Aegis instance with the element if found  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> | Selector to find the element with |
+
+<a name="DOM+offset"></a>
+
+### doM.offset() ⇒ <code>Object</code>
+Get the top and left offsets of the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>Object</code> - - Object with `top` and `left` offsets  
+<a name="DOM+closest"></a>
+
+### doM.closest(selector) ⇒ [<code>DOM</code>](#DOM)
+Find the closest element matching the given selector. This bubbles up
+from the initial object and then follows to its parents.
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - DOM instance with the closest HTML element matching the selector  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> | Selector to match the closest element with |
+
+<a name="DOM+attribute"></a>
+
+### doM.attribute(attribute, [value]) ⇒ <code>type</code>
+Get or set the value of a given attribute
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>type</code> - - If no value is provided, this function returns the current
+value of the provided attribute  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| attribute | <code>string</code> | Attribute's name |
+| [value] | <code>string</code> \| <code>Number</code> | Value to set the attribute to |
+
+<a name="DOM+after"></a>
+
+### doM.after(content)
+Insert content to the `after` property of an element
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| content | <code>string</code> | String representation of the content to add |
+
+<a name="DOM+before"></a>
+
+### doM.before(content)
+Insert content to the `before` property of an element
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| content | <code>string</code> | String representation of the content to add |
+
+<a name="DOM+style"></a>
+
+### doM.style(properties, [value]) ⇒ <code>string</code>
+Get or modify the `style` properties of the elements matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>string</code> - - If a peoperty is given but not a value for it, this
+function will return its current value  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| properties | <code>string</code> \| <code>Object</code> | Properties to change or get. Can be either an individual property or a JSON object with key-value pairs |
+| [value] | <code>string</code> | Value to set the property to when only changing one property |
+
+<a name="DOM+animate"></a>
+
+### doM.animate(style, time)
+Animate the given `style` properties on all elements in the collection in
+with a given time duration
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| style | <code>Object</code> | JSON object with the key-value pairs of properties to animate |
+| time | <code>int</code> | Time in milliseconds during which the properties will be animated |
+
+<a name="DOM+fadeIn"></a>
+
+### doM.fadeIn([time], callback)
+Use a fade in animation i the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [time] | <code>type</code> | <code>400</code> | Time duration for the animation |
+| callback | <code>type</code> |  | Callback function to run once the animation is over |
+
+<a name="DOM+fadeOut"></a>
+
+### doM.fadeOut([time], callback)
+Use a fade out animation i the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [time] | <code>type</code> | <code>400</code> | Time duration for the animation |
+| callback | <code>type</code> |  | Callback function to run once the animation is over |
+
+<a name="DOM+matches"></a>
+
+### doM.matches(selector) ⇒ <code>boolean</code>
+Check if the first element in the collection matches a given selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>boolean</code> - - Whether the element matches the selector or not  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> | Selector to match |
+
+<a name="DOM+remove"></a>
+
+### doM.remove()
+Remove all elemets in the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+replaceWith"></a>
+
+### doM.replaceWith()
+Replace the first element in the collection with a new one
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+reset"></a>
+
+### doM.reset()
+Reset every element in the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+property"></a>
+
+### doM.property(property, [value]) ⇒ <code>string</code> \| <code>Number</code>
+Get or set a property for the first element in the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>string</code> \| <code>Number</code> - - If no value is provided, this funcion will return the
+current value of the indicated property  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| property | <code>string</code> | Property name to set or get |
+| [value] | <code>string</code> \| <code>Number</code> | Value to set the property to |
+
+<a name="DOM+hide"></a>
+
+### doM.hide()
+Hide elements by setting their `display` property to 'none'.
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+show"></a>
+
+### doM.show([display])
+Show elements by setting their `display` property to the given value.
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [display] | <code>string</code> | <code>&quot;&#x27;block&#x27;&quot;</code> | Display property to set |
+
+<a name="DOM+addClass"></a>
+
+### doM.addClass(newClass)
+Add a class to the classList object
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| newClass | <code>string</code> | Class name to add |
+
+<a name="DOM+removeClass"></a>
+
+### doM.removeClass([oldClass])
+Remove a given class from the classList object
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [oldClass] | <code>string</code> | <code>null</code> | Class to remove. If it's empty or null, all classes will be removed |
+
+<a name="DOM+toggleClass"></a>
+
+### doM.toggleClass(classes)
+Toggle between two classes
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| classes | <code>string</code> | Space separated class names |
+
+<a name="DOM+hasClass"></a>
+
+### doM.hasClass(classToCheck) ⇒ <code>boolean</code>
+Check if the first element matching the selector has the given class
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>boolean</code> - - Whether the class is present or not  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| classToCheck | <code>string</code> | Class name to check for |
+
+<a name="DOM+value"></a>
+
+### doM.value(value) ⇒ <code>string</code>
+Get or set the value from the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>string</code> - - If no value was provided, this returns the value of the
+element instead of setting it  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| value | <code>string</code> | Value to set to the element. |
+
+<a name="DOM+focus"></a>
+
+### doM.focus()
+Focus on the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+click"></a>
+
+### doM.click(callback)
+Add a callback for the 'click' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+keyup"></a>
+
+### doM.keyup(callback)
+Add a callback for the 'keyup' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+keydown"></a>
+
+### doM.keydown(callback)
+Add a callback for the 'keydown' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+submit"></a>
+
+### doM.submit(callback)
+Add a callback for the 'submit' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+change"></a>
+
+### doM.change(callback)
+Add a callback for the 'change' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+scroll"></a>
+
+### doM.scroll(callback)
+Add a callback for the 'scroll' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+on"></a>
+
+### doM.on(event, target, callback)
+Add a callback function to a given event
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| event | <code>string</code> | Event to add the listener to |
+| target | <code>string</code> | Target element on which to detect the event |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+filter"></a>
+
+### doM.filter(element) ⇒ [<code>DOM</code>](#DOM)
+Filter from the current collection to only those matching the new selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - New DOM instance with the filtered collection  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>string</code> | Selector to filter the collection with |
+
+<a name="DOM+data"></a>
+
+### doM.data(name, [value]) ⇒ <code>string</code>
+Get or set a `data` property
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>string</code> - - If no value is set, this function returns it's current value  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>string</code> | Name of the data property |
+| [value] | <code>string</code> | Value of the property |
+
+<a name="DOM+text"></a>
+
+### doM.text([value]) ⇒ <code>type</code>
+Get or set the text of the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>type</code> - - If no value is present, this function returns its the
+element's current text.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [value] | <code>string</code> | Value to set the text to |
+
+<a name="DOM+html"></a>
+
+### doM.html([value]) ⇒ <code>type</code>
+Get or set the inner HTML of the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>type</code> - - If no value is present, this function returns its the
+element's current HTML.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [value] | <code>string</code> | Value to set the HTML to |
+
+<a name="DOM+append"></a>
+
+### doM.append(element)
+Append an element to the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>string</code> | String representation of the element to add |
+
+<a name="DOM+prepend"></a>
+
+### doM.prepend(element)
+Prepend an element to the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>string</code> | String representation of the element to add |
+
+<a name="DOM+each"></a>
+
+### doM.each(callback)
+Iterate over the collection of elements matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback to run for every element |
+
+<a name="DOM+get"></a>
+
+### doM.get(index) ⇒ <code>HTMLElement</code>
+Get an element from the collection given it's index
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>HTMLElement</code> - - HTML Element in the position indicated by the index  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| index | <code>int</code> | Index of the element to retrieve |
+
+<a name="DOM+first"></a>
+
+### doM.first() ⇒ [<code>DOM</code>](#DOM)
+Get the first element in the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - DOM instance with the first element  
+<a name="DOM+isVisible"></a>
+
+### doM.isVisible() ⇒ <code>boolean</code>
+Check if the elements in the collection are visible by chacking their
+display, offsetWidth and offsetHeight properties
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>boolean</code> - - Whether the elements are visible or not  
+<a name="DOM+parent"></a>
+
+### doM.parent() ⇒ [<code>DOM</code>](#DOM)
+Get the parent of the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - DOM instance of the parent element  
+<a name="DOM+find"></a>
+
+### doM.find(selector) ⇒ [<code>DOM</code>](#DOM)
+Find an element that matches the given selector in the first element of the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - Aegis instance with the element if found  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> | Selector to find the element with |
+
+<a name="DOM+offset"></a>
+
+### doM.offset() ⇒ <code>Object</code>
+Get the top and left offsets of the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>Object</code> - - Object with `top` and `left` offsets  
+<a name="DOM+closest"></a>
+
+### doM.closest(selector) ⇒ [<code>DOM</code>](#DOM)
+Find the closest element matching the given selector. This bubbles up
+from the initial object and then follows to its parents.
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - DOM instance with the closest HTML element matching the selector  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> | Selector to match the closest element with |
+
+<a name="DOM+attribute"></a>
+
+### doM.attribute(attribute, [value]) ⇒ <code>type</code>
+Get or set the value of a given attribute
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>type</code> - - If no value is provided, this function returns the current
+value of the provided attribute  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| attribute | <code>string</code> | Attribute's name |
+| [value] | <code>string</code> \| <code>Number</code> | Value to set the attribute to |
+
+<a name="DOM+after"></a>
+
+### doM.after(content)
+Insert content to the `after` property of an element
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| content | <code>string</code> | String representation of the content to add |
+
+<a name="DOM+before"></a>
+
+### doM.before(content)
+Insert content to the `before` property of an element
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| content | <code>string</code> | String representation of the content to add |
+
+<a name="DOM+style"></a>
+
+### doM.style(properties, [value]) ⇒ <code>string</code>
+Get or modify the `style` properties of the elements matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>string</code> - - If a peoperty is given but not a value for it, this
+function will return its current value  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| properties | <code>string</code> \| <code>Object</code> | Properties to change or get. Can be either an individual property or a JSON object with key-value pairs |
+| [value] | <code>string</code> | Value to set the property to when only changing one property |
+
+<a name="DOM+animate"></a>
+
+### doM.animate(style, time)
+Animate the given `style` properties on all elements in the collection in
+with a given time duration
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| style | <code>Object</code> | JSON object with the key-value pairs of properties to animate |
+| time | <code>int</code> | Time in milliseconds during which the properties will be animated |
+
+<a name="DOM+fadeIn"></a>
+
+### doM.fadeIn([time], callback)
+Use a fade in animation i the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [time] | <code>type</code> | <code>400</code> | Time duration for the animation |
+| callback | <code>type</code> |  | Callback function to run once the animation is over |
+
+<a name="DOM+fadeOut"></a>
+
+### doM.fadeOut([time], callback)
+Use a fade out animation i the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [time] | <code>type</code> | <code>400</code> | Time duration for the animation |
+| callback | <code>type</code> |  | Callback function to run once the animation is over |
+
+<a name="DOM+matches"></a>
+
+### doM.matches(selector) ⇒ <code>boolean</code>
+Check if the first element in the collection matches a given selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>boolean</code> - - Whether the element matches the selector or not  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> | Selector to match |
+
+<a name="DOM+remove"></a>
+
+### doM.remove()
+Remove all elemets in the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+replaceWith"></a>
+
+### doM.replaceWith()
+Replace the first element in the collection with a new one
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+reset"></a>
+
+### doM.reset()
+Reset every element in the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+property"></a>
+
+### doM.property(property, [value]) ⇒ <code>string</code> \| <code>Number</code>
+Get or set a property for the first element in the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>string</code> \| <code>Number</code> - - If no value is provided, this funcion will return the
+current value of the indicated property  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| property | <code>string</code> | Property name to set or get |
+| [value] | <code>string</code> \| <code>Number</code> | Value to set the property to |
+
+<a name="FileSystem"></a>
+
+## FileSystem
+A simple class wrapper for the File and FileReader web API, while this class
+doesn't actually provide acces to the host file system, it does provide useful
+utilities for form file inputs and remote content loading.
+
+**Kind**: global class  
+
+* [FileSystem](#FileSystem)
+    * [.readRemote(url, [type], [props])](#FileSystem.readRemote) ⇒ <code>Promise.&lt;(ArrayBuffer\|string)&gt;</code>
+    * [.read(file, [type])](#FileSystem.read) ⇒ <code>Promise.&lt;Event, (ArrayBuffer\|string)&gt;</code>
+    * [.create(file, content, [type])](#FileSystem.create) ⇒ <code>Promise.&lt;File&gt;</code>
+    * [.extension(name)](#FileSystem.extension) ⇒ <code>string</code>
+    * [.isImage(name)](#FileSystem.isImage) ⇒ <code>boolean</code>
+
+<a name="FileSystem.readRemote"></a>
+
+### FileSystem.readRemote(url, [type], [props]) ⇒ <code>Promise.&lt;(ArrayBuffer\|string)&gt;</code>
+**Kind**: static method of [<code>FileSystem</code>](#FileSystem)  
+**Returns**: <code>Promise.&lt;(ArrayBuffer\|string)&gt;</code> - - Content of the file. The format
+depends on the type parameter used.  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| url | <code>type</code> |  | URL to fetch the file from |
+| [type] | <code>type</code> | <code>&#x27;base64&#x27;</code> | Type of data to be read, values can be 'text', 'base64' and 'buffer'. This parameter is used for the read () function. |
+| [props] | <code>Object</code> | <code>{}</code> | Props to send to the Request object |
+
+<a name="FileSystem.read"></a>
+
+### FileSystem.read(file, [type]) ⇒ <code>Promise.&lt;Event, (ArrayBuffer\|string)&gt;</code>
+**Kind**: static method of [<code>FileSystem</code>](#FileSystem)  
+**Returns**: <code>Promise.&lt;Event, (ArrayBuffer\|string)&gt;</code> - - Promise that resolves to
+the Load event and content of the file. The format depends on the type
+parameter used.  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| file | <code>File</code> \| <code>Blob</code> |  | File to read |
+| [type] | <code>string</code> | <code>&quot;&#x27;text&#x27;&quot;</code> | Type of data to be read, values can be 'text', 'base64' and 'buffer'. |
+
+<a name="FileSystem.create"></a>
+
+### FileSystem.create(file, content, [type]) ⇒ <code>Promise.&lt;File&gt;</code>
+**Kind**: static method of [<code>FileSystem</code>](#FileSystem)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| file | <code>string</code> |  | Name of the file (Including extension) |
+| content | <code>ArrayBuffer</code> \| <code>ArrayBufferView</code> \| <code>Blob</code> \| <code>string</code> |  | Content to save in the file |
+| [type] | <code>string</code> | <code>&quot;&#x27;text/plain&#x27;&quot;</code> | Mime Type for the file |
+
+<a name="FileSystem.extension"></a>
+
+### FileSystem.extension(name) ⇒ <code>string</code>
+**Kind**: static method of [<code>FileSystem</code>](#FileSystem)  
+**Returns**: <code>string</code> - - File extension without the leading dot (.)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>string</code> | Name or full path of the file |
+
+<a name="FileSystem.isImage"></a>
+
+### FileSystem.isImage(name) ⇒ <code>boolean</code>
+**Kind**: static method of [<code>FileSystem</code>](#FileSystem)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>string</code> | Name or full path of the file |
+
+<a name="Form"></a>
+
+## Form
+Utility class that provides simple function for filling and retrieving values
+from froms. This class requires the use of the `data-form` attribute.
+
+**Kind**: global class  
+
+* [Form](#Form)
+    * [.fill(name, data)](#Form.fill)
+    * [.values(name)](#Form.values) ⇒ <code>Object</code>
+
+<a name="Form.fill"></a>
+
+### Form.fill(name, data)
+**Kind**: static method of [<code>Form</code>](#Form)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>string</code> | Form name. Must match the `data-form` attribute of the Form. |
+| data | <code>Object</code> | JSON object with key-value pairs to fill the inputs. |
+
+<a name="Form.values"></a>
+
+### Form.values(name) ⇒ <code>Object</code>
+**Kind**: static method of [<code>Form</code>](#Form)  
+**Returns**: <code>Object</code> - - Key-value JSON object  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>string</code> | Form name. Must match the `data-form` attribute of the Form. |
+
+<a name="Platform"></a>
+
+## Platform
+General checks for what kind of platform is the being used to run the app.
+
+**Kind**: global class  
+
+* [Platform](#Platform)
+    * [.retina()](#Platform.retina) ⇒ <code>boolean</code>
+    * [.portrait()](#Platform.portrait) ⇒ <code>boolean</code>
+    * [.landscape()](#Platform.landscape) ⇒ <code>boolean</code>
+    * [.orientation()](#Platform.orientation) ⇒ <code>string</code>
+    * [.electron()](#Platform.electron) ⇒ <code>boolean</code>
+    * [.cordova()](#Platform.cordova) ⇒ <code>boolean</code>
+    * [.desktop()](#Platform.desktop) ⇒ <code>boolean</code>
+    * [.mobile([platform])](#Platform.mobile) ⇒ <code>boolean</code>
+    * [.serviceWorkers()](#Platform.serviceWorkers) ⇒ <code>boolean</code>
+
+<a name="Platform.retina"></a>
+
+### Platform.retina() ⇒ <code>boolean</code>
+Check if the screen has a retina pixel ratio
+
+**Kind**: static method of [<code>Platform</code>](#Platform)  
+<a name="Platform.portrait"></a>
+
+### Platform.portrait() ⇒ <code>boolean</code>
+Check if the device is on portrait orientation
+
+**Kind**: static method of [<code>Platform</code>](#Platform)  
+<a name="Platform.landscape"></a>
+
+### Platform.landscape() ⇒ <code>boolean</code>
+Check if the device is on landscape orientation
+
+**Kind**: static method of [<code>Platform</code>](#Platform)  
+<a name="Platform.orientation"></a>
+
+### Platform.orientation() ⇒ <code>string</code>
+Get device Orientation
+
+**Kind**: static method of [<code>Platform</code>](#Platform)  
+**Returns**: <code>string</code> - portrait | landscape  
+<a name="Platform.electron"></a>
+
+### Platform.electron() ⇒ <code>boolean</code>
+Check if the app is running over Electron
+
+**Kind**: static method of [<code>Platform</code>](#Platform)  
+<a name="Platform.cordova"></a>
+
+### Platform.cordova() ⇒ <code>boolean</code>
+Check if the app is running over Cordova
+
+**Kind**: static method of [<code>Platform</code>](#Platform)  
+<a name="Platform.desktop"></a>
+
+### Platform.desktop() ⇒ <code>boolean</code>
+Check if the app is running in a desktop platform
+
+**Kind**: static method of [<code>Platform</code>](#Platform)  
+<a name="Platform.mobile"></a>
+
+### Platform.mobile([platform]) ⇒ <code>boolean</code>
+Check if the app is running in a mobile platform
+
+**Kind**: static method of [<code>Platform</code>](#Platform)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [platform] | <code>string</code> | <code>&quot;&#x27;Any&#x27;&quot;</code> | Check for a specific mobile platform [Android | iOS | Opera | Windows | BlackBerry | Any] |
+
+<a name="Platform.serviceWorkers"></a>
+
+### Platform.serviceWorkers() ⇒ <code>boolean</code>
+**Kind**: static method of [<code>Platform</code>](#Platform)  
+**Returns**: <code>boolean</code> - - Whether they're supported or not  
+<a name="Preload"></a>
+
+## Preload
+A simple class for asset preloading. This class assumes you have a service
+worker set up that will be caching all requests.
+
+**Kind**: global class  
+
+* [Preload](#Preload)
+    * [.image(route)](#Preload.image) ⇒ <code>Promise</code>
+    * [.file(route)](#Preload.file) ⇒ <code>Promise</code>
+
+<a name="Preload.image"></a>
+
+### Preload.image(route) ⇒ <code>Promise</code>
+**Kind**: static method of [<code>Preload</code>](#Preload)  
+**Returns**: <code>Promise</code> - - Resolves to the image object or gets rejected with
+the rejection event  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| route | <code>string</code> | Route to the image |
+
+<a name="Preload.file"></a>
+
+### Preload.file(route) ⇒ <code>Promise</code>
+**Kind**: static method of [<code>Preload</code>](#Preload)  
+**Returns**: <code>Promise</code> - - Resolves or rejects depending on request success  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| route | <code>string</code> | Route to the file |
+
+<a name="Request"></a>
+
+## Request
+Simple Wrapper for the fetch API, providing simple functions to handle requests
+
+**Kind**: global class  
+
+* [Request](#Request)
+    * [.serialize(data)](#Request.serialize) ⇒ <code>string</code>
+    * [.get(url, [data], [options])](#Request.get) ⇒ <code>Promise.&lt;Response&gt;</code>
+    * [.post(url, [data], [options])](#Request.post) ⇒ <code>Promise.&lt;Response&gt;</code>
+    * [.put(url, [data], [options])](#Request.put) ⇒ <code>Promise.&lt;Response&gt;</code>
+    * [.delete(url, [data], [options])](#Request.delete) ⇒ <code>Promise.&lt;Response&gt;</code>
+    * [.json(url, [data], [options])](#Request.json) ⇒ <code>Promise.&lt;Object&gt;</code>
+    * [.blob(url, [data], [options])](#Request.blob) ⇒ <code>Promise.&lt;Blob&gt;</code>
+
+<a name="Request.serialize"></a>
+
+### Request.serialize(data) ⇒ <code>string</code>
+**Kind**: static method of [<code>Request</code>](#Request)  
+**Returns**: <code>string</code> - - Serialized Data  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| data | <code>Object</code> | Key-value object of data to serialize |
+
+<a name="Request.get"></a>
+
+### Request.get(url, [data], [options]) ⇒ <code>Promise.&lt;Response&gt;</code>
+**Kind**: static method of [<code>Request</code>](#Request)  
+**Returns**: <code>Promise.&lt;Response&gt;</code> - - Resolves to the response of the request  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| url | <code>string</code> |  | URL to make the request to |
+| [data] | <code>Object</code> | <code>{}</code> | Parameters to send in the URL, represented as a JSON object. These parameters will be sent as a query in the URL |
+| [options] | <code>Object</code> | <code>{}</code> | Options object for configurations you want to use in the fetch () request made. |
+
+<a name="Request.post"></a>
+
+### Request.post(url, [data], [options]) ⇒ <code>Promise.&lt;Response&gt;</code>
+**Kind**: static method of [<code>Request</code>](#Request)  
+**Returns**: <code>Promise.&lt;Response&gt;</code> - - Resolves to the response of the request  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| url | <code>string</code> |  | URL to make the request |
+| [data] | <code>Object</code> | <code>{}</code> | Set of data to send in the URL, represented as a JSON object |
+| [options] | <code>Object</code> | <code>{}</code> | Options object for configurations you want to use in the fetch () request made. The Content-Type header is used to serialize data in the correct format and defaults to application/x-www-form-urlencoded |
+
+<a name="Request.put"></a>
+
+### Request.put(url, [data], [options]) ⇒ <code>Promise.&lt;Response&gt;</code>
+**Kind**: static method of [<code>Request</code>](#Request)  
+**Returns**: <code>Promise.&lt;Response&gt;</code> - - Resolves to the response of the request  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| url | <code>string</code> |  | URL to make the request |
+| [data] | <code>Object</code> | <code>{}</code> | Set of data to send in the URL, represented as a JSON object |
+| [options] | <code>Object</code> | <code>{}</code> | Options object for configurations you want to use in the fetch () request made. The Content-Type header is used to serialize data in the correct format and defaults to application/x-www-form-urlencoded |
+
+<a name="Request.delete"></a>
+
+### Request.delete(url, [data], [options]) ⇒ <code>Promise.&lt;Response&gt;</code>
+**Kind**: static method of [<code>Request</code>](#Request)  
+**Returns**: <code>Promise.&lt;Response&gt;</code> - - Resolves to the response of the request  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| url | <code>string</code> |  | URL to make the request |
+| [data] | <code>Object</code> | <code>{}</code> | Parameters to send in the URL, represented as a JSON object. These parameters will be sent as a query in the URL |
+| [options] | <code>Object</code> | <code>{}</code> | Options object for configurations you want to use in the fetch () request made. The Content-Type header is used to serialize data in the correct format and defaults to application/x-www-form-urlencoded |
+
+<a name="Request.json"></a>
+
+### Request.json(url, [data], [options]) ⇒ <code>Promise.&lt;Object&gt;</code>
+**Kind**: static method of [<code>Request</code>](#Request)  
+**Returns**: <code>Promise.&lt;Object&gt;</code> - - Resolves to the json object obtained from the request response  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| url | <code>string</code> |  | URL to make the request to |
+| [data] | <code>Object</code> | <code>{}</code> | Parameters to send in the URL, represented as a JSON object. These parameters will be sent as a query in the URL |
+| [options] | <code>Object</code> | <code>{}</code> | Options object for configurations you want to use in the fetch () request made. |
+
+<a name="Request.blob"></a>
+
+### Request.blob(url, [data], [options]) ⇒ <code>Promise.&lt;Blob&gt;</code>
+**Kind**: static method of [<code>Request</code>](#Request)  
+**Returns**: <code>Promise.&lt;Blob&gt;</code> - - Resolves to the blob obtained from the request response  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| url | <code>string</code> |  | URL to make the request to |
+| [data] | <code>Object</code> | <code>{}</code> | Parameters to send in the URL, represented as a JSON object. These parameters will be sent as a query in the URL |
+| [options] | <code>Object</code> | <code>{}</code> | Options object for configurations you want to use in the fetch () request made. |
+
+<a name="Space"></a>
+
+## Space
+Space provides a simple wrapper for different Storage APIs. It aims to
+provide data independence through storage namespaces and versioning, allowing
+transparent data formatting and content modifications through versions.
+
+While this class documentation provides some information, specific details may
+be addressed on the documentation of each adapter.
+
+**Kind**: global class  
+
+* [Space](#Space)
+    * [new exports.Space([adapter], [configuration])](#new_Space_new)
+    * [.configuration(object)](#Space+configuration) ⇒ <code>object</code>
+    * [.open()](#Space+open) ⇒ <code>Promise</code>
+    * [.set(key, value)](#Space+set) ⇒ <code>Promise.&lt;{key, value}&gt;</code>
+    * [.update(key, value)](#Space+update) ⇒ <code>Promise.&lt;{key, value}&gt;</code>
+    * [.get(key)](#Space+get) ⇒ <code>Promise.&lt;Object&gt;</code> \| <code>Promise.&lt;string&gt;</code> \| <code>Promise.&lt;Number&gt;</code>
+    * [.getAll()](#Space+getAll) ⇒ <code>Promise.&lt;Object&gt;</code>
+    * [.each(callback)](#Space+each) ⇒ <code>Promise</code>
+    * [.contains(key)](#Space+contains) ⇒ <code>Promise</code>
+    * [.upgrade(oldVersion, newVersion)](#Space+upgrade) ⇒ <code>Promise</code>
+    * [.rename(name)](#Space+rename) ⇒ <code>Promise</code>
+    * [.onCreate(callback)](#Space+onCreate)
+    * [.onUpdate(callback)](#Space+onUpdate)
+    * [.onDelete(callback)](#Space+onDelete)
+    * [.addTransformation(id, get, set)](#Space+addTransformation)
+    * [.removeTransformation(id)](#Space+removeTransformation)
+    * [.key(index, [full])](#Space+key) ⇒ <code>Promise.&lt;string&gt;</code>
+    * [.keys([full])](#Space+keys) ⇒ <code>Promise.&lt;Array.&lt;string&gt;&gt;</code>
+    * [.remove(key)](#Space+remove) ⇒ <code>Promise.&lt;key, value&gt;</code>
+    * [.clear()](#Space+clear) ⇒ <code>Promise</code>
+
+<a name="new_Space_new"></a>
+
+### new exports.Space([adapter], [configuration])
+Create a new Space Object. If no name and version is defined, the global LocalSpace space is used.
+
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [adapter] | [<code>SpaceAdapter</code>](#SpaceAdapter) | <code>SpaceAdapter.LocalStorage</code> | Space Adapter to use. Currently LocalStorage, SessionStorage, IndexedDB and Server are available |
+| [configuration] | <code>Object</code> | <code>{}</code> | Configuration object for the space. This configuration may change depending on the adapter used, however all adapters have support for a name, version and store properties. |
+| configuration.name | <code>string</code> |  | Name of the Space |
+| configuration.version | <code>string</code> |  | Version of the Space in Semantic versioning syntax |
+| configuration.store | <code>string</code> |  | Name of the Object Store to use |
+
+<a name="Space+configuration"></a>
+
+### space.configuration(object) ⇒ <code>object</code>
+Modify the space configuration, it will also be passed down to the adapter
+using its configuration () function.
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+**Returns**: <code>object</code> - - Configuration object if no param was passed  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| object | <code>object</code> | <code></code> | Configuration object to set up |
+
+<a name="Space+open"></a>
+
+### space.open() ⇒ <code>Promise</code>
+Open the Storage Object to be used depending on the SpaceAdapter
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+<a name="Space+set"></a>
+
+### space.set(key, value) ⇒ <code>Promise.&lt;{key, value}&gt;</code>
+Store a key-value pair
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| key | <code>string</code> | Key with which this value will be saved |
+| value | <code>Object</code> \| <code>string</code> \| <code>Number</code> | Value to save |
+
+<a name="Space+update"></a>
+
+### space.update(key, value) ⇒ <code>Promise.&lt;{key, value}&gt;</code>
+Update a key-value pair. In difference with the set () method, the update
+method will use an Object.assign () in the case of objects so no value is
+lost.
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| key | <code>string</code> | Key with which this value will be saved |
+| value | <code>Object</code> \| <code>string</code> \| <code>Number</code> | Value to save |
+
+<a name="Space+get"></a>
+
+### space.get(key) ⇒ <code>Promise.&lt;Object&gt;</code> \| <code>Promise.&lt;string&gt;</code> \| <code>Promise.&lt;Number&gt;</code>
+Retrieves a value from storage given it's key
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+**Returns**: <code>Promise.&lt;Object&gt;</code> \| <code>Promise.&lt;string&gt;</code> \| <code>Promise.&lt;Number&gt;</code> - - Resolves to the retreived value
+or its rejected if it doesn't exist.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| key | <code>string</code> | Key with which the value was saved |
+
+<a name="Space+getAll"></a>
+
+### space.getAll() ⇒ <code>Promise.&lt;Object&gt;</code>
+Retrieves all the values in the space in a key-value JSON object
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+**Returns**: <code>Promise.&lt;Object&gt;</code> - - Resolves to the retreived values  
+<a name="Space+each"></a>
+
+### space.each(callback) ⇒ <code>Promise</code>
+Iterate over every value in the space
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+**Returns**: <code>Promise</code> - - Resolves when all callbacks have been resolved.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | A callback function receiving the key and value of a value. Must return a callback |
+
+<a name="Space+contains"></a>
+
+### space.contains(key) ⇒ <code>Promise</code>
+Check if a space contains a given key. Not all adapters may give this information
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+**Returns**: <code>Promise</code> - - Promise gets resolved if it exists and rejected if
+doesn't  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| key | <code>string</code> | Key to look for. |
+
+<a name="Space+upgrade"></a>
+
+### space.upgrade(oldVersion, newVersion) ⇒ <code>Promise</code>
+Upgrade a Space Version. Not all adapters may provide this functionality
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+**Returns**: <code>Promise</code> - - Result of the upgrade operation  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| oldVersion | <code>string</code> | The version of the storage to be upgraded |
+| newVersion | <code>string</code> | The version to be upgraded to |
+
+<a name="Space+rename"></a>
+
+### space.rename(name) ⇒ <code>Promise</code>
+Rename a Space. Not all adapters may provide this functionality
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+**Returns**: <code>Promise</code> - Result of the rename operation  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>string</code> | New name to be used. |
+
+<a name="Space+onCreate"></a>
+
+### space.onCreate(callback)
+Add a callback function to be run every time a value is created.
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback Function. Key and Value pair will be sent as parameters when run. |
+
+<a name="Space+onUpdate"></a>
+
+### space.onUpdate(callback)
+Add a callback function to be run every time a value is updated.
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback Function. Key and Value pair will be sent as parameters when run. |
+
+<a name="Space+onDelete"></a>
+
+### space.onDelete(callback)
+Add a callback function to be run every time a value is deleted.
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback Function. Key and Value pair will be sent as parameters when run. |
+
+<a name="Space+addTransformation"></a>
+
+### space.addTransformation(id, get, set)
+Add a transformation function to the space.
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| id | <code>string</code> | Unique transformation name or identifier |
+| get | <code>function</code> \| <code>null</code> | Transformation function to apply to the content before returning the value when using the get () function . |
+| set | <code>function</code> \| <code>null</code> | Transformation function to apply to the content before saving it when using the set () function befo. |
+
+<a name="Space+removeTransformation"></a>
+
+### space.removeTransformation(id)
+Remove a transformation function given its id
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| id | <code>string</code> | Name or identifier of the transformation to remove |
+
+<a name="Space+key"></a>
+
+### space.key(index, [full]) ⇒ <code>Promise.&lt;string&gt;</code>
+Get the key that corresponds to a given index in the storage. Not all adapters may provide this functionality
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+**Returns**: <code>Promise.&lt;string&gt;</code> - - Resolves to the key's name  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| index | <code>Number</code> |  | Index to get the key from |
+| [full] | <code>boolean</code> | <code>false</code> | Whether to return the full key name including space id or just the key name |
+
+<a name="Space+keys"></a>
+
+### space.keys([full]) ⇒ <code>Promise.&lt;Array.&lt;string&gt;&gt;</code>
+Return all keys stored in the space. Not all adapters may provide this functionality
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+**Returns**: <code>Promise.&lt;Array.&lt;string&gt;&gt;</code> - - Array of keys  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [full] | <code>boolean</code> | <code>false</code> | Whether to return the full key name including space id or just the key name |
+
+<a name="Space+remove"></a>
+
+### space.remove(key) ⇒ <code>Promise.&lt;key, value&gt;</code>
+Delete a value from the space given it's key
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+**Returns**: <code>Promise.&lt;key, value&gt;</code> - - Resolves to the key and value of the deleted object  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| key | <code>string</code> | Key of the item to delete |
+
+<a name="Space+clear"></a>
+
+### space.clear() ⇒ <code>Promise</code>
+Clear the entire space
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+**Returns**: <code>Promise</code> - - Result of the clear operation  
+<a name="Text"></a>
+
+## Text
+Provides utility functions for texts
+
+**Kind**: global class  
+
+* [Text](#Text)
+    * [.capitalize(text)](#Text.capitalize) ⇒ <code>string</code>
+    * [.suffix(key, text)](#Text.suffix) ⇒ <code>string</code>
+    * [.selection()](#Text.selection) ⇒ <code>string</code>
+    * [.prefix(key, text)](#Text.prefix) ⇒ <code>string</code>
+    * [.friendly(text)](#Text.friendly) ⇒ <code>string</code>
+
+<a name="Text.capitalize"></a>
+
+### Text.capitalize(text) ⇒ <code>string</code>
+**Kind**: static method of [<code>Text</code>](#Text)  
+**Returns**: <code>string</code> - - Capitalized string  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| text | <code>string</code> | Text string to capitalize |
+
+<a name="Text.suffix"></a>
+
+### Text.suffix(key, text) ⇒ <code>string</code>
+**Kind**: static method of [<code>Text</code>](#Text)  
+**Returns**: <code>string</code> - - Suffix  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| key | <code>string</code> | Key part of the string |
+| text | <code>string</code> | Full string to extract the suffix from |
+
+<a name="Text.selection"></a>
+
+### Text.selection() ⇒ <code>string</code>
+**Kind**: static method of [<code>Text</code>](#Text)  
+**Returns**: <code>string</code> - - Text selection  
+<a name="Text.prefix"></a>
+
+### Text.prefix(key, text) ⇒ <code>string</code>
+**Kind**: static method of [<code>Text</code>](#Text)  
+**Returns**: <code>string</code> - - Prefix  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| key | <code>string</code> | Key part of the string |
+| text | <code>string</code> | Full string to extract the prefix from |
+
+<a name="Text.friendly"></a>
+
+### Text.friendly(text) ⇒ <code>string</code>
+**Kind**: static method of [<code>Text</code>](#Text)  
+**Returns**: <code>string</code> - - Friendly URL  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| text | <code>string</code> | The text to build the url from |
+
+<a name="Util"></a>
+
+## Util
+Provides diverse utility functions
+
+**Kind**: global class  
+<a name="DOM"></a>
+
+## DOM
+Simple DOM manipulation functions
+
+**Kind**: global class  
+
+* [DOM](#DOM)
+    * [new exports.DOM(selector)](#new_DOM_new)
+    * [new exports.DOM(selector)](#new_DOM_new)
+    * [.hide()](#DOM+hide)
+    * [.show([display])](#DOM+show)
+    * [.addClass(newClass)](#DOM+addClass)
+    * [.removeClass([oldClass])](#DOM+removeClass)
+    * [.toggleClass(classes)](#DOM+toggleClass)
+    * [.hasClass(classToCheck)](#DOM+hasClass) ⇒ <code>boolean</code>
+    * [.value(value)](#DOM+value) ⇒ <code>string</code>
+    * [.focus()](#DOM+focus)
+    * [.click(callback)](#DOM+click)
+    * [.keyup(callback)](#DOM+keyup)
+    * [.keydown(callback)](#DOM+keydown)
+    * [.submit(callback)](#DOM+submit)
+    * [.change(callback)](#DOM+change)
+    * [.scroll(callback)](#DOM+scroll)
+    * [.on(event, target, callback)](#DOM+on)
+    * [.filter(element)](#DOM+filter) ⇒ [<code>DOM</code>](#DOM)
+    * [.data(name, [value])](#DOM+data) ⇒ <code>string</code>
+    * [.text([value])](#DOM+text) ⇒ <code>type</code>
+    * [.html([value])](#DOM+html) ⇒ <code>type</code>
+    * [.append(element)](#DOM+append)
+    * [.prepend(element)](#DOM+prepend)
+    * [.each(callback)](#DOM+each)
+    * [.get(index)](#DOM+get) ⇒ <code>HTMLElement</code>
+    * [.first()](#DOM+first) ⇒ [<code>DOM</code>](#DOM)
+    * [.isVisible()](#DOM+isVisible) ⇒ <code>boolean</code>
+    * [.parent()](#DOM+parent) ⇒ [<code>DOM</code>](#DOM)
+    * [.find(selector)](#DOM+find) ⇒ [<code>DOM</code>](#DOM)
+    * [.offset()](#DOM+offset) ⇒ <code>Object</code>
+    * [.closest(selector)](#DOM+closest) ⇒ [<code>DOM</code>](#DOM)
+    * [.attribute(attribute, [value])](#DOM+attribute) ⇒ <code>type</code>
+    * [.after(content)](#DOM+after)
+    * [.before(content)](#DOM+before)
+    * [.style(properties, [value])](#DOM+style) ⇒ <code>string</code>
+    * [.animate(style, time)](#DOM+animate)
+    * [.fadeIn([time], callback)](#DOM+fadeIn)
+    * [.fadeOut([time], callback)](#DOM+fadeOut)
+    * [.matches(selector)](#DOM+matches) ⇒ <code>boolean</code>
+    * [.remove()](#DOM+remove)
+    * [.replaceWith()](#DOM+replaceWith)
+    * [.reset()](#DOM+reset)
+    * [.property(property, [value])](#DOM+property) ⇒ <code>string</code> \| <code>Number</code>
+    * [.hide()](#DOM+hide)
+    * [.show([display])](#DOM+show)
+    * [.addClass(newClass)](#DOM+addClass)
+    * [.removeClass([oldClass])](#DOM+removeClass)
+    * [.toggleClass(classes)](#DOM+toggleClass)
+    * [.hasClass(classToCheck)](#DOM+hasClass) ⇒ <code>boolean</code>
+    * [.value(value)](#DOM+value) ⇒ <code>string</code>
+    * [.focus()](#DOM+focus)
+    * [.click(callback)](#DOM+click)
+    * [.keyup(callback)](#DOM+keyup)
+    * [.keydown(callback)](#DOM+keydown)
+    * [.submit(callback)](#DOM+submit)
+    * [.change(callback)](#DOM+change)
+    * [.scroll(callback)](#DOM+scroll)
+    * [.on(event, target, callback)](#DOM+on)
+    * [.filter(element)](#DOM+filter) ⇒ [<code>DOM</code>](#DOM)
+    * [.data(name, [value])](#DOM+data) ⇒ <code>string</code>
+    * [.text([value])](#DOM+text) ⇒ <code>type</code>
+    * [.html([value])](#DOM+html) ⇒ <code>type</code>
+    * [.append(element)](#DOM+append)
+    * [.prepend(element)](#DOM+prepend)
+    * [.each(callback)](#DOM+each)
+    * [.get(index)](#DOM+get) ⇒ <code>HTMLElement</code>
+    * [.first()](#DOM+first) ⇒ [<code>DOM</code>](#DOM)
+    * [.isVisible()](#DOM+isVisible) ⇒ <code>boolean</code>
+    * [.parent()](#DOM+parent) ⇒ [<code>DOM</code>](#DOM)
+    * [.find(selector)](#DOM+find) ⇒ [<code>DOM</code>](#DOM)
+    * [.offset()](#DOM+offset) ⇒ <code>Object</code>
+    * [.closest(selector)](#DOM+closest) ⇒ [<code>DOM</code>](#DOM)
+    * [.attribute(attribute, [value])](#DOM+attribute) ⇒ <code>type</code>
+    * [.after(content)](#DOM+after)
+    * [.before(content)](#DOM+before)
+    * [.style(properties, [value])](#DOM+style) ⇒ <code>string</code>
+    * [.animate(style, time)](#DOM+animate)
+    * [.fadeIn([time], callback)](#DOM+fadeIn)
+    * [.fadeOut([time], callback)](#DOM+fadeOut)
+    * [.matches(selector)](#DOM+matches) ⇒ <code>boolean</code>
+    * [.remove()](#DOM+remove)
+    * [.replaceWith()](#DOM+replaceWith)
+    * [.reset()](#DOM+reset)
+    * [.property(property, [value])](#DOM+property) ⇒ <code>string</code> \| <code>Number</code>
+
+<a name="new_DOM_new"></a>
+
+### new exports.DOM(selector)
+Create a new DOM object
+
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> \| <code>Object</code> \| <code>array</code> | Selector or DOM element to use |
+
+<a name="new_DOM_new"></a>
+
+### new exports.DOM(selector)
+Create a new DOM object
+
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> \| <code>Object</code> \| <code>array</code> | Selector or DOM element to use |
+
+<a name="DOM+hide"></a>
+
+### doM.hide()
+Hide elements by setting their `display` property to 'none'.
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+show"></a>
+
+### doM.show([display])
+Show elements by setting their `display` property to the given value.
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [display] | <code>string</code> | <code>&quot;&#x27;block&#x27;&quot;</code> | Display property to set |
+
+<a name="DOM+addClass"></a>
+
+### doM.addClass(newClass)
+Add a class to the classList object
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| newClass | <code>string</code> | Class name to add |
+
+<a name="DOM+removeClass"></a>
+
+### doM.removeClass([oldClass])
+Remove a given class from the classList object
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [oldClass] | <code>string</code> | <code>null</code> | Class to remove. If it's empty or null, all classes will be removed |
+
+<a name="DOM+toggleClass"></a>
+
+### doM.toggleClass(classes)
+Toggle between two classes
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| classes | <code>string</code> | Space separated class names |
+
+<a name="DOM+hasClass"></a>
+
+### doM.hasClass(classToCheck) ⇒ <code>boolean</code>
+Check if the first element matching the selector has the given class
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>boolean</code> - - Whether the class is present or not  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| classToCheck | <code>string</code> | Class name to check for |
+
+<a name="DOM+value"></a>
+
+### doM.value(value) ⇒ <code>string</code>
+Get or set the value from the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>string</code> - - If no value was provided, this returns the value of the
+element instead of setting it  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| value | <code>string</code> | Value to set to the element. |
+
+<a name="DOM+focus"></a>
+
+### doM.focus()
+Focus on the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+click"></a>
+
+### doM.click(callback)
+Add a callback for the 'click' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+keyup"></a>
+
+### doM.keyup(callback)
+Add a callback for the 'keyup' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+keydown"></a>
+
+### doM.keydown(callback)
+Add a callback for the 'keydown' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+submit"></a>
+
+### doM.submit(callback)
+Add a callback for the 'submit' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+change"></a>
+
+### doM.change(callback)
+Add a callback for the 'change' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+scroll"></a>
+
+### doM.scroll(callback)
+Add a callback for the 'scroll' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+on"></a>
+
+### doM.on(event, target, callback)
+Add a callback function to a given event
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| event | <code>string</code> | Event to add the listener to |
+| target | <code>string</code> | Target element on which to detect the event |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+filter"></a>
+
+### doM.filter(element) ⇒ [<code>DOM</code>](#DOM)
+Filter from the current collection to only those matching the new selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - New DOM instance with the filtered collection  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>string</code> | Selector to filter the collection with |
+
+<a name="DOM+data"></a>
+
+### doM.data(name, [value]) ⇒ <code>string</code>
+Get or set a `data` property
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>string</code> - - If no value is set, this function returns it's current value  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>string</code> | Name of the data property |
+| [value] | <code>string</code> | Value of the property |
+
+<a name="DOM+text"></a>
+
+### doM.text([value]) ⇒ <code>type</code>
+Get or set the text of the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>type</code> - - If no value is present, this function returns its the
+element's current text.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [value] | <code>string</code> | Value to set the text to |
+
+<a name="DOM+html"></a>
+
+### doM.html([value]) ⇒ <code>type</code>
+Get or set the inner HTML of the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>type</code> - - If no value is present, this function returns its the
+element's current HTML.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [value] | <code>string</code> | Value to set the HTML to |
+
+<a name="DOM+append"></a>
+
+### doM.append(element)
+Append an element to the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>string</code> | String representation of the element to add |
+
+<a name="DOM+prepend"></a>
+
+### doM.prepend(element)
+Prepend an element to the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>string</code> | String representation of the element to add |
+
+<a name="DOM+each"></a>
+
+### doM.each(callback)
+Iterate over the collection of elements matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback to run for every element |
+
+<a name="DOM+get"></a>
+
+### doM.get(index) ⇒ <code>HTMLElement</code>
+Get an element from the collection given it's index
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>HTMLElement</code> - - HTML Element in the position indicated by the index  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| index | <code>int</code> | Index of the element to retrieve |
+
+<a name="DOM+first"></a>
+
+### doM.first() ⇒ [<code>DOM</code>](#DOM)
+Get the first element in the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - DOM instance with the first element  
+<a name="DOM+isVisible"></a>
+
+### doM.isVisible() ⇒ <code>boolean</code>
+Check if the elements in the collection are visible by chacking their
+display, offsetWidth and offsetHeight properties
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>boolean</code> - - Whether the elements are visible or not  
+<a name="DOM+parent"></a>
+
+### doM.parent() ⇒ [<code>DOM</code>](#DOM)
+Get the parent of the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - DOM instance of the parent element  
+<a name="DOM+find"></a>
+
+### doM.find(selector) ⇒ [<code>DOM</code>](#DOM)
+Find an element that matches the given selector in the first element of the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - Aegis instance with the element if found  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> | Selector to find the element with |
+
+<a name="DOM+offset"></a>
+
+### doM.offset() ⇒ <code>Object</code>
+Get the top and left offsets of the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>Object</code> - - Object with `top` and `left` offsets  
+<a name="DOM+closest"></a>
+
+### doM.closest(selector) ⇒ [<code>DOM</code>](#DOM)
+Find the closest element matching the given selector. This bubbles up
+from the initial object and then follows to its parents.
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - DOM instance with the closest HTML element matching the selector  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> | Selector to match the closest element with |
+
+<a name="DOM+attribute"></a>
+
+### doM.attribute(attribute, [value]) ⇒ <code>type</code>
+Get or set the value of a given attribute
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>type</code> - - If no value is provided, this function returns the current
+value of the provided attribute  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| attribute | <code>string</code> | Attribute's name |
+| [value] | <code>string</code> \| <code>Number</code> | Value to set the attribute to |
+
+<a name="DOM+after"></a>
+
+### doM.after(content)
+Insert content to the `after` property of an element
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| content | <code>string</code> | String representation of the content to add |
+
+<a name="DOM+before"></a>
+
+### doM.before(content)
+Insert content to the `before` property of an element
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| content | <code>string</code> | String representation of the content to add |
+
+<a name="DOM+style"></a>
+
+### doM.style(properties, [value]) ⇒ <code>string</code>
+Get or modify the `style` properties of the elements matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>string</code> - - If a peoperty is given but not a value for it, this
+function will return its current value  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| properties | <code>string</code> \| <code>Object</code> | Properties to change or get. Can be either an individual property or a JSON object with key-value pairs |
+| [value] | <code>string</code> | Value to set the property to when only changing one property |
+
+<a name="DOM+animate"></a>
+
+### doM.animate(style, time)
+Animate the given `style` properties on all elements in the collection in
+with a given time duration
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| style | <code>Object</code> | JSON object with the key-value pairs of properties to animate |
+| time | <code>int</code> | Time in milliseconds during which the properties will be animated |
+
+<a name="DOM+fadeIn"></a>
+
+### doM.fadeIn([time], callback)
+Use a fade in animation i the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [time] | <code>type</code> | <code>400</code> | Time duration for the animation |
+| callback | <code>type</code> |  | Callback function to run once the animation is over |
+
+<a name="DOM+fadeOut"></a>
+
+### doM.fadeOut([time], callback)
+Use a fade out animation i the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [time] | <code>type</code> | <code>400</code> | Time duration for the animation |
+| callback | <code>type</code> |  | Callback function to run once the animation is over |
+
+<a name="DOM+matches"></a>
+
+### doM.matches(selector) ⇒ <code>boolean</code>
+Check if the first element in the collection matches a given selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>boolean</code> - - Whether the element matches the selector or not  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> | Selector to match |
+
+<a name="DOM+remove"></a>
+
+### doM.remove()
+Remove all elemets in the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+replaceWith"></a>
+
+### doM.replaceWith()
+Replace the first element in the collection with a new one
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+reset"></a>
+
+### doM.reset()
+Reset every element in the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+property"></a>
+
+### doM.property(property, [value]) ⇒ <code>string</code> \| <code>Number</code>
+Get or set a property for the first element in the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>string</code> \| <code>Number</code> - - If no value is provided, this funcion will return the
+current value of the indicated property  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| property | <code>string</code> | Property name to set or get |
+| [value] | <code>string</code> \| <code>Number</code> | Value to set the property to |
+
+<a name="DOM+hide"></a>
+
+### doM.hide()
+Hide elements by setting their `display` property to 'none'.
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+show"></a>
+
+### doM.show([display])
+Show elements by setting their `display` property to the given value.
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [display] | <code>string</code> | <code>&quot;&#x27;block&#x27;&quot;</code> | Display property to set |
+
+<a name="DOM+addClass"></a>
+
+### doM.addClass(newClass)
+Add a class to the classList object
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| newClass | <code>string</code> | Class name to add |
+
+<a name="DOM+removeClass"></a>
+
+### doM.removeClass([oldClass])
+Remove a given class from the classList object
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [oldClass] | <code>string</code> | <code>null</code> | Class to remove. If it's empty or null, all classes will be removed |
+
+<a name="DOM+toggleClass"></a>
+
+### doM.toggleClass(classes)
+Toggle between two classes
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| classes | <code>string</code> | Space separated class names |
+
+<a name="DOM+hasClass"></a>
+
+### doM.hasClass(classToCheck) ⇒ <code>boolean</code>
+Check if the first element matching the selector has the given class
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>boolean</code> - - Whether the class is present or not  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| classToCheck | <code>string</code> | Class name to check for |
+
+<a name="DOM+value"></a>
+
+### doM.value(value) ⇒ <code>string</code>
+Get or set the value from the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>string</code> - - If no value was provided, this returns the value of the
+element instead of setting it  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| value | <code>string</code> | Value to set to the element. |
+
+<a name="DOM+focus"></a>
+
+### doM.focus()
+Focus on the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+click"></a>
+
+### doM.click(callback)
+Add a callback for the 'click' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+keyup"></a>
+
+### doM.keyup(callback)
+Add a callback for the 'keyup' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+keydown"></a>
+
+### doM.keydown(callback)
+Add a callback for the 'keydown' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+submit"></a>
+
+### doM.submit(callback)
+Add a callback for the 'submit' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+change"></a>
+
+### doM.change(callback)
+Add a callback for the 'change' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+scroll"></a>
+
+### doM.scroll(callback)
+Add a callback for the 'scroll' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+on"></a>
+
+### doM.on(event, target, callback)
+Add a callback function to a given event
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| event | <code>string</code> | Event to add the listener to |
+| target | <code>string</code> | Target element on which to detect the event |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+filter"></a>
+
+### doM.filter(element) ⇒ [<code>DOM</code>](#DOM)
+Filter from the current collection to only those matching the new selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - New DOM instance with the filtered collection  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>string</code> | Selector to filter the collection with |
+
+<a name="DOM+data"></a>
+
+### doM.data(name, [value]) ⇒ <code>string</code>
+Get or set a `data` property
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>string</code> - - If no value is set, this function returns it's current value  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>string</code> | Name of the data property |
+| [value] | <code>string</code> | Value of the property |
+
+<a name="DOM+text"></a>
+
+### doM.text([value]) ⇒ <code>type</code>
+Get or set the text of the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>type</code> - - If no value is present, this function returns its the
+element's current text.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [value] | <code>string</code> | Value to set the text to |
+
+<a name="DOM+html"></a>
+
+### doM.html([value]) ⇒ <code>type</code>
+Get or set the inner HTML of the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>type</code> - - If no value is present, this function returns its the
+element's current HTML.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [value] | <code>string</code> | Value to set the HTML to |
+
+<a name="DOM+append"></a>
+
+### doM.append(element)
+Append an element to the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>string</code> | String representation of the element to add |
+
+<a name="DOM+prepend"></a>
+
+### doM.prepend(element)
+Prepend an element to the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>string</code> | String representation of the element to add |
+
+<a name="DOM+each"></a>
+
+### doM.each(callback)
+Iterate over the collection of elements matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback to run for every element |
+
+<a name="DOM+get"></a>
+
+### doM.get(index) ⇒ <code>HTMLElement</code>
+Get an element from the collection given it's index
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>HTMLElement</code> - - HTML Element in the position indicated by the index  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| index | <code>int</code> | Index of the element to retrieve |
+
+<a name="DOM+first"></a>
+
+### doM.first() ⇒ [<code>DOM</code>](#DOM)
+Get the first element in the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - DOM instance with the first element  
+<a name="DOM+isVisible"></a>
+
+### doM.isVisible() ⇒ <code>boolean</code>
+Check if the elements in the collection are visible by chacking their
+display, offsetWidth and offsetHeight properties
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>boolean</code> - - Whether the elements are visible or not  
+<a name="DOM+parent"></a>
+
+### doM.parent() ⇒ [<code>DOM</code>](#DOM)
+Get the parent of the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - DOM instance of the parent element  
+<a name="DOM+find"></a>
+
+### doM.find(selector) ⇒ [<code>DOM</code>](#DOM)
+Find an element that matches the given selector in the first element of the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - Aegis instance with the element if found  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> | Selector to find the element with |
+
+<a name="DOM+offset"></a>
+
+### doM.offset() ⇒ <code>Object</code>
+Get the top and left offsets of the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>Object</code> - - Object with `top` and `left` offsets  
+<a name="DOM+closest"></a>
+
+### doM.closest(selector) ⇒ [<code>DOM</code>](#DOM)
+Find the closest element matching the given selector. This bubbles up
+from the initial object and then follows to its parents.
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - DOM instance with the closest HTML element matching the selector  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> | Selector to match the closest element with |
+
+<a name="DOM+attribute"></a>
+
+### doM.attribute(attribute, [value]) ⇒ <code>type</code>
+Get or set the value of a given attribute
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>type</code> - - If no value is provided, this function returns the current
+value of the provided attribute  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| attribute | <code>string</code> | Attribute's name |
+| [value] | <code>string</code> \| <code>Number</code> | Value to set the attribute to |
+
+<a name="DOM+after"></a>
+
+### doM.after(content)
+Insert content to the `after` property of an element
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| content | <code>string</code> | String representation of the content to add |
+
+<a name="DOM+before"></a>
+
+### doM.before(content)
+Insert content to the `before` property of an element
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| content | <code>string</code> | String representation of the content to add |
+
+<a name="DOM+style"></a>
+
+### doM.style(properties, [value]) ⇒ <code>string</code>
+Get or modify the `style` properties of the elements matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>string</code> - - If a peoperty is given but not a value for it, this
+function will return its current value  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| properties | <code>string</code> \| <code>Object</code> | Properties to change or get. Can be either an individual property or a JSON object with key-value pairs |
+| [value] | <code>string</code> | Value to set the property to when only changing one property |
+
+<a name="DOM+animate"></a>
+
+### doM.animate(style, time)
+Animate the given `style` properties on all elements in the collection in
+with a given time duration
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| style | <code>Object</code> | JSON object with the key-value pairs of properties to animate |
+| time | <code>int</code> | Time in milliseconds during which the properties will be animated |
+
+<a name="DOM+fadeIn"></a>
+
+### doM.fadeIn([time], callback)
+Use a fade in animation i the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [time] | <code>type</code> | <code>400</code> | Time duration for the animation |
+| callback | <code>type</code> |  | Callback function to run once the animation is over |
+
+<a name="DOM+fadeOut"></a>
+
+### doM.fadeOut([time], callback)
+Use a fade out animation i the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [time] | <code>type</code> | <code>400</code> | Time duration for the animation |
+| callback | <code>type</code> |  | Callback function to run once the animation is over |
+
+<a name="DOM+matches"></a>
+
+### doM.matches(selector) ⇒ <code>boolean</code>
+Check if the first element in the collection matches a given selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>boolean</code> - - Whether the element matches the selector or not  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> | Selector to match |
+
+<a name="DOM+remove"></a>
+
+### doM.remove()
+Remove all elemets in the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+replaceWith"></a>
+
+### doM.replaceWith()
+Replace the first element in the collection with a new one
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+reset"></a>
+
+### doM.reset()
+Reset every element in the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+property"></a>
+
+### doM.property(property, [value]) ⇒ <code>string</code> \| <code>Number</code>
+Get or set a property for the first element in the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>string</code> \| <code>Number</code> - - If no value is provided, this funcion will return the
+current value of the indicated property  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| property | <code>string</code> | Property name to set or get |
+| [value] | <code>string</code> \| <code>Number</code> | Value to set the property to |
+
+<a name="SpaceAdapter"></a>
+
+## SpaceAdapter
+List of Adapters Available
+
+**Kind**: global constant  
+<a name="$_"></a>
+
+## $_(selector) ⇒ [<code>DOM</code>](#DOM)
+Simple wrapper function to use the DOM library
+
+**Kind**: global function  
+**Returns**: [<code>DOM</code>](#DOM) - - DOM instance or class if no selector is used  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> \| <code>Object</code> \| <code>array</code> | Selector or DOM element to use |
+
+<a name="$_ready"></a>
+
+## $_ready(callback)
+Utility function to attach the 'load' listener to the window
+
+**Kind**: global function  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the window is ready |
+
+<a name="$_"></a>
+
+## $_(selector) ⇒ [<code>DOM</code>](#DOM)
+Simple wrapper function to use the DOM library
+
+**Kind**: global function  
+**Returns**: [<code>DOM</code>](#DOM) - - DOM instance or class if no selector is used  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> \| <code>Object</code> \| <code>array</code> | Selector or DOM element to use |
+
+<a name="$_ready"></a>
+
+## $_ready(callback)
+Utility function to attach the 'load' listener to the window
+
+**Kind**: global function  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the window is ready |
+
+## Classes
+
+<dl>
+<dt><a href="#DOM">DOM</a></dt>
+<dd><p>Simple DOM manipulation functions</p>
+</dd>
+<dt><a href="#FileSystem">FileSystem</a></dt>
+<dd><p>A simple class wrapper for the File and FileReader web API, while this class
+doesn&#39;t actually provide acces to the host file system, it does provide useful
+utilities for form file inputs and remote content loading.</p>
+</dd>
+<dt><a href="#Form">Form</a></dt>
+<dd><p>Utility class that provides simple function for filling and retrieving values
+from froms. This class requires the use of the <code>data-form</code> attribute.</p>
+</dd>
+<dt><a href="#Platform">Platform</a></dt>
+<dd><p>General checks for what kind of platform is the being used to run the app.</p>
+</dd>
+<dt><a href="#Preload">Preload</a></dt>
+<dd><p>A simple class for asset preloading. This class assumes you have a service
+worker set up that will be caching all requests.</p>
+</dd>
+<dt><a href="#Request">Request</a></dt>
+<dd><p>Simple Wrapper for the fetch API, providing simple functions to handle requests</p>
+</dd>
+<dt><a href="#Space">Space</a></dt>
+<dd><p>Space provides a simple wrapper for different Storage APIs. It aims to
+provide data independence through storage namespaces and versioning, allowing
+transparent data formatting and content modifications through versions.</p>
+<p>While this class documentation provides some information, specific details may
+be addressed on the documentation of each adapter.</p>
+</dd>
+<dt><a href="#Text">Text</a></dt>
+<dd><p>Provides utility functions for texts</p>
+</dd>
+<dt><a href="#Util">Util</a></dt>
+<dd><p>Provides diverse utility functions</p>
+</dd>
+<dt><a href="#DOM">DOM</a></dt>
+<dd><p>Simple DOM manipulation functions</p>
+</dd>
+</dl>
+
+## Constants
+
+<dl>
+<dt><a href="#SpaceAdapter">SpaceAdapter</a></dt>
+<dd><p>List of Adapters Available</p>
+</dd>
+</dl>
+
+## Functions
+
+<dl>
+<dt><a href="#$_">$_(selector)</a> ⇒ <code><a href="#DOM">DOM</a></code></dt>
+<dd><p>Simple wrapper function to use the DOM library</p>
+</dd>
+<dt><a href="#$_ready">$_ready(callback)</a></dt>
+<dd><p>Utility function to attach the &#39;load&#39; listener to the window</p>
+</dd>
+<dt><a href="#$_">$_(selector)</a> ⇒ <code><a href="#DOM">DOM</a></code></dt>
+<dd><p>Simple wrapper function to use the DOM library</p>
+</dd>
+<dt><a href="#$_ready">$_ready(callback)</a></dt>
+<dd><p>Utility function to attach the &#39;load&#39; listener to the window</p>
+</dd>
+</dl>
+
+<a name="DOM"></a>
+
+## DOM
+Simple DOM manipulation functions
+
+**Kind**: global class  
+
+* [DOM](#DOM)
+    * [new exports.DOM(selector)](#new_DOM_new)
+    * [new exports.DOM(selector)](#new_DOM_new)
+    * [.hide()](#DOM+hide)
+    * [.show([display])](#DOM+show)
+    * [.addClass(newClass)](#DOM+addClass)
+    * [.removeClass([oldClass])](#DOM+removeClass)
+    * [.toggleClass(classes)](#DOM+toggleClass)
+    * [.hasClass(classToCheck)](#DOM+hasClass) ⇒ <code>boolean</code>
+    * [.value(value)](#DOM+value) ⇒ <code>string</code>
+    * [.focus()](#DOM+focus)
+    * [.click(callback)](#DOM+click)
+    * [.keyup(callback)](#DOM+keyup)
+    * [.keydown(callback)](#DOM+keydown)
+    * [.submit(callback)](#DOM+submit)
+    * [.change(callback)](#DOM+change)
+    * [.scroll(callback)](#DOM+scroll)
+    * [.on(event, target, callback)](#DOM+on)
+    * [.filter(element)](#DOM+filter) ⇒ [<code>DOM</code>](#DOM)
+    * [.data(name, [value])](#DOM+data) ⇒ <code>string</code>
+    * [.text([value])](#DOM+text) ⇒ <code>type</code>
+    * [.html([value])](#DOM+html) ⇒ <code>type</code>
+    * [.append(element)](#DOM+append)
+    * [.prepend(element)](#DOM+prepend)
+    * [.each(callback)](#DOM+each)
+    * [.get(index)](#DOM+get) ⇒ <code>HTMLElement</code>
+    * [.first()](#DOM+first) ⇒ [<code>DOM</code>](#DOM)
+    * [.isVisible()](#DOM+isVisible) ⇒ <code>boolean</code>
+    * [.parent()](#DOM+parent) ⇒ [<code>DOM</code>](#DOM)
+    * [.find(selector)](#DOM+find) ⇒ [<code>DOM</code>](#DOM)
+    * [.offset()](#DOM+offset) ⇒ <code>Object</code>
+    * [.closest(selector)](#DOM+closest) ⇒ [<code>DOM</code>](#DOM)
+    * [.attribute(attribute, [value])](#DOM+attribute) ⇒ <code>type</code>
+    * [.after(content)](#DOM+after)
+    * [.before(content)](#DOM+before)
+    * [.style(properties, [value])](#DOM+style) ⇒ <code>string</code>
+    * [.animate(style, time)](#DOM+animate)
+    * [.fadeIn([time], callback)](#DOM+fadeIn)
+    * [.fadeOut([time], callback)](#DOM+fadeOut)
+    * [.matches(selector)](#DOM+matches) ⇒ <code>boolean</code>
+    * [.remove()](#DOM+remove)
+    * [.replaceWith()](#DOM+replaceWith)
+    * [.reset()](#DOM+reset)
+    * [.property(property, [value])](#DOM+property) ⇒ <code>string</code> \| <code>Number</code>
+    * [.hide()](#DOM+hide)
+    * [.show([display])](#DOM+show)
+    * [.addClass(newClass)](#DOM+addClass)
+    * [.removeClass([oldClass])](#DOM+removeClass)
+    * [.toggleClass(classes)](#DOM+toggleClass)
+    * [.hasClass(classToCheck)](#DOM+hasClass) ⇒ <code>boolean</code>
+    * [.value(value)](#DOM+value) ⇒ <code>string</code>
+    * [.focus()](#DOM+focus)
+    * [.click(callback)](#DOM+click)
+    * [.keyup(callback)](#DOM+keyup)
+    * [.keydown(callback)](#DOM+keydown)
+    * [.submit(callback)](#DOM+submit)
+    * [.change(callback)](#DOM+change)
+    * [.scroll(callback)](#DOM+scroll)
+    * [.on(event, target, callback)](#DOM+on)
+    * [.filter(element)](#DOM+filter) ⇒ [<code>DOM</code>](#DOM)
+    * [.data(name, [value])](#DOM+data) ⇒ <code>string</code>
+    * [.text([value])](#DOM+text) ⇒ <code>type</code>
+    * [.html([value])](#DOM+html) ⇒ <code>type</code>
+    * [.append(element)](#DOM+append)
+    * [.prepend(element)](#DOM+prepend)
+    * [.each(callback)](#DOM+each)
+    * [.get(index)](#DOM+get) ⇒ <code>HTMLElement</code>
+    * [.first()](#DOM+first) ⇒ [<code>DOM</code>](#DOM)
+    * [.isVisible()](#DOM+isVisible) ⇒ <code>boolean</code>
+    * [.parent()](#DOM+parent) ⇒ [<code>DOM</code>](#DOM)
+    * [.find(selector)](#DOM+find) ⇒ [<code>DOM</code>](#DOM)
+    * [.offset()](#DOM+offset) ⇒ <code>Object</code>
+    * [.closest(selector)](#DOM+closest) ⇒ [<code>DOM</code>](#DOM)
+    * [.attribute(attribute, [value])](#DOM+attribute) ⇒ <code>type</code>
+    * [.after(content)](#DOM+after)
+    * [.before(content)](#DOM+before)
+    * [.style(properties, [value])](#DOM+style) ⇒ <code>string</code>
+    * [.animate(style, time)](#DOM+animate)
+    * [.fadeIn([time], callback)](#DOM+fadeIn)
+    * [.fadeOut([time], callback)](#DOM+fadeOut)
+    * [.matches(selector)](#DOM+matches) ⇒ <code>boolean</code>
+    * [.remove()](#DOM+remove)
+    * [.replaceWith()](#DOM+replaceWith)
+    * [.reset()](#DOM+reset)
+    * [.property(property, [value])](#DOM+property) ⇒ <code>string</code> \| <code>Number</code>
+
+<a name="new_DOM_new"></a>
+
+### new exports.DOM(selector)
+Create a new DOM object
+
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> \| <code>Object</code> \| <code>array</code> | Selector or DOM element to use |
+
+<a name="new_DOM_new"></a>
+
+### new exports.DOM(selector)
+Create a new DOM object
+
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> \| <code>Object</code> \| <code>array</code> | Selector or DOM element to use |
+
+<a name="DOM+hide"></a>
+
+### doM.hide()
+Hide elements by setting their `display` property to 'none'.
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+show"></a>
+
+### doM.show([display])
+Show elements by setting their `display` property to the given value.
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [display] | <code>string</code> | <code>&quot;&#x27;block&#x27;&quot;</code> | Display property to set |
+
+<a name="DOM+addClass"></a>
+
+### doM.addClass(newClass)
+Add a class to the classList object
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| newClass | <code>string</code> | Class name to add |
+
+<a name="DOM+removeClass"></a>
+
+### doM.removeClass([oldClass])
+Remove a given class from the classList object
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [oldClass] | <code>string</code> | <code>null</code> | Class to remove. If it's empty or null, all classes will be removed |
+
+<a name="DOM+toggleClass"></a>
+
+### doM.toggleClass(classes)
+Toggle between two classes
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| classes | <code>string</code> | Space separated class names |
+
+<a name="DOM+hasClass"></a>
+
+### doM.hasClass(classToCheck) ⇒ <code>boolean</code>
+Check if the first element matching the selector has the given class
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>boolean</code> - - Whether the class is present or not  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| classToCheck | <code>string</code> | Class name to check for |
+
+<a name="DOM+value"></a>
+
+### doM.value(value) ⇒ <code>string</code>
+Get or set the value from the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>string</code> - - If no value was provided, this returns the value of the
+element instead of setting it  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| value | <code>string</code> | Value to set to the element. |
+
+<a name="DOM+focus"></a>
+
+### doM.focus()
+Focus on the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+click"></a>
+
+### doM.click(callback)
+Add a callback for the 'click' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+keyup"></a>
+
+### doM.keyup(callback)
+Add a callback for the 'keyup' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+keydown"></a>
+
+### doM.keydown(callback)
+Add a callback for the 'keydown' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+submit"></a>
+
+### doM.submit(callback)
+Add a callback for the 'submit' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+change"></a>
+
+### doM.change(callback)
+Add a callback for the 'change' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+scroll"></a>
+
+### doM.scroll(callback)
+Add a callback for the 'scroll' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+on"></a>
+
+### doM.on(event, target, callback)
+Add a callback function to a given event
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| event | <code>string</code> | Event to add the listener to |
+| target | <code>string</code> | Target element on which to detect the event |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+filter"></a>
+
+### doM.filter(element) ⇒ [<code>DOM</code>](#DOM)
+Filter from the current collection to only those matching the new selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - New DOM instance with the filtered collection  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>string</code> | Selector to filter the collection with |
+
+<a name="DOM+data"></a>
+
+### doM.data(name, [value]) ⇒ <code>string</code>
+Get or set a `data` property
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>string</code> - - If no value is set, this function returns it's current value  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>string</code> | Name of the data property |
+| [value] | <code>string</code> | Value of the property |
+
+<a name="DOM+text"></a>
+
+### doM.text([value]) ⇒ <code>type</code>
+Get or set the text of the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>type</code> - - If no value is present, this function returns its the
+element's current text.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [value] | <code>string</code> | Value to set the text to |
+
+<a name="DOM+html"></a>
+
+### doM.html([value]) ⇒ <code>type</code>
+Get or set the inner HTML of the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>type</code> - - If no value is present, this function returns its the
+element's current HTML.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [value] | <code>string</code> | Value to set the HTML to |
+
+<a name="DOM+append"></a>
+
+### doM.append(element)
+Append an element to the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>string</code> | String representation of the element to add |
+
+<a name="DOM+prepend"></a>
+
+### doM.prepend(element)
+Prepend an element to the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>string</code> | String representation of the element to add |
+
+<a name="DOM+each"></a>
+
+### doM.each(callback)
+Iterate over the collection of elements matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback to run for every element |
+
+<a name="DOM+get"></a>
+
+### doM.get(index) ⇒ <code>HTMLElement</code>
+Get an element from the collection given it's index
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>HTMLElement</code> - - HTML Element in the position indicated by the index  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| index | <code>int</code> | Index of the element to retrieve |
+
+<a name="DOM+first"></a>
+
+### doM.first() ⇒ [<code>DOM</code>](#DOM)
+Get the first element in the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - DOM instance with the first element  
+<a name="DOM+isVisible"></a>
+
+### doM.isVisible() ⇒ <code>boolean</code>
+Check if the elements in the collection are visible by chacking their
+display, offsetWidth and offsetHeight properties
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>boolean</code> - - Whether the elements are visible or not  
+<a name="DOM+parent"></a>
+
+### doM.parent() ⇒ [<code>DOM</code>](#DOM)
+Get the parent of the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - DOM instance of the parent element  
+<a name="DOM+find"></a>
+
+### doM.find(selector) ⇒ [<code>DOM</code>](#DOM)
+Find an element that matches the given selector in the first element of the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - Aegis instance with the element if found  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> | Selector to find the element with |
+
+<a name="DOM+offset"></a>
+
+### doM.offset() ⇒ <code>Object</code>
+Get the top and left offsets of the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>Object</code> - - Object with `top` and `left` offsets  
+<a name="DOM+closest"></a>
+
+### doM.closest(selector) ⇒ [<code>DOM</code>](#DOM)
+Find the closest element matching the given selector. This bubbles up
+from the initial object and then follows to its parents.
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - DOM instance with the closest HTML element matching the selector  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> | Selector to match the closest element with |
+
+<a name="DOM+attribute"></a>
+
+### doM.attribute(attribute, [value]) ⇒ <code>type</code>
+Get or set the value of a given attribute
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>type</code> - - If no value is provided, this function returns the current
+value of the provided attribute  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| attribute | <code>string</code> | Attribute's name |
+| [value] | <code>string</code> \| <code>Number</code> | Value to set the attribute to |
+
+<a name="DOM+after"></a>
+
+### doM.after(content)
+Insert content to the `after` property of an element
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| content | <code>string</code> | String representation of the content to add |
+
+<a name="DOM+before"></a>
+
+### doM.before(content)
+Insert content to the `before` property of an element
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| content | <code>string</code> | String representation of the content to add |
+
+<a name="DOM+style"></a>
+
+### doM.style(properties, [value]) ⇒ <code>string</code>
+Get or modify the `style` properties of the elements matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>string</code> - - If a peoperty is given but not a value for it, this
+function will return its current value  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| properties | <code>string</code> \| <code>Object</code> | Properties to change or get. Can be either an individual property or a JSON object with key-value pairs |
+| [value] | <code>string</code> | Value to set the property to when only changing one property |
+
+<a name="DOM+animate"></a>
+
+### doM.animate(style, time)
+Animate the given `style` properties on all elements in the collection in
+with a given time duration
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| style | <code>Object</code> | JSON object with the key-value pairs of properties to animate |
+| time | <code>int</code> | Time in milliseconds during which the properties will be animated |
+
+<a name="DOM+fadeIn"></a>
+
+### doM.fadeIn([time], callback)
+Use a fade in animation i the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [time] | <code>type</code> | <code>400</code> | Time duration for the animation |
+| callback | <code>type</code> |  | Callback function to run once the animation is over |
+
+<a name="DOM+fadeOut"></a>
+
+### doM.fadeOut([time], callback)
+Use a fade out animation i the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [time] | <code>type</code> | <code>400</code> | Time duration for the animation |
+| callback | <code>type</code> |  | Callback function to run once the animation is over |
+
+<a name="DOM+matches"></a>
+
+### doM.matches(selector) ⇒ <code>boolean</code>
+Check if the first element in the collection matches a given selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>boolean</code> - - Whether the element matches the selector or not  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> | Selector to match |
+
+<a name="DOM+remove"></a>
+
+### doM.remove()
+Remove all elemets in the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+replaceWith"></a>
+
+### doM.replaceWith()
+Replace the first element in the collection with a new one
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+reset"></a>
+
+### doM.reset()
+Reset every element in the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+property"></a>
+
+### doM.property(property, [value]) ⇒ <code>string</code> \| <code>Number</code>
+Get or set a property for the first element in the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>string</code> \| <code>Number</code> - - If no value is provided, this funcion will return the
+current value of the indicated property  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| property | <code>string</code> | Property name to set or get |
+| [value] | <code>string</code> \| <code>Number</code> | Value to set the property to |
+
+<a name="DOM+hide"></a>
+
+### doM.hide()
+Hide elements by setting their `display` property to 'none'.
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+show"></a>
+
+### doM.show([display])
+Show elements by setting their `display` property to the given value.
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [display] | <code>string</code> | <code>&quot;&#x27;block&#x27;&quot;</code> | Display property to set |
+
+<a name="DOM+addClass"></a>
+
+### doM.addClass(newClass)
+Add a class to the classList object
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| newClass | <code>string</code> | Class name to add |
+
+<a name="DOM+removeClass"></a>
+
+### doM.removeClass([oldClass])
+Remove a given class from the classList object
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [oldClass] | <code>string</code> | <code>null</code> | Class to remove. If it's empty or null, all classes will be removed |
+
+<a name="DOM+toggleClass"></a>
+
+### doM.toggleClass(classes)
+Toggle between two classes
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| classes | <code>string</code> | Space separated class names |
+
+<a name="DOM+hasClass"></a>
+
+### doM.hasClass(classToCheck) ⇒ <code>boolean</code>
+Check if the first element matching the selector has the given class
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>boolean</code> - - Whether the class is present or not  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| classToCheck | <code>string</code> | Class name to check for |
+
+<a name="DOM+value"></a>
+
+### doM.value(value) ⇒ <code>string</code>
+Get or set the value from the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>string</code> - - If no value was provided, this returns the value of the
+element instead of setting it  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| value | <code>string</code> | Value to set to the element. |
+
+<a name="DOM+focus"></a>
+
+### doM.focus()
+Focus on the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+click"></a>
+
+### doM.click(callback)
+Add a callback for the 'click' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+keyup"></a>
+
+### doM.keyup(callback)
+Add a callback for the 'keyup' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+keydown"></a>
+
+### doM.keydown(callback)
+Add a callback for the 'keydown' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+submit"></a>
+
+### doM.submit(callback)
+Add a callback for the 'submit' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+change"></a>
+
+### doM.change(callback)
+Add a callback for the 'change' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+scroll"></a>
+
+### doM.scroll(callback)
+Add a callback for the 'scroll' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+on"></a>
+
+### doM.on(event, target, callback)
+Add a callback function to a given event
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| event | <code>string</code> | Event to add the listener to |
+| target | <code>string</code> | Target element on which to detect the event |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+filter"></a>
+
+### doM.filter(element) ⇒ [<code>DOM</code>](#DOM)
+Filter from the current collection to only those matching the new selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - New DOM instance with the filtered collection  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>string</code> | Selector to filter the collection with |
+
+<a name="DOM+data"></a>
+
+### doM.data(name, [value]) ⇒ <code>string</code>
+Get or set a `data` property
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>string</code> - - If no value is set, this function returns it's current value  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>string</code> | Name of the data property |
+| [value] | <code>string</code> | Value of the property |
+
+<a name="DOM+text"></a>
+
+### doM.text([value]) ⇒ <code>type</code>
+Get or set the text of the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>type</code> - - If no value is present, this function returns its the
+element's current text.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [value] | <code>string</code> | Value to set the text to |
+
+<a name="DOM+html"></a>
+
+### doM.html([value]) ⇒ <code>type</code>
+Get or set the inner HTML of the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>type</code> - - If no value is present, this function returns its the
+element's current HTML.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [value] | <code>string</code> | Value to set the HTML to |
+
+<a name="DOM+append"></a>
+
+### doM.append(element)
+Append an element to the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>string</code> | String representation of the element to add |
+
+<a name="DOM+prepend"></a>
+
+### doM.prepend(element)
+Prepend an element to the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>string</code> | String representation of the element to add |
+
+<a name="DOM+each"></a>
+
+### doM.each(callback)
+Iterate over the collection of elements matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback to run for every element |
+
+<a name="DOM+get"></a>
+
+### doM.get(index) ⇒ <code>HTMLElement</code>
+Get an element from the collection given it's index
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>HTMLElement</code> - - HTML Element in the position indicated by the index  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| index | <code>int</code> | Index of the element to retrieve |
+
+<a name="DOM+first"></a>
+
+### doM.first() ⇒ [<code>DOM</code>](#DOM)
+Get the first element in the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - DOM instance with the first element  
+<a name="DOM+isVisible"></a>
+
+### doM.isVisible() ⇒ <code>boolean</code>
+Check if the elements in the collection are visible by chacking their
+display, offsetWidth and offsetHeight properties
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>boolean</code> - - Whether the elements are visible or not  
+<a name="DOM+parent"></a>
+
+### doM.parent() ⇒ [<code>DOM</code>](#DOM)
+Get the parent of the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - DOM instance of the parent element  
+<a name="DOM+find"></a>
+
+### doM.find(selector) ⇒ [<code>DOM</code>](#DOM)
+Find an element that matches the given selector in the first element of the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - Aegis instance with the element if found  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> | Selector to find the element with |
+
+<a name="DOM+offset"></a>
+
+### doM.offset() ⇒ <code>Object</code>
+Get the top and left offsets of the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>Object</code> - - Object with `top` and `left` offsets  
+<a name="DOM+closest"></a>
+
+### doM.closest(selector) ⇒ [<code>DOM</code>](#DOM)
+Find the closest element matching the given selector. This bubbles up
+from the initial object and then follows to its parents.
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - DOM instance with the closest HTML element matching the selector  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> | Selector to match the closest element with |
+
+<a name="DOM+attribute"></a>
+
+### doM.attribute(attribute, [value]) ⇒ <code>type</code>
+Get or set the value of a given attribute
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>type</code> - - If no value is provided, this function returns the current
+value of the provided attribute  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| attribute | <code>string</code> | Attribute's name |
+| [value] | <code>string</code> \| <code>Number</code> | Value to set the attribute to |
+
+<a name="DOM+after"></a>
+
+### doM.after(content)
+Insert content to the `after` property of an element
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| content | <code>string</code> | String representation of the content to add |
+
+<a name="DOM+before"></a>
+
+### doM.before(content)
+Insert content to the `before` property of an element
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| content | <code>string</code> | String representation of the content to add |
+
+<a name="DOM+style"></a>
+
+### doM.style(properties, [value]) ⇒ <code>string</code>
+Get or modify the `style` properties of the elements matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>string</code> - - If a peoperty is given but not a value for it, this
+function will return its current value  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| properties | <code>string</code> \| <code>Object</code> | Properties to change or get. Can be either an individual property or a JSON object with key-value pairs |
+| [value] | <code>string</code> | Value to set the property to when only changing one property |
+
+<a name="DOM+animate"></a>
+
+### doM.animate(style, time)
+Animate the given `style` properties on all elements in the collection in
+with a given time duration
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| style | <code>Object</code> | JSON object with the key-value pairs of properties to animate |
+| time | <code>int</code> | Time in milliseconds during which the properties will be animated |
+
+<a name="DOM+fadeIn"></a>
+
+### doM.fadeIn([time], callback)
+Use a fade in animation i the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [time] | <code>type</code> | <code>400</code> | Time duration for the animation |
+| callback | <code>type</code> |  | Callback function to run once the animation is over |
+
+<a name="DOM+fadeOut"></a>
+
+### doM.fadeOut([time], callback)
+Use a fade out animation i the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [time] | <code>type</code> | <code>400</code> | Time duration for the animation |
+| callback | <code>type</code> |  | Callback function to run once the animation is over |
+
+<a name="DOM+matches"></a>
+
+### doM.matches(selector) ⇒ <code>boolean</code>
+Check if the first element in the collection matches a given selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>boolean</code> - - Whether the element matches the selector or not  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> | Selector to match |
+
+<a name="DOM+remove"></a>
+
+### doM.remove()
+Remove all elemets in the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+replaceWith"></a>
+
+### doM.replaceWith()
+Replace the first element in the collection with a new one
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+reset"></a>
+
+### doM.reset()
+Reset every element in the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+property"></a>
+
+### doM.property(property, [value]) ⇒ <code>string</code> \| <code>Number</code>
+Get or set a property for the first element in the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>string</code> \| <code>Number</code> - - If no value is provided, this funcion will return the
+current value of the indicated property  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| property | <code>string</code> | Property name to set or get |
+| [value] | <code>string</code> \| <code>Number</code> | Value to set the property to |
+
+<a name="FileSystem"></a>
+
+## FileSystem
+A simple class wrapper for the File and FileReader web API, while this class
+doesn't actually provide acces to the host file system, it does provide useful
+utilities for form file inputs and remote content loading.
+
+**Kind**: global class  
+
+* [FileSystem](#FileSystem)
+    * [.readRemote(url, [type], [props])](#FileSystem.readRemote) ⇒ <code>Promise.&lt;(ArrayBuffer\|string)&gt;</code>
+    * [.read(file, [type])](#FileSystem.read) ⇒ <code>Promise.&lt;Event, (ArrayBuffer\|string)&gt;</code>
+    * [.create(file, content, [type])](#FileSystem.create) ⇒ <code>Promise.&lt;File&gt;</code>
+    * [.extension(name)](#FileSystem.extension) ⇒ <code>string</code>
+    * [.isImage(name)](#FileSystem.isImage) ⇒ <code>boolean</code>
+
+<a name="FileSystem.readRemote"></a>
+
+### FileSystem.readRemote(url, [type], [props]) ⇒ <code>Promise.&lt;(ArrayBuffer\|string)&gt;</code>
+**Kind**: static method of [<code>FileSystem</code>](#FileSystem)  
+**Returns**: <code>Promise.&lt;(ArrayBuffer\|string)&gt;</code> - - Content of the file. The format
+depends on the type parameter used.  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| url | <code>type</code> |  | URL to fetch the file from |
+| [type] | <code>type</code> | <code>&#x27;base64&#x27;</code> | Type of data to be read, values can be 'text', 'base64' and 'buffer'. This parameter is used for the read () function. |
+| [props] | <code>Object</code> | <code>{}</code> | Props to send to the Request object |
+
+<a name="FileSystem.read"></a>
+
+### FileSystem.read(file, [type]) ⇒ <code>Promise.&lt;Event, (ArrayBuffer\|string)&gt;</code>
+**Kind**: static method of [<code>FileSystem</code>](#FileSystem)  
+**Returns**: <code>Promise.&lt;Event, (ArrayBuffer\|string)&gt;</code> - - Promise that resolves to
+the Load event and content of the file. The format depends on the type
+parameter used.  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| file | <code>File</code> \| <code>Blob</code> |  | File to read |
+| [type] | <code>string</code> | <code>&quot;&#x27;text&#x27;&quot;</code> | Type of data to be read, values can be 'text', 'base64' and 'buffer'. |
+
+<a name="FileSystem.create"></a>
+
+### FileSystem.create(file, content, [type]) ⇒ <code>Promise.&lt;File&gt;</code>
+**Kind**: static method of [<code>FileSystem</code>](#FileSystem)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| file | <code>string</code> |  | Name of the file (Including extension) |
+| content | <code>ArrayBuffer</code> \| <code>ArrayBufferView</code> \| <code>Blob</code> \| <code>string</code> |  | Content to save in the file |
+| [type] | <code>string</code> | <code>&quot;&#x27;text/plain&#x27;&quot;</code> | Mime Type for the file |
+
+<a name="FileSystem.extension"></a>
+
+### FileSystem.extension(name) ⇒ <code>string</code>
+**Kind**: static method of [<code>FileSystem</code>](#FileSystem)  
+**Returns**: <code>string</code> - - File extension without the leading dot (.)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>string</code> | Name or full path of the file |
+
+<a name="FileSystem.isImage"></a>
+
+### FileSystem.isImage(name) ⇒ <code>boolean</code>
+**Kind**: static method of [<code>FileSystem</code>](#FileSystem)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>string</code> | Name or full path of the file |
+
+<a name="Form"></a>
+
+## Form
+Utility class that provides simple function for filling and retrieving values
+from froms. This class requires the use of the `data-form` attribute.
+
+**Kind**: global class  
+
+* [Form](#Form)
+    * [.fill(name, data)](#Form.fill)
+    * [.values(name)](#Form.values) ⇒ <code>Object</code>
+
+<a name="Form.fill"></a>
+
+### Form.fill(name, data)
+**Kind**: static method of [<code>Form</code>](#Form)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>string</code> | Form name. Must match the `data-form` attribute of the Form. |
+| data | <code>Object</code> | JSON object with key-value pairs to fill the inputs. |
+
+<a name="Form.values"></a>
+
+### Form.values(name) ⇒ <code>Object</code>
+**Kind**: static method of [<code>Form</code>](#Form)  
+**Returns**: <code>Object</code> - - Key-value JSON object  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>string</code> | Form name. Must match the `data-form` attribute of the Form. |
+
+<a name="Platform"></a>
+
+## Platform
+General checks for what kind of platform is the being used to run the app.
+
+**Kind**: global class  
+
+* [Platform](#Platform)
+    * [.retina()](#Platform.retina) ⇒ <code>boolean</code>
+    * [.portrait()](#Platform.portrait) ⇒ <code>boolean</code>
+    * [.landscape()](#Platform.landscape) ⇒ <code>boolean</code>
+    * [.orientation()](#Platform.orientation) ⇒ <code>string</code>
+    * [.electron()](#Platform.electron) ⇒ <code>boolean</code>
+    * [.cordova()](#Platform.cordova) ⇒ <code>boolean</code>
+    * [.desktop()](#Platform.desktop) ⇒ <code>boolean</code>
+    * [.mobile([platform])](#Platform.mobile) ⇒ <code>boolean</code>
+    * [.serviceWorkers()](#Platform.serviceWorkers) ⇒ <code>boolean</code>
+
+<a name="Platform.retina"></a>
+
+### Platform.retina() ⇒ <code>boolean</code>
+Check if the screen has a retina pixel ratio
+
+**Kind**: static method of [<code>Platform</code>](#Platform)  
+<a name="Platform.portrait"></a>
+
+### Platform.portrait() ⇒ <code>boolean</code>
+Check if the device is on portrait orientation
+
+**Kind**: static method of [<code>Platform</code>](#Platform)  
+<a name="Platform.landscape"></a>
+
+### Platform.landscape() ⇒ <code>boolean</code>
+Check if the device is on landscape orientation
+
+**Kind**: static method of [<code>Platform</code>](#Platform)  
+<a name="Platform.orientation"></a>
+
+### Platform.orientation() ⇒ <code>string</code>
+Get device Orientation
+
+**Kind**: static method of [<code>Platform</code>](#Platform)  
+**Returns**: <code>string</code> - portrait | landscape  
+<a name="Platform.electron"></a>
+
+### Platform.electron() ⇒ <code>boolean</code>
+Check if the app is running over Electron
+
+**Kind**: static method of [<code>Platform</code>](#Platform)  
+<a name="Platform.cordova"></a>
+
+### Platform.cordova() ⇒ <code>boolean</code>
+Check if the app is running over Cordova
+
+**Kind**: static method of [<code>Platform</code>](#Platform)  
+<a name="Platform.desktop"></a>
+
+### Platform.desktop() ⇒ <code>boolean</code>
+Check if the app is running in a desktop platform
+
+**Kind**: static method of [<code>Platform</code>](#Platform)  
+<a name="Platform.mobile"></a>
+
+### Platform.mobile([platform]) ⇒ <code>boolean</code>
+Check if the app is running in a mobile platform
+
+**Kind**: static method of [<code>Platform</code>](#Platform)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [platform] | <code>string</code> | <code>&quot;&#x27;Any&#x27;&quot;</code> | Check for a specific mobile platform [Android | iOS | Opera | Windows | BlackBerry | Any] |
+
+<a name="Platform.serviceWorkers"></a>
+
+### Platform.serviceWorkers() ⇒ <code>boolean</code>
+**Kind**: static method of [<code>Platform</code>](#Platform)  
+**Returns**: <code>boolean</code> - - Whether they're supported or not  
+<a name="Preload"></a>
+
+## Preload
+A simple class for asset preloading. This class assumes you have a service
+worker set up that will be caching all requests.
+
+**Kind**: global class  
+
+* [Preload](#Preload)
+    * [.image(route)](#Preload.image) ⇒ <code>Promise</code>
+    * [.file(route)](#Preload.file) ⇒ <code>Promise</code>
+
+<a name="Preload.image"></a>
+
+### Preload.image(route) ⇒ <code>Promise</code>
+**Kind**: static method of [<code>Preload</code>](#Preload)  
+**Returns**: <code>Promise</code> - - Resolves to the image object or gets rejected with
+the rejection event  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| route | <code>string</code> | Route to the image |
+
+<a name="Preload.file"></a>
+
+### Preload.file(route) ⇒ <code>Promise</code>
+**Kind**: static method of [<code>Preload</code>](#Preload)  
+**Returns**: <code>Promise</code> - - Resolves or rejects depending on request success  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| route | <code>string</code> | Route to the file |
+
+<a name="Request"></a>
+
+## Request
+Simple Wrapper for the fetch API, providing simple functions to handle requests
+
+**Kind**: global class  
+
+* [Request](#Request)
+    * [.serialize(data)](#Request.serialize) ⇒ <code>string</code>
+    * [.get(url, [data], [options])](#Request.get) ⇒ <code>Promise.&lt;Response&gt;</code>
+    * [.post(url, [data], [options])](#Request.post) ⇒ <code>Promise.&lt;Response&gt;</code>
+    * [.put(url, [data], [options])](#Request.put) ⇒ <code>Promise.&lt;Response&gt;</code>
+    * [.delete(url, [data], [options])](#Request.delete) ⇒ <code>Promise.&lt;Response&gt;</code>
+    * [.json(url, [data], [options])](#Request.json) ⇒ <code>Promise.&lt;Object&gt;</code>
+    * [.blob(url, [data], [options])](#Request.blob) ⇒ <code>Promise.&lt;Blob&gt;</code>
+
+<a name="Request.serialize"></a>
+
+### Request.serialize(data) ⇒ <code>string</code>
+**Kind**: static method of [<code>Request</code>](#Request)  
+**Returns**: <code>string</code> - - Serialized Data  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| data | <code>Object</code> | Key-value object of data to serialize |
+
+<a name="Request.get"></a>
+
+### Request.get(url, [data], [options]) ⇒ <code>Promise.&lt;Response&gt;</code>
+**Kind**: static method of [<code>Request</code>](#Request)  
+**Returns**: <code>Promise.&lt;Response&gt;</code> - - Resolves to the response of the request  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| url | <code>string</code> |  | URL to make the request to |
+| [data] | <code>Object</code> | <code>{}</code> | Parameters to send in the URL, represented as a JSON object. These parameters will be sent as a query in the URL |
+| [options] | <code>Object</code> | <code>{}</code> | Options object for configurations you want to use in the fetch () request made. |
+
+<a name="Request.post"></a>
+
+### Request.post(url, [data], [options]) ⇒ <code>Promise.&lt;Response&gt;</code>
+**Kind**: static method of [<code>Request</code>](#Request)  
+**Returns**: <code>Promise.&lt;Response&gt;</code> - - Resolves to the response of the request  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| url | <code>string</code> |  | URL to make the request |
+| [data] | <code>Object</code> | <code>{}</code> | Set of data to send in the URL, represented as a JSON object |
+| [options] | <code>Object</code> | <code>{}</code> | Options object for configurations you want to use in the fetch () request made. The Content-Type header is used to serialize data in the correct format and defaults to application/x-www-form-urlencoded |
+
+<a name="Request.put"></a>
+
+### Request.put(url, [data], [options]) ⇒ <code>Promise.&lt;Response&gt;</code>
+**Kind**: static method of [<code>Request</code>](#Request)  
+**Returns**: <code>Promise.&lt;Response&gt;</code> - - Resolves to the response of the request  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| url | <code>string</code> |  | URL to make the request |
+| [data] | <code>Object</code> | <code>{}</code> | Set of data to send in the URL, represented as a JSON object |
+| [options] | <code>Object</code> | <code>{}</code> | Options object for configurations you want to use in the fetch () request made. The Content-Type header is used to serialize data in the correct format and defaults to application/x-www-form-urlencoded |
+
+<a name="Request.delete"></a>
+
+### Request.delete(url, [data], [options]) ⇒ <code>Promise.&lt;Response&gt;</code>
+**Kind**: static method of [<code>Request</code>](#Request)  
+**Returns**: <code>Promise.&lt;Response&gt;</code> - - Resolves to the response of the request  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| url | <code>string</code> |  | URL to make the request |
+| [data] | <code>Object</code> | <code>{}</code> | Parameters to send in the URL, represented as a JSON object. These parameters will be sent as a query in the URL |
+| [options] | <code>Object</code> | <code>{}</code> | Options object for configurations you want to use in the fetch () request made. The Content-Type header is used to serialize data in the correct format and defaults to application/x-www-form-urlencoded |
+
+<a name="Request.json"></a>
+
+### Request.json(url, [data], [options]) ⇒ <code>Promise.&lt;Object&gt;</code>
+**Kind**: static method of [<code>Request</code>](#Request)  
+**Returns**: <code>Promise.&lt;Object&gt;</code> - - Resolves to the json object obtained from the request response  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| url | <code>string</code> |  | URL to make the request to |
+| [data] | <code>Object</code> | <code>{}</code> | Parameters to send in the URL, represented as a JSON object. These parameters will be sent as a query in the URL |
+| [options] | <code>Object</code> | <code>{}</code> | Options object for configurations you want to use in the fetch () request made. |
+
+<a name="Request.blob"></a>
+
+### Request.blob(url, [data], [options]) ⇒ <code>Promise.&lt;Blob&gt;</code>
+**Kind**: static method of [<code>Request</code>](#Request)  
+**Returns**: <code>Promise.&lt;Blob&gt;</code> - - Resolves to the blob obtained from the request response  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| url | <code>string</code> |  | URL to make the request to |
+| [data] | <code>Object</code> | <code>{}</code> | Parameters to send in the URL, represented as a JSON object. These parameters will be sent as a query in the URL |
+| [options] | <code>Object</code> | <code>{}</code> | Options object for configurations you want to use in the fetch () request made. |
+
+<a name="Space"></a>
+
+## Space
+Space provides a simple wrapper for different Storage APIs. It aims to
+provide data independence through storage namespaces and versioning, allowing
+transparent data formatting and content modifications through versions.
+
+While this class documentation provides some information, specific details may
+be addressed on the documentation of each adapter.
+
+**Kind**: global class  
+
+* [Space](#Space)
+    * [new exports.Space([adapter], [configuration])](#new_Space_new)
+    * [.configuration(object)](#Space+configuration) ⇒ <code>object</code>
+    * [.open()](#Space+open) ⇒ <code>Promise</code>
+    * [.set(key, value)](#Space+set) ⇒ <code>Promise.&lt;{key, value}&gt;</code>
+    * [.update(key, value)](#Space+update) ⇒ <code>Promise.&lt;{key, value}&gt;</code>
+    * [.get(key)](#Space+get) ⇒ <code>Promise.&lt;Object&gt;</code> \| <code>Promise.&lt;string&gt;</code> \| <code>Promise.&lt;Number&gt;</code>
+    * [.getAll()](#Space+getAll) ⇒ <code>Promise.&lt;Object&gt;</code>
+    * [.each(callback)](#Space+each) ⇒ <code>Promise</code>
+    * [.contains(key)](#Space+contains) ⇒ <code>Promise</code>
+    * [.upgrade(oldVersion, newVersion)](#Space+upgrade) ⇒ <code>Promise</code>
+    * [.rename(name)](#Space+rename) ⇒ <code>Promise</code>
+    * [.onCreate(callback)](#Space+onCreate)
+    * [.onUpdate(callback)](#Space+onUpdate)
+    * [.onDelete(callback)](#Space+onDelete)
+    * [.addTransformation(id, get, set)](#Space+addTransformation)
+    * [.removeTransformation(id)](#Space+removeTransformation)
+    * [.key(index, [full])](#Space+key) ⇒ <code>Promise.&lt;string&gt;</code>
+    * [.keys([full])](#Space+keys) ⇒ <code>Promise.&lt;Array.&lt;string&gt;&gt;</code>
+    * [.remove(key)](#Space+remove) ⇒ <code>Promise.&lt;key, value&gt;</code>
+    * [.clear()](#Space+clear) ⇒ <code>Promise</code>
+
+<a name="new_Space_new"></a>
+
+### new exports.Space([adapter], [configuration])
+Create a new Space Object. If no name and version is defined, the global LocalSpace space is used.
+
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [adapter] | [<code>SpaceAdapter</code>](#SpaceAdapter) | <code>SpaceAdapter.LocalStorage</code> | Space Adapter to use. Currently LocalStorage, SessionStorage, IndexedDB and Server are available |
+| [configuration] | <code>Object</code> | <code>{}</code> | Configuration object for the space. This configuration may change depending on the adapter used, however all adapters have support for a name, version and store properties. |
+| configuration.name | <code>string</code> |  | Name of the Space |
+| configuration.version | <code>string</code> |  | Version of the Space in Semantic versioning syntax |
+| configuration.store | <code>string</code> |  | Name of the Object Store to use |
+
+<a name="Space+configuration"></a>
+
+### space.configuration(object) ⇒ <code>object</code>
+Modify the space configuration, it will also be passed down to the adapter
+using its configuration () function.
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+**Returns**: <code>object</code> - - Configuration object if no param was passed  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| object | <code>object</code> | <code></code> | Configuration object to set up |
+
+<a name="Space+open"></a>
+
+### space.open() ⇒ <code>Promise</code>
+Open the Storage Object to be used depending on the SpaceAdapter
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+<a name="Space+set"></a>
+
+### space.set(key, value) ⇒ <code>Promise.&lt;{key, value}&gt;</code>
+Store a key-value pair
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| key | <code>string</code> | Key with which this value will be saved |
+| value | <code>Object</code> \| <code>string</code> \| <code>Number</code> | Value to save |
+
+<a name="Space+update"></a>
+
+### space.update(key, value) ⇒ <code>Promise.&lt;{key, value}&gt;</code>
+Update a key-value pair. In difference with the set () method, the update
+method will use an Object.assign () in the case of objects so no value is
+lost.
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| key | <code>string</code> | Key with which this value will be saved |
+| value | <code>Object</code> \| <code>string</code> \| <code>Number</code> | Value to save |
+
+<a name="Space+get"></a>
+
+### space.get(key) ⇒ <code>Promise.&lt;Object&gt;</code> \| <code>Promise.&lt;string&gt;</code> \| <code>Promise.&lt;Number&gt;</code>
+Retrieves a value from storage given it's key
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+**Returns**: <code>Promise.&lt;Object&gt;</code> \| <code>Promise.&lt;string&gt;</code> \| <code>Promise.&lt;Number&gt;</code> - - Resolves to the retreived value
+or its rejected if it doesn't exist.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| key | <code>string</code> | Key with which the value was saved |
+
+<a name="Space+getAll"></a>
+
+### space.getAll() ⇒ <code>Promise.&lt;Object&gt;</code>
+Retrieves all the values in the space in a key-value JSON object
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+**Returns**: <code>Promise.&lt;Object&gt;</code> - - Resolves to the retreived values  
+<a name="Space+each"></a>
+
+### space.each(callback) ⇒ <code>Promise</code>
+Iterate over every value in the space
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+**Returns**: <code>Promise</code> - - Resolves when all callbacks have been resolved.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | A callback function receiving the key and value of a value. Must return a callback |
+
+<a name="Space+contains"></a>
+
+### space.contains(key) ⇒ <code>Promise</code>
+Check if a space contains a given key. Not all adapters may give this information
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+**Returns**: <code>Promise</code> - - Promise gets resolved if it exists and rejected if
+doesn't  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| key | <code>string</code> | Key to look for. |
+
+<a name="Space+upgrade"></a>
+
+### space.upgrade(oldVersion, newVersion) ⇒ <code>Promise</code>
+Upgrade a Space Version. Not all adapters may provide this functionality
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+**Returns**: <code>Promise</code> - - Result of the upgrade operation  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| oldVersion | <code>string</code> | The version of the storage to be upgraded |
+| newVersion | <code>string</code> | The version to be upgraded to |
+
+<a name="Space+rename"></a>
+
+### space.rename(name) ⇒ <code>Promise</code>
+Rename a Space. Not all adapters may provide this functionality
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+**Returns**: <code>Promise</code> - Result of the rename operation  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>string</code> | New name to be used. |
+
+<a name="Space+onCreate"></a>
+
+### space.onCreate(callback)
+Add a callback function to be run every time a value is created.
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback Function. Key and Value pair will be sent as parameters when run. |
+
+<a name="Space+onUpdate"></a>
+
+### space.onUpdate(callback)
+Add a callback function to be run every time a value is updated.
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback Function. Key and Value pair will be sent as parameters when run. |
+
+<a name="Space+onDelete"></a>
+
+### space.onDelete(callback)
+Add a callback function to be run every time a value is deleted.
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback Function. Key and Value pair will be sent as parameters when run. |
+
+<a name="Space+addTransformation"></a>
+
+### space.addTransformation(id, get, set)
+Add a transformation function to the space.
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| id | <code>string</code> | Unique transformation name or identifier |
+| get | <code>function</code> \| <code>null</code> | Transformation function to apply to the content before returning the value when using the get () function . |
+| set | <code>function</code> \| <code>null</code> | Transformation function to apply to the content before saving it when using the set () function befo. |
+
+<a name="Space+removeTransformation"></a>
+
+### space.removeTransformation(id)
+Remove a transformation function given its id
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| id | <code>string</code> | Name or identifier of the transformation to remove |
+
+<a name="Space+key"></a>
+
+### space.key(index, [full]) ⇒ <code>Promise.&lt;string&gt;</code>
+Get the key that corresponds to a given index in the storage. Not all adapters may provide this functionality
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+**Returns**: <code>Promise.&lt;string&gt;</code> - - Resolves to the key's name  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| index | <code>Number</code> |  | Index to get the key from |
+| [full] | <code>boolean</code> | <code>false</code> | Whether to return the full key name including space id or just the key name |
+
+<a name="Space+keys"></a>
+
+### space.keys([full]) ⇒ <code>Promise.&lt;Array.&lt;string&gt;&gt;</code>
+Return all keys stored in the space. Not all adapters may provide this functionality
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+**Returns**: <code>Promise.&lt;Array.&lt;string&gt;&gt;</code> - - Array of keys  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [full] | <code>boolean</code> | <code>false</code> | Whether to return the full key name including space id or just the key name |
+
+<a name="Space+remove"></a>
+
+### space.remove(key) ⇒ <code>Promise.&lt;key, value&gt;</code>
+Delete a value from the space given it's key
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+**Returns**: <code>Promise.&lt;key, value&gt;</code> - - Resolves to the key and value of the deleted object  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| key | <code>string</code> | Key of the item to delete |
+
+<a name="Space+clear"></a>
+
+### space.clear() ⇒ <code>Promise</code>
+Clear the entire space
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+**Returns**: <code>Promise</code> - - Result of the clear operation  
+<a name="Text"></a>
+
+## Text
+Provides utility functions for texts
+
+**Kind**: global class  
+
+* [Text](#Text)
+    * [.capitalize(text)](#Text.capitalize) ⇒ <code>string</code>
+    * [.suffix(key, text)](#Text.suffix) ⇒ <code>string</code>
+    * [.selection()](#Text.selection) ⇒ <code>string</code>
+    * [.prefix(key, text)](#Text.prefix) ⇒ <code>string</code>
+    * [.friendly(text)](#Text.friendly) ⇒ <code>string</code>
+
+<a name="Text.capitalize"></a>
+
+### Text.capitalize(text) ⇒ <code>string</code>
+**Kind**: static method of [<code>Text</code>](#Text)  
+**Returns**: <code>string</code> - - Capitalized string  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| text | <code>string</code> | Text string to capitalize |
+
+<a name="Text.suffix"></a>
+
+### Text.suffix(key, text) ⇒ <code>string</code>
+**Kind**: static method of [<code>Text</code>](#Text)  
+**Returns**: <code>string</code> - - Suffix  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| key | <code>string</code> | Key part of the string |
+| text | <code>string</code> | Full string to extract the suffix from |
+
+<a name="Text.selection"></a>
+
+### Text.selection() ⇒ <code>string</code>
+**Kind**: static method of [<code>Text</code>](#Text)  
+**Returns**: <code>string</code> - - Text selection  
+<a name="Text.prefix"></a>
+
+### Text.prefix(key, text) ⇒ <code>string</code>
+**Kind**: static method of [<code>Text</code>](#Text)  
+**Returns**: <code>string</code> - - Prefix  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| key | <code>string</code> | Key part of the string |
+| text | <code>string</code> | Full string to extract the prefix from |
+
+<a name="Text.friendly"></a>
+
+### Text.friendly(text) ⇒ <code>string</code>
+**Kind**: static method of [<code>Text</code>](#Text)  
+**Returns**: <code>string</code> - - Friendly URL  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| text | <code>string</code> | The text to build the url from |
+
+<a name="Util"></a>
+
+## Util
+Provides diverse utility functions
+
+**Kind**: global class  
+<a name="DOM"></a>
+
+## DOM
+Simple DOM manipulation functions
+
+**Kind**: global class  
+
+* [DOM](#DOM)
+    * [new exports.DOM(selector)](#new_DOM_new)
+    * [new exports.DOM(selector)](#new_DOM_new)
+    * [.hide()](#DOM+hide)
+    * [.show([display])](#DOM+show)
+    * [.addClass(newClass)](#DOM+addClass)
+    * [.removeClass([oldClass])](#DOM+removeClass)
+    * [.toggleClass(classes)](#DOM+toggleClass)
+    * [.hasClass(classToCheck)](#DOM+hasClass) ⇒ <code>boolean</code>
+    * [.value(value)](#DOM+value) ⇒ <code>string</code>
+    * [.focus()](#DOM+focus)
+    * [.click(callback)](#DOM+click)
+    * [.keyup(callback)](#DOM+keyup)
+    * [.keydown(callback)](#DOM+keydown)
+    * [.submit(callback)](#DOM+submit)
+    * [.change(callback)](#DOM+change)
+    * [.scroll(callback)](#DOM+scroll)
+    * [.on(event, target, callback)](#DOM+on)
+    * [.filter(element)](#DOM+filter) ⇒ [<code>DOM</code>](#DOM)
+    * [.data(name, [value])](#DOM+data) ⇒ <code>string</code>
+    * [.text([value])](#DOM+text) ⇒ <code>type</code>
+    * [.html([value])](#DOM+html) ⇒ <code>type</code>
+    * [.append(element)](#DOM+append)
+    * [.prepend(element)](#DOM+prepend)
+    * [.each(callback)](#DOM+each)
+    * [.get(index)](#DOM+get) ⇒ <code>HTMLElement</code>
+    * [.first()](#DOM+first) ⇒ [<code>DOM</code>](#DOM)
+    * [.isVisible()](#DOM+isVisible) ⇒ <code>boolean</code>
+    * [.parent()](#DOM+parent) ⇒ [<code>DOM</code>](#DOM)
+    * [.find(selector)](#DOM+find) ⇒ [<code>DOM</code>](#DOM)
+    * [.offset()](#DOM+offset) ⇒ <code>Object</code>
+    * [.closest(selector)](#DOM+closest) ⇒ [<code>DOM</code>](#DOM)
+    * [.attribute(attribute, [value])](#DOM+attribute) ⇒ <code>type</code>
+    * [.after(content)](#DOM+after)
+    * [.before(content)](#DOM+before)
+    * [.style(properties, [value])](#DOM+style) ⇒ <code>string</code>
+    * [.animate(style, time)](#DOM+animate)
+    * [.fadeIn([time], callback)](#DOM+fadeIn)
+    * [.fadeOut([time], callback)](#DOM+fadeOut)
+    * [.matches(selector)](#DOM+matches) ⇒ <code>boolean</code>
+    * [.remove()](#DOM+remove)
+    * [.replaceWith()](#DOM+replaceWith)
+    * [.reset()](#DOM+reset)
+    * [.property(property, [value])](#DOM+property) ⇒ <code>string</code> \| <code>Number</code>
+    * [.hide()](#DOM+hide)
+    * [.show([display])](#DOM+show)
+    * [.addClass(newClass)](#DOM+addClass)
+    * [.removeClass([oldClass])](#DOM+removeClass)
+    * [.toggleClass(classes)](#DOM+toggleClass)
+    * [.hasClass(classToCheck)](#DOM+hasClass) ⇒ <code>boolean</code>
+    * [.value(value)](#DOM+value) ⇒ <code>string</code>
+    * [.focus()](#DOM+focus)
+    * [.click(callback)](#DOM+click)
+    * [.keyup(callback)](#DOM+keyup)
+    * [.keydown(callback)](#DOM+keydown)
+    * [.submit(callback)](#DOM+submit)
+    * [.change(callback)](#DOM+change)
+    * [.scroll(callback)](#DOM+scroll)
+    * [.on(event, target, callback)](#DOM+on)
+    * [.filter(element)](#DOM+filter) ⇒ [<code>DOM</code>](#DOM)
+    * [.data(name, [value])](#DOM+data) ⇒ <code>string</code>
+    * [.text([value])](#DOM+text) ⇒ <code>type</code>
+    * [.html([value])](#DOM+html) ⇒ <code>type</code>
+    * [.append(element)](#DOM+append)
+    * [.prepend(element)](#DOM+prepend)
+    * [.each(callback)](#DOM+each)
+    * [.get(index)](#DOM+get) ⇒ <code>HTMLElement</code>
+    * [.first()](#DOM+first) ⇒ [<code>DOM</code>](#DOM)
+    * [.isVisible()](#DOM+isVisible) ⇒ <code>boolean</code>
+    * [.parent()](#DOM+parent) ⇒ [<code>DOM</code>](#DOM)
+    * [.find(selector)](#DOM+find) ⇒ [<code>DOM</code>](#DOM)
+    * [.offset()](#DOM+offset) ⇒ <code>Object</code>
+    * [.closest(selector)](#DOM+closest) ⇒ [<code>DOM</code>](#DOM)
+    * [.attribute(attribute, [value])](#DOM+attribute) ⇒ <code>type</code>
+    * [.after(content)](#DOM+after)
+    * [.before(content)](#DOM+before)
+    * [.style(properties, [value])](#DOM+style) ⇒ <code>string</code>
+    * [.animate(style, time)](#DOM+animate)
+    * [.fadeIn([time], callback)](#DOM+fadeIn)
+    * [.fadeOut([time], callback)](#DOM+fadeOut)
+    * [.matches(selector)](#DOM+matches) ⇒ <code>boolean</code>
+    * [.remove()](#DOM+remove)
+    * [.replaceWith()](#DOM+replaceWith)
+    * [.reset()](#DOM+reset)
+    * [.property(property, [value])](#DOM+property) ⇒ <code>string</code> \| <code>Number</code>
+
+<a name="new_DOM_new"></a>
+
+### new exports.DOM(selector)
+Create a new DOM object
+
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> \| <code>Object</code> \| <code>array</code> | Selector or DOM element to use |
+
+<a name="new_DOM_new"></a>
+
+### new exports.DOM(selector)
+Create a new DOM object
+
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> \| <code>Object</code> \| <code>array</code> | Selector or DOM element to use |
+
+<a name="DOM+hide"></a>
+
+### doM.hide()
+Hide elements by setting their `display` property to 'none'.
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+show"></a>
+
+### doM.show([display])
+Show elements by setting their `display` property to the given value.
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [display] | <code>string</code> | <code>&quot;&#x27;block&#x27;&quot;</code> | Display property to set |
+
+<a name="DOM+addClass"></a>
+
+### doM.addClass(newClass)
+Add a class to the classList object
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| newClass | <code>string</code> | Class name to add |
+
+<a name="DOM+removeClass"></a>
+
+### doM.removeClass([oldClass])
+Remove a given class from the classList object
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [oldClass] | <code>string</code> | <code>null</code> | Class to remove. If it's empty or null, all classes will be removed |
+
+<a name="DOM+toggleClass"></a>
+
+### doM.toggleClass(classes)
+Toggle between two classes
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| classes | <code>string</code> | Space separated class names |
+
+<a name="DOM+hasClass"></a>
+
+### doM.hasClass(classToCheck) ⇒ <code>boolean</code>
+Check if the first element matching the selector has the given class
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>boolean</code> - - Whether the class is present or not  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| classToCheck | <code>string</code> | Class name to check for |
+
+<a name="DOM+value"></a>
+
+### doM.value(value) ⇒ <code>string</code>
+Get or set the value from the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>string</code> - - If no value was provided, this returns the value of the
+element instead of setting it  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| value | <code>string</code> | Value to set to the element. |
+
+<a name="DOM+focus"></a>
+
+### doM.focus()
+Focus on the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+click"></a>
+
+### doM.click(callback)
+Add a callback for the 'click' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+keyup"></a>
+
+### doM.keyup(callback)
+Add a callback for the 'keyup' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+keydown"></a>
+
+### doM.keydown(callback)
+Add a callback for the 'keydown' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+submit"></a>
+
+### doM.submit(callback)
+Add a callback for the 'submit' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+change"></a>
+
+### doM.change(callback)
+Add a callback for the 'change' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+scroll"></a>
+
+### doM.scroll(callback)
+Add a callback for the 'scroll' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+on"></a>
+
+### doM.on(event, target, callback)
+Add a callback function to a given event
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| event | <code>string</code> | Event to add the listener to |
+| target | <code>string</code> | Target element on which to detect the event |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+filter"></a>
+
+### doM.filter(element) ⇒ [<code>DOM</code>](#DOM)
+Filter from the current collection to only those matching the new selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - New DOM instance with the filtered collection  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>string</code> | Selector to filter the collection with |
+
+<a name="DOM+data"></a>
+
+### doM.data(name, [value]) ⇒ <code>string</code>
+Get or set a `data` property
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>string</code> - - If no value is set, this function returns it's current value  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>string</code> | Name of the data property |
+| [value] | <code>string</code> | Value of the property |
+
+<a name="DOM+text"></a>
+
+### doM.text([value]) ⇒ <code>type</code>
+Get or set the text of the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>type</code> - - If no value is present, this function returns its the
+element's current text.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [value] | <code>string</code> | Value to set the text to |
+
+<a name="DOM+html"></a>
+
+### doM.html([value]) ⇒ <code>type</code>
+Get or set the inner HTML of the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>type</code> - - If no value is present, this function returns its the
+element's current HTML.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [value] | <code>string</code> | Value to set the HTML to |
+
+<a name="DOM+append"></a>
+
+### doM.append(element)
+Append an element to the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>string</code> | String representation of the element to add |
+
+<a name="DOM+prepend"></a>
+
+### doM.prepend(element)
+Prepend an element to the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>string</code> | String representation of the element to add |
+
+<a name="DOM+each"></a>
+
+### doM.each(callback)
+Iterate over the collection of elements matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback to run for every element |
+
+<a name="DOM+get"></a>
+
+### doM.get(index) ⇒ <code>HTMLElement</code>
+Get an element from the collection given it's index
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>HTMLElement</code> - - HTML Element in the position indicated by the index  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| index | <code>int</code> | Index of the element to retrieve |
+
+<a name="DOM+first"></a>
+
+### doM.first() ⇒ [<code>DOM</code>](#DOM)
+Get the first element in the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - DOM instance with the first element  
+<a name="DOM+isVisible"></a>
+
+### doM.isVisible() ⇒ <code>boolean</code>
+Check if the elements in the collection are visible by chacking their
+display, offsetWidth and offsetHeight properties
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>boolean</code> - - Whether the elements are visible or not  
+<a name="DOM+parent"></a>
+
+### doM.parent() ⇒ [<code>DOM</code>](#DOM)
+Get the parent of the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - DOM instance of the parent element  
+<a name="DOM+find"></a>
+
+### doM.find(selector) ⇒ [<code>DOM</code>](#DOM)
+Find an element that matches the given selector in the first element of the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - Aegis instance with the element if found  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> | Selector to find the element with |
+
+<a name="DOM+offset"></a>
+
+### doM.offset() ⇒ <code>Object</code>
+Get the top and left offsets of the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>Object</code> - - Object with `top` and `left` offsets  
+<a name="DOM+closest"></a>
+
+### doM.closest(selector) ⇒ [<code>DOM</code>](#DOM)
+Find the closest element matching the given selector. This bubbles up
+from the initial object and then follows to its parents.
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - DOM instance with the closest HTML element matching the selector  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> | Selector to match the closest element with |
+
+<a name="DOM+attribute"></a>
+
+### doM.attribute(attribute, [value]) ⇒ <code>type</code>
+Get or set the value of a given attribute
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>type</code> - - If no value is provided, this function returns the current
+value of the provided attribute  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| attribute | <code>string</code> | Attribute's name |
+| [value] | <code>string</code> \| <code>Number</code> | Value to set the attribute to |
+
+<a name="DOM+after"></a>
+
+### doM.after(content)
+Insert content to the `after` property of an element
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| content | <code>string</code> | String representation of the content to add |
+
+<a name="DOM+before"></a>
+
+### doM.before(content)
+Insert content to the `before` property of an element
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| content | <code>string</code> | String representation of the content to add |
+
+<a name="DOM+style"></a>
+
+### doM.style(properties, [value]) ⇒ <code>string</code>
+Get or modify the `style` properties of the elements matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>string</code> - - If a peoperty is given but not a value for it, this
+function will return its current value  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| properties | <code>string</code> \| <code>Object</code> | Properties to change or get. Can be either an individual property or a JSON object with key-value pairs |
+| [value] | <code>string</code> | Value to set the property to when only changing one property |
+
+<a name="DOM+animate"></a>
+
+### doM.animate(style, time)
+Animate the given `style` properties on all elements in the collection in
+with a given time duration
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| style | <code>Object</code> | JSON object with the key-value pairs of properties to animate |
+| time | <code>int</code> | Time in milliseconds during which the properties will be animated |
+
+<a name="DOM+fadeIn"></a>
+
+### doM.fadeIn([time], callback)
+Use a fade in animation i the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [time] | <code>type</code> | <code>400</code> | Time duration for the animation |
+| callback | <code>type</code> |  | Callback function to run once the animation is over |
+
+<a name="DOM+fadeOut"></a>
+
+### doM.fadeOut([time], callback)
+Use a fade out animation i the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [time] | <code>type</code> | <code>400</code> | Time duration for the animation |
+| callback | <code>type</code> |  | Callback function to run once the animation is over |
+
+<a name="DOM+matches"></a>
+
+### doM.matches(selector) ⇒ <code>boolean</code>
+Check if the first element in the collection matches a given selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>boolean</code> - - Whether the element matches the selector or not  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> | Selector to match |
+
+<a name="DOM+remove"></a>
+
+### doM.remove()
+Remove all elemets in the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+replaceWith"></a>
+
+### doM.replaceWith()
+Replace the first element in the collection with a new one
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+reset"></a>
+
+### doM.reset()
+Reset every element in the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+property"></a>
+
+### doM.property(property, [value]) ⇒ <code>string</code> \| <code>Number</code>
+Get or set a property for the first element in the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>string</code> \| <code>Number</code> - - If no value is provided, this funcion will return the
+current value of the indicated property  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| property | <code>string</code> | Property name to set or get |
+| [value] | <code>string</code> \| <code>Number</code> | Value to set the property to |
+
+<a name="DOM+hide"></a>
+
+### doM.hide()
+Hide elements by setting their `display` property to 'none'.
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+show"></a>
+
+### doM.show([display])
+Show elements by setting their `display` property to the given value.
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [display] | <code>string</code> | <code>&quot;&#x27;block&#x27;&quot;</code> | Display property to set |
+
+<a name="DOM+addClass"></a>
+
+### doM.addClass(newClass)
+Add a class to the classList object
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| newClass | <code>string</code> | Class name to add |
+
+<a name="DOM+removeClass"></a>
+
+### doM.removeClass([oldClass])
+Remove a given class from the classList object
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [oldClass] | <code>string</code> | <code>null</code> | Class to remove. If it's empty or null, all classes will be removed |
+
+<a name="DOM+toggleClass"></a>
+
+### doM.toggleClass(classes)
+Toggle between two classes
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| classes | <code>string</code> | Space separated class names |
+
+<a name="DOM+hasClass"></a>
+
+### doM.hasClass(classToCheck) ⇒ <code>boolean</code>
+Check if the first element matching the selector has the given class
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>boolean</code> - - Whether the class is present or not  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| classToCheck | <code>string</code> | Class name to check for |
+
+<a name="DOM+value"></a>
+
+### doM.value(value) ⇒ <code>string</code>
+Get or set the value from the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>string</code> - - If no value was provided, this returns the value of the
+element instead of setting it  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| value | <code>string</code> | Value to set to the element. |
+
+<a name="DOM+focus"></a>
+
+### doM.focus()
+Focus on the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+click"></a>
+
+### doM.click(callback)
+Add a callback for the 'click' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+keyup"></a>
+
+### doM.keyup(callback)
+Add a callback for the 'keyup' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+keydown"></a>
+
+### doM.keydown(callback)
+Add a callback for the 'keydown' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+submit"></a>
+
+### doM.submit(callback)
+Add a callback for the 'submit' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+change"></a>
+
+### doM.change(callback)
+Add a callback for the 'change' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+scroll"></a>
+
+### doM.scroll(callback)
+Add a callback for the 'scroll' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+on"></a>
+
+### doM.on(event, target, callback)
+Add a callback function to a given event
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| event | <code>string</code> | Event to add the listener to |
+| target | <code>string</code> | Target element on which to detect the event |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+filter"></a>
+
+### doM.filter(element) ⇒ [<code>DOM</code>](#DOM)
+Filter from the current collection to only those matching the new selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - New DOM instance with the filtered collection  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>string</code> | Selector to filter the collection with |
+
+<a name="DOM+data"></a>
+
+### doM.data(name, [value]) ⇒ <code>string</code>
+Get or set a `data` property
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>string</code> - - If no value is set, this function returns it's current value  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>string</code> | Name of the data property |
+| [value] | <code>string</code> | Value of the property |
+
+<a name="DOM+text"></a>
+
+### doM.text([value]) ⇒ <code>type</code>
+Get or set the text of the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>type</code> - - If no value is present, this function returns its the
+element's current text.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [value] | <code>string</code> | Value to set the text to |
+
+<a name="DOM+html"></a>
+
+### doM.html([value]) ⇒ <code>type</code>
+Get or set the inner HTML of the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>type</code> - - If no value is present, this function returns its the
+element's current HTML.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [value] | <code>string</code> | Value to set the HTML to |
+
+<a name="DOM+append"></a>
+
+### doM.append(element)
+Append an element to the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>string</code> | String representation of the element to add |
+
+<a name="DOM+prepend"></a>
+
+### doM.prepend(element)
+Prepend an element to the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>string</code> | String representation of the element to add |
+
+<a name="DOM+each"></a>
+
+### doM.each(callback)
+Iterate over the collection of elements matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback to run for every element |
+
+<a name="DOM+get"></a>
+
+### doM.get(index) ⇒ <code>HTMLElement</code>
+Get an element from the collection given it's index
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>HTMLElement</code> - - HTML Element in the position indicated by the index  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| index | <code>int</code> | Index of the element to retrieve |
+
+<a name="DOM+first"></a>
+
+### doM.first() ⇒ [<code>DOM</code>](#DOM)
+Get the first element in the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - DOM instance with the first element  
+<a name="DOM+isVisible"></a>
+
+### doM.isVisible() ⇒ <code>boolean</code>
+Check if the elements in the collection are visible by chacking their
+display, offsetWidth and offsetHeight properties
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>boolean</code> - - Whether the elements are visible or not  
+<a name="DOM+parent"></a>
+
+### doM.parent() ⇒ [<code>DOM</code>](#DOM)
+Get the parent of the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - DOM instance of the parent element  
+<a name="DOM+find"></a>
+
+### doM.find(selector) ⇒ [<code>DOM</code>](#DOM)
+Find an element that matches the given selector in the first element of the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - Aegis instance with the element if found  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> | Selector to find the element with |
+
+<a name="DOM+offset"></a>
+
+### doM.offset() ⇒ <code>Object</code>
+Get the top and left offsets of the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>Object</code> - - Object with `top` and `left` offsets  
+<a name="DOM+closest"></a>
+
+### doM.closest(selector) ⇒ [<code>DOM</code>](#DOM)
+Find the closest element matching the given selector. This bubbles up
+from the initial object and then follows to its parents.
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - DOM instance with the closest HTML element matching the selector  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> | Selector to match the closest element with |
+
+<a name="DOM+attribute"></a>
+
+### doM.attribute(attribute, [value]) ⇒ <code>type</code>
+Get or set the value of a given attribute
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>type</code> - - If no value is provided, this function returns the current
+value of the provided attribute  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| attribute | <code>string</code> | Attribute's name |
+| [value] | <code>string</code> \| <code>Number</code> | Value to set the attribute to |
+
+<a name="DOM+after"></a>
+
+### doM.after(content)
+Insert content to the `after` property of an element
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| content | <code>string</code> | String representation of the content to add |
+
+<a name="DOM+before"></a>
+
+### doM.before(content)
+Insert content to the `before` property of an element
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| content | <code>string</code> | String representation of the content to add |
+
+<a name="DOM+style"></a>
+
+### doM.style(properties, [value]) ⇒ <code>string</code>
+Get or modify the `style` properties of the elements matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>string</code> - - If a peoperty is given but not a value for it, this
+function will return its current value  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| properties | <code>string</code> \| <code>Object</code> | Properties to change or get. Can be either an individual property or a JSON object with key-value pairs |
+| [value] | <code>string</code> | Value to set the property to when only changing one property |
+
+<a name="DOM+animate"></a>
+
+### doM.animate(style, time)
+Animate the given `style` properties on all elements in the collection in
+with a given time duration
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| style | <code>Object</code> | JSON object with the key-value pairs of properties to animate |
+| time | <code>int</code> | Time in milliseconds during which the properties will be animated |
+
+<a name="DOM+fadeIn"></a>
+
+### doM.fadeIn([time], callback)
+Use a fade in animation i the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [time] | <code>type</code> | <code>400</code> | Time duration for the animation |
+| callback | <code>type</code> |  | Callback function to run once the animation is over |
+
+<a name="DOM+fadeOut"></a>
+
+### doM.fadeOut([time], callback)
+Use a fade out animation i the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [time] | <code>type</code> | <code>400</code> | Time duration for the animation |
+| callback | <code>type</code> |  | Callback function to run once the animation is over |
+
+<a name="DOM+matches"></a>
+
+### doM.matches(selector) ⇒ <code>boolean</code>
+Check if the first element in the collection matches a given selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>boolean</code> - - Whether the element matches the selector or not  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> | Selector to match |
+
+<a name="DOM+remove"></a>
+
+### doM.remove()
+Remove all elemets in the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+replaceWith"></a>
+
+### doM.replaceWith()
+Replace the first element in the collection with a new one
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+reset"></a>
+
+### doM.reset()
+Reset every element in the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+property"></a>
+
+### doM.property(property, [value]) ⇒ <code>string</code> \| <code>Number</code>
+Get or set a property for the first element in the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>string</code> \| <code>Number</code> - - If no value is provided, this funcion will return the
+current value of the indicated property  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| property | <code>string</code> | Property name to set or get |
+| [value] | <code>string</code> \| <code>Number</code> | Value to set the property to |
+
+<a name="SpaceAdapter"></a>
+
+## SpaceAdapter
+List of Adapters Available
+
+**Kind**: global constant  
+<a name="$_"></a>
+
+## $_(selector) ⇒ [<code>DOM</code>](#DOM)
+Simple wrapper function to use the DOM library
+
+**Kind**: global function  
+**Returns**: [<code>DOM</code>](#DOM) - - DOM instance or class if no selector is used  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> \| <code>Object</code> \| <code>array</code> | Selector or DOM element to use |
+
+<a name="$_ready"></a>
+
+## $_ready(callback)
+Utility function to attach the 'load' listener to the window
+
+**Kind**: global function  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the window is ready |
+
+<a name="$_"></a>
+
+## $_(selector) ⇒ [<code>DOM</code>](#DOM)
+Simple wrapper function to use the DOM library
+
+**Kind**: global function  
+**Returns**: [<code>DOM</code>](#DOM) - - DOM instance or class if no selector is used  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> \| <code>Object</code> \| <code>array</code> | Selector or DOM element to use |
+
+<a name="$_ready"></a>
+
+## $_ready(callback)
+Utility function to attach the 'load' listener to the window
+
+**Kind**: global function  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the window is ready |
+
+## Classes
+
+<dl>
+<dt><a href="#DOM">DOM</a></dt>
+<dd><p>Simple DOM manipulation functions</p>
+</dd>
+<dt><a href="#FileSystem">FileSystem</a></dt>
+<dd><p>A simple class wrapper for the File and FileReader web API, while this class
+doesn&#39;t actually provide acces to the host file system, it does provide useful
+utilities for form file inputs and remote content loading.</p>
+</dd>
+<dt><a href="#Form">Form</a></dt>
+<dd><p>Utility class that provides simple function for filling and retrieving values
+from froms. This class requires the use of the <code>data-form</code> attribute.</p>
+</dd>
+<dt><a href="#Platform">Platform</a></dt>
+<dd><p>General checks for what kind of platform is the being used to run the app.</p>
+</dd>
+<dt><a href="#Preload">Preload</a></dt>
+<dd><p>A simple class for asset preloading. This class assumes you have a service
+worker set up that will be caching all requests.</p>
+</dd>
+<dt><a href="#Request">Request</a></dt>
+<dd><p>Simple Wrapper for the fetch API, providing simple functions to handle requests</p>
+</dd>
+<dt><a href="#Space">Space</a></dt>
+<dd><p>Space provides a simple wrapper for different Storage APIs. It aims to
+provide data independence through storage namespaces and versioning, allowing
+transparent data formatting and content modifications through versions.</p>
+<p>While this class documentation provides some information, specific details may
+be addressed on the documentation of each adapter.</p>
+</dd>
+<dt><a href="#Text">Text</a></dt>
+<dd><p>Provides utility functions for texts</p>
+</dd>
+<dt><a href="#Util">Util</a></dt>
+<dd><p>Provides diverse utility functions</p>
+</dd>
+<dt><a href="#DOM">DOM</a></dt>
+<dd><p>Simple DOM manipulation functions</p>
+</dd>
+</dl>
+
+## Constants
+
+<dl>
+<dt><a href="#SpaceAdapter">SpaceAdapter</a></dt>
+<dd><p>List of Adapters Available</p>
+</dd>
+</dl>
+
+## Functions
+
+<dl>
+<dt><a href="#$_">$_(selector)</a> ⇒ <code><a href="#DOM">DOM</a></code></dt>
+<dd><p>Simple wrapper function to use the DOM library</p>
+</dd>
+<dt><a href="#$_ready">$_ready(callback)</a></dt>
+<dd><p>Utility function to attach the &#39;load&#39; listener to the window</p>
+</dd>
+<dt><a href="#$_">$_(selector)</a> ⇒ <code><a href="#DOM">DOM</a></code></dt>
+<dd><p>Simple wrapper function to use the DOM library</p>
+</dd>
+<dt><a href="#$_ready">$_ready(callback)</a></dt>
+<dd><p>Utility function to attach the &#39;load&#39; listener to the window</p>
+</dd>
+</dl>
+
+<a name="DOM"></a>
+
+## DOM
+Simple DOM manipulation functions
+
+**Kind**: global class  
+
+* [DOM](#DOM)
+    * [new exports.DOM(selector)](#new_DOM_new)
+    * [new exports.DOM(selector)](#new_DOM_new)
+    * [.hide()](#DOM+hide)
+    * [.show([display])](#DOM+show)
+    * [.addClass(newClass)](#DOM+addClass)
+    * [.removeClass([oldClass])](#DOM+removeClass)
+    * [.toggleClass(classes)](#DOM+toggleClass)
+    * [.hasClass(classToCheck)](#DOM+hasClass) ⇒ <code>boolean</code>
+    * [.value(value)](#DOM+value) ⇒ <code>string</code>
+    * [.focus()](#DOM+focus)
+    * [.click(callback)](#DOM+click)
+    * [.keyup(callback)](#DOM+keyup)
+    * [.keydown(callback)](#DOM+keydown)
+    * [.submit(callback)](#DOM+submit)
+    * [.change(callback)](#DOM+change)
+    * [.scroll(callback)](#DOM+scroll)
+    * [.on(event, target, callback)](#DOM+on)
+    * [.filter(element)](#DOM+filter) ⇒ [<code>DOM</code>](#DOM)
+    * [.data(name, [value])](#DOM+data) ⇒ <code>string</code>
+    * [.text([value])](#DOM+text) ⇒ <code>type</code>
+    * [.html([value])](#DOM+html) ⇒ <code>type</code>
+    * [.append(element)](#DOM+append)
+    * [.prepend(element)](#DOM+prepend)
+    * [.each(callback)](#DOM+each)
+    * [.get(index)](#DOM+get) ⇒ <code>HTMLElement</code>
+    * [.first()](#DOM+first) ⇒ [<code>DOM</code>](#DOM)
+    * [.isVisible()](#DOM+isVisible) ⇒ <code>boolean</code>
+    * [.parent()](#DOM+parent) ⇒ [<code>DOM</code>](#DOM)
+    * [.find(selector)](#DOM+find) ⇒ [<code>DOM</code>](#DOM)
+    * [.offset()](#DOM+offset) ⇒ <code>Object</code>
+    * [.closest(selector)](#DOM+closest) ⇒ [<code>DOM</code>](#DOM)
+    * [.attribute(attribute, [value])](#DOM+attribute) ⇒ <code>type</code>
+    * [.after(content)](#DOM+after)
+    * [.before(content)](#DOM+before)
+    * [.style(properties, [value])](#DOM+style) ⇒ <code>string</code>
+    * [.animate(style, time)](#DOM+animate)
+    * [.fadeIn([time], callback)](#DOM+fadeIn)
+    * [.fadeOut([time], callback)](#DOM+fadeOut)
+    * [.matches(selector)](#DOM+matches) ⇒ <code>boolean</code>
+    * [.remove()](#DOM+remove)
+    * [.replaceWith()](#DOM+replaceWith)
+    * [.reset()](#DOM+reset)
+    * [.property(property, [value])](#DOM+property) ⇒ <code>string</code> \| <code>Number</code>
+    * [.hide()](#DOM+hide)
+    * [.show([display])](#DOM+show)
+    * [.addClass(newClass)](#DOM+addClass)
+    * [.removeClass([oldClass])](#DOM+removeClass)
+    * [.toggleClass(classes)](#DOM+toggleClass)
+    * [.hasClass(classToCheck)](#DOM+hasClass) ⇒ <code>boolean</code>
+    * [.value(value)](#DOM+value) ⇒ <code>string</code>
+    * [.focus()](#DOM+focus)
+    * [.click(callback)](#DOM+click)
+    * [.keyup(callback)](#DOM+keyup)
+    * [.keydown(callback)](#DOM+keydown)
+    * [.submit(callback)](#DOM+submit)
+    * [.change(callback)](#DOM+change)
+    * [.scroll(callback)](#DOM+scroll)
+    * [.on(event, target, callback)](#DOM+on)
+    * [.filter(element)](#DOM+filter) ⇒ [<code>DOM</code>](#DOM)
+    * [.data(name, [value])](#DOM+data) ⇒ <code>string</code>
+    * [.text([value])](#DOM+text) ⇒ <code>type</code>
+    * [.html([value])](#DOM+html) ⇒ <code>type</code>
+    * [.append(element)](#DOM+append)
+    * [.prepend(element)](#DOM+prepend)
+    * [.each(callback)](#DOM+each)
+    * [.get(index)](#DOM+get) ⇒ <code>HTMLElement</code>
+    * [.first()](#DOM+first) ⇒ [<code>DOM</code>](#DOM)
+    * [.isVisible()](#DOM+isVisible) ⇒ <code>boolean</code>
+    * [.parent()](#DOM+parent) ⇒ [<code>DOM</code>](#DOM)
+    * [.find(selector)](#DOM+find) ⇒ [<code>DOM</code>](#DOM)
+    * [.offset()](#DOM+offset) ⇒ <code>Object</code>
+    * [.closest(selector)](#DOM+closest) ⇒ [<code>DOM</code>](#DOM)
+    * [.attribute(attribute, [value])](#DOM+attribute) ⇒ <code>type</code>
+    * [.after(content)](#DOM+after)
+    * [.before(content)](#DOM+before)
+    * [.style(properties, [value])](#DOM+style) ⇒ <code>string</code>
+    * [.animate(style, time)](#DOM+animate)
+    * [.fadeIn([time], callback)](#DOM+fadeIn)
+    * [.fadeOut([time], callback)](#DOM+fadeOut)
+    * [.matches(selector)](#DOM+matches) ⇒ <code>boolean</code>
+    * [.remove()](#DOM+remove)
+    * [.replaceWith()](#DOM+replaceWith)
+    * [.reset()](#DOM+reset)
+    * [.property(property, [value])](#DOM+property) ⇒ <code>string</code> \| <code>Number</code>
+
+<a name="new_DOM_new"></a>
+
+### new exports.DOM(selector)
+Create a new DOM object
+
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> \| <code>Object</code> \| <code>array</code> | Selector or DOM element to use |
+
+<a name="new_DOM_new"></a>
+
+### new exports.DOM(selector)
+Create a new DOM object
+
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> \| <code>Object</code> \| <code>array</code> | Selector or DOM element to use |
+
+<a name="DOM+hide"></a>
+
+### doM.hide()
+Hide elements by setting their `display` property to 'none'.
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+show"></a>
+
+### doM.show([display])
+Show elements by setting their `display` property to the given value.
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [display] | <code>string</code> | <code>&quot;&#x27;block&#x27;&quot;</code> | Display property to set |
+
+<a name="DOM+addClass"></a>
+
+### doM.addClass(newClass)
+Add a class to the classList object
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| newClass | <code>string</code> | Class name to add |
+
+<a name="DOM+removeClass"></a>
+
+### doM.removeClass([oldClass])
+Remove a given class from the classList object
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [oldClass] | <code>string</code> | <code>null</code> | Class to remove. If it's empty or null, all classes will be removed |
+
+<a name="DOM+toggleClass"></a>
+
+### doM.toggleClass(classes)
+Toggle between two classes
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| classes | <code>string</code> | Space separated class names |
+
+<a name="DOM+hasClass"></a>
+
+### doM.hasClass(classToCheck) ⇒ <code>boolean</code>
+Check if the first element matching the selector has the given class
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>boolean</code> - - Whether the class is present or not  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| classToCheck | <code>string</code> | Class name to check for |
+
+<a name="DOM+value"></a>
+
+### doM.value(value) ⇒ <code>string</code>
+Get or set the value from the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>string</code> - - If no value was provided, this returns the value of the
+element instead of setting it  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| value | <code>string</code> | Value to set to the element. |
+
+<a name="DOM+focus"></a>
+
+### doM.focus()
+Focus on the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+click"></a>
+
+### doM.click(callback)
+Add a callback for the 'click' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+keyup"></a>
+
+### doM.keyup(callback)
+Add a callback for the 'keyup' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+keydown"></a>
+
+### doM.keydown(callback)
+Add a callback for the 'keydown' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+submit"></a>
+
+### doM.submit(callback)
+Add a callback for the 'submit' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+change"></a>
+
+### doM.change(callback)
+Add a callback for the 'change' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+scroll"></a>
+
+### doM.scroll(callback)
+Add a callback for the 'scroll' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+on"></a>
+
+### doM.on(event, target, callback)
+Add a callback function to a given event
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| event | <code>string</code> | Event to add the listener to |
+| target | <code>string</code> | Target element on which to detect the event |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+filter"></a>
+
+### doM.filter(element) ⇒ [<code>DOM</code>](#DOM)
+Filter from the current collection to only those matching the new selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - New DOM instance with the filtered collection  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>string</code> | Selector to filter the collection with |
+
+<a name="DOM+data"></a>
+
+### doM.data(name, [value]) ⇒ <code>string</code>
+Get or set a `data` property
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>string</code> - - If no value is set, this function returns it's current value  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>string</code> | Name of the data property |
+| [value] | <code>string</code> | Value of the property |
+
+<a name="DOM+text"></a>
+
+### doM.text([value]) ⇒ <code>type</code>
+Get or set the text of the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>type</code> - - If no value is present, this function returns its the
+element's current text.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [value] | <code>string</code> | Value to set the text to |
+
+<a name="DOM+html"></a>
+
+### doM.html([value]) ⇒ <code>type</code>
+Get or set the inner HTML of the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>type</code> - - If no value is present, this function returns its the
+element's current HTML.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [value] | <code>string</code> | Value to set the HTML to |
+
+<a name="DOM+append"></a>
+
+### doM.append(element)
+Append an element to the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>string</code> | String representation of the element to add |
+
+<a name="DOM+prepend"></a>
+
+### doM.prepend(element)
+Prepend an element to the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>string</code> | String representation of the element to add |
+
+<a name="DOM+each"></a>
+
+### doM.each(callback)
+Iterate over the collection of elements matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback to run for every element |
+
+<a name="DOM+get"></a>
+
+### doM.get(index) ⇒ <code>HTMLElement</code>
+Get an element from the collection given it's index
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>HTMLElement</code> - - HTML Element in the position indicated by the index  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| index | <code>int</code> | Index of the element to retrieve |
+
+<a name="DOM+first"></a>
+
+### doM.first() ⇒ [<code>DOM</code>](#DOM)
+Get the first element in the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - DOM instance with the first element  
+<a name="DOM+isVisible"></a>
+
+### doM.isVisible() ⇒ <code>boolean</code>
+Check if the elements in the collection are visible by chacking their
+display, offsetWidth and offsetHeight properties
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>boolean</code> - - Whether the elements are visible or not  
+<a name="DOM+parent"></a>
+
+### doM.parent() ⇒ [<code>DOM</code>](#DOM)
+Get the parent of the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - DOM instance of the parent element  
+<a name="DOM+find"></a>
+
+### doM.find(selector) ⇒ [<code>DOM</code>](#DOM)
+Find an element that matches the given selector in the first element of the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - Aegis instance with the element if found  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> | Selector to find the element with |
+
+<a name="DOM+offset"></a>
+
+### doM.offset() ⇒ <code>Object</code>
+Get the top and left offsets of the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>Object</code> - - Object with `top` and `left` offsets  
+<a name="DOM+closest"></a>
+
+### doM.closest(selector) ⇒ [<code>DOM</code>](#DOM)
+Find the closest element matching the given selector. This bubbles up
+from the initial object and then follows to its parents.
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - DOM instance with the closest HTML element matching the selector  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> | Selector to match the closest element with |
+
+<a name="DOM+attribute"></a>
+
+### doM.attribute(attribute, [value]) ⇒ <code>type</code>
+Get or set the value of a given attribute
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>type</code> - - If no value is provided, this function returns the current
+value of the provided attribute  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| attribute | <code>string</code> | Attribute's name |
+| [value] | <code>string</code> \| <code>Number</code> | Value to set the attribute to |
+
+<a name="DOM+after"></a>
+
+### doM.after(content)
+Insert content to the `after` property of an element
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| content | <code>string</code> | String representation of the content to add |
+
+<a name="DOM+before"></a>
+
+### doM.before(content)
+Insert content to the `before` property of an element
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| content | <code>string</code> | String representation of the content to add |
+
+<a name="DOM+style"></a>
+
+### doM.style(properties, [value]) ⇒ <code>string</code>
+Get or modify the `style` properties of the elements matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>string</code> - - If a peoperty is given but not a value for it, this
+function will return its current value  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| properties | <code>string</code> \| <code>Object</code> | Properties to change or get. Can be either an individual property or a JSON object with key-value pairs |
+| [value] | <code>string</code> | Value to set the property to when only changing one property |
+
+<a name="DOM+animate"></a>
+
+### doM.animate(style, time)
+Animate the given `style` properties on all elements in the collection in
+with a given time duration
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| style | <code>Object</code> | JSON object with the key-value pairs of properties to animate |
+| time | <code>int</code> | Time in milliseconds during which the properties will be animated |
+
+<a name="DOM+fadeIn"></a>
+
+### doM.fadeIn([time], callback)
+Use a fade in animation i the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [time] | <code>type</code> | <code>400</code> | Time duration for the animation |
+| callback | <code>type</code> |  | Callback function to run once the animation is over |
+
+<a name="DOM+fadeOut"></a>
+
+### doM.fadeOut([time], callback)
+Use a fade out animation i the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [time] | <code>type</code> | <code>400</code> | Time duration for the animation |
+| callback | <code>type</code> |  | Callback function to run once the animation is over |
+
+<a name="DOM+matches"></a>
+
+### doM.matches(selector) ⇒ <code>boolean</code>
+Check if the first element in the collection matches a given selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>boolean</code> - - Whether the element matches the selector or not  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> | Selector to match |
+
+<a name="DOM+remove"></a>
+
+### doM.remove()
+Remove all elemets in the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+replaceWith"></a>
+
+### doM.replaceWith()
+Replace the first element in the collection with a new one
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+reset"></a>
+
+### doM.reset()
+Reset every element in the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+property"></a>
+
+### doM.property(property, [value]) ⇒ <code>string</code> \| <code>Number</code>
+Get or set a property for the first element in the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>string</code> \| <code>Number</code> - - If no value is provided, this funcion will return the
+current value of the indicated property  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| property | <code>string</code> | Property name to set or get |
+| [value] | <code>string</code> \| <code>Number</code> | Value to set the property to |
+
+<a name="DOM+hide"></a>
+
+### doM.hide()
+Hide elements by setting their `display` property to 'none'.
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+show"></a>
+
+### doM.show([display])
+Show elements by setting their `display` property to the given value.
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [display] | <code>string</code> | <code>&quot;&#x27;block&#x27;&quot;</code> | Display property to set |
+
+<a name="DOM+addClass"></a>
+
+### doM.addClass(newClass)
+Add a class to the classList object
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| newClass | <code>string</code> | Class name to add |
+
+<a name="DOM+removeClass"></a>
+
+### doM.removeClass([oldClass])
+Remove a given class from the classList object
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [oldClass] | <code>string</code> | <code>null</code> | Class to remove. If it's empty or null, all classes will be removed |
+
+<a name="DOM+toggleClass"></a>
+
+### doM.toggleClass(classes)
+Toggle between two classes
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| classes | <code>string</code> | Space separated class names |
+
+<a name="DOM+hasClass"></a>
+
+### doM.hasClass(classToCheck) ⇒ <code>boolean</code>
+Check if the first element matching the selector has the given class
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>boolean</code> - - Whether the class is present or not  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| classToCheck | <code>string</code> | Class name to check for |
+
+<a name="DOM+value"></a>
+
+### doM.value(value) ⇒ <code>string</code>
+Get or set the value from the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>string</code> - - If no value was provided, this returns the value of the
+element instead of setting it  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| value | <code>string</code> | Value to set to the element. |
+
+<a name="DOM+focus"></a>
+
+### doM.focus()
+Focus on the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+click"></a>
+
+### doM.click(callback)
+Add a callback for the 'click' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+keyup"></a>
+
+### doM.keyup(callback)
+Add a callback for the 'keyup' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+keydown"></a>
+
+### doM.keydown(callback)
+Add a callback for the 'keydown' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+submit"></a>
+
+### doM.submit(callback)
+Add a callback for the 'submit' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+change"></a>
+
+### doM.change(callback)
+Add a callback for the 'change' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+scroll"></a>
+
+### doM.scroll(callback)
+Add a callback for the 'scroll' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+on"></a>
+
+### doM.on(event, target, callback)
+Add a callback function to a given event
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| event | <code>string</code> | Event to add the listener to |
+| target | <code>string</code> | Target element on which to detect the event |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+filter"></a>
+
+### doM.filter(element) ⇒ [<code>DOM</code>](#DOM)
+Filter from the current collection to only those matching the new selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - New DOM instance with the filtered collection  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>string</code> | Selector to filter the collection with |
+
+<a name="DOM+data"></a>
+
+### doM.data(name, [value]) ⇒ <code>string</code>
+Get or set a `data` property
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>string</code> - - If no value is set, this function returns it's current value  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>string</code> | Name of the data property |
+| [value] | <code>string</code> | Value of the property |
+
+<a name="DOM+text"></a>
+
+### doM.text([value]) ⇒ <code>type</code>
+Get or set the text of the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>type</code> - - If no value is present, this function returns its the
+element's current text.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [value] | <code>string</code> | Value to set the text to |
+
+<a name="DOM+html"></a>
+
+### doM.html([value]) ⇒ <code>type</code>
+Get or set the inner HTML of the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>type</code> - - If no value is present, this function returns its the
+element's current HTML.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [value] | <code>string</code> | Value to set the HTML to |
+
+<a name="DOM+append"></a>
+
+### doM.append(element)
+Append an element to the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>string</code> | String representation of the element to add |
+
+<a name="DOM+prepend"></a>
+
+### doM.prepend(element)
+Prepend an element to the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>string</code> | String representation of the element to add |
+
+<a name="DOM+each"></a>
+
+### doM.each(callback)
+Iterate over the collection of elements matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback to run for every element |
+
+<a name="DOM+get"></a>
+
+### doM.get(index) ⇒ <code>HTMLElement</code>
+Get an element from the collection given it's index
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>HTMLElement</code> - - HTML Element in the position indicated by the index  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| index | <code>int</code> | Index of the element to retrieve |
+
+<a name="DOM+first"></a>
+
+### doM.first() ⇒ [<code>DOM</code>](#DOM)
+Get the first element in the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - DOM instance with the first element  
+<a name="DOM+isVisible"></a>
+
+### doM.isVisible() ⇒ <code>boolean</code>
+Check if the elements in the collection are visible by chacking their
+display, offsetWidth and offsetHeight properties
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>boolean</code> - - Whether the elements are visible or not  
+<a name="DOM+parent"></a>
+
+### doM.parent() ⇒ [<code>DOM</code>](#DOM)
+Get the parent of the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - DOM instance of the parent element  
+<a name="DOM+find"></a>
+
+### doM.find(selector) ⇒ [<code>DOM</code>](#DOM)
+Find an element that matches the given selector in the first element of the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - Aegis instance with the element if found  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> | Selector to find the element with |
+
+<a name="DOM+offset"></a>
+
+### doM.offset() ⇒ <code>Object</code>
+Get the top and left offsets of the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>Object</code> - - Object with `top` and `left` offsets  
+<a name="DOM+closest"></a>
+
+### doM.closest(selector) ⇒ [<code>DOM</code>](#DOM)
+Find the closest element matching the given selector. This bubbles up
+from the initial object and then follows to its parents.
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - DOM instance with the closest HTML element matching the selector  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> | Selector to match the closest element with |
+
+<a name="DOM+attribute"></a>
+
+### doM.attribute(attribute, [value]) ⇒ <code>type</code>
+Get or set the value of a given attribute
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>type</code> - - If no value is provided, this function returns the current
+value of the provided attribute  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| attribute | <code>string</code> | Attribute's name |
+| [value] | <code>string</code> \| <code>Number</code> | Value to set the attribute to |
+
+<a name="DOM+after"></a>
+
+### doM.after(content)
+Insert content to the `after` property of an element
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| content | <code>string</code> | String representation of the content to add |
+
+<a name="DOM+before"></a>
+
+### doM.before(content)
+Insert content to the `before` property of an element
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| content | <code>string</code> | String representation of the content to add |
+
+<a name="DOM+style"></a>
+
+### doM.style(properties, [value]) ⇒ <code>string</code>
+Get or modify the `style` properties of the elements matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>string</code> - - If a peoperty is given but not a value for it, this
+function will return its current value  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| properties | <code>string</code> \| <code>Object</code> | Properties to change or get. Can be either an individual property or a JSON object with key-value pairs |
+| [value] | <code>string</code> | Value to set the property to when only changing one property |
+
+<a name="DOM+animate"></a>
+
+### doM.animate(style, time)
+Animate the given `style` properties on all elements in the collection in
+with a given time duration
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| style | <code>Object</code> | JSON object with the key-value pairs of properties to animate |
+| time | <code>int</code> | Time in milliseconds during which the properties will be animated |
+
+<a name="DOM+fadeIn"></a>
+
+### doM.fadeIn([time], callback)
+Use a fade in animation i the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [time] | <code>type</code> | <code>400</code> | Time duration for the animation |
+| callback | <code>type</code> |  | Callback function to run once the animation is over |
+
+<a name="DOM+fadeOut"></a>
+
+### doM.fadeOut([time], callback)
+Use a fade out animation i the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [time] | <code>type</code> | <code>400</code> | Time duration for the animation |
+| callback | <code>type</code> |  | Callback function to run once the animation is over |
+
+<a name="DOM+matches"></a>
+
+### doM.matches(selector) ⇒ <code>boolean</code>
+Check if the first element in the collection matches a given selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>boolean</code> - - Whether the element matches the selector or not  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> | Selector to match |
+
+<a name="DOM+remove"></a>
+
+### doM.remove()
+Remove all elemets in the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+replaceWith"></a>
+
+### doM.replaceWith()
+Replace the first element in the collection with a new one
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+reset"></a>
+
+### doM.reset()
+Reset every element in the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+property"></a>
+
+### doM.property(property, [value]) ⇒ <code>string</code> \| <code>Number</code>
+Get or set a property for the first element in the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>string</code> \| <code>Number</code> - - If no value is provided, this funcion will return the
+current value of the indicated property  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| property | <code>string</code> | Property name to set or get |
+| [value] | <code>string</code> \| <code>Number</code> | Value to set the property to |
+
+<a name="FileSystem"></a>
+
+## FileSystem
+A simple class wrapper for the File and FileReader web API, while this class
+doesn't actually provide acces to the host file system, it does provide useful
+utilities for form file inputs and remote content loading.
+
+**Kind**: global class  
+
+* [FileSystem](#FileSystem)
+    * [.readRemote(url, [type], [props])](#FileSystem.readRemote) ⇒ <code>Promise.&lt;(ArrayBuffer\|string)&gt;</code>
+    * [.read(file, [type])](#FileSystem.read) ⇒ <code>Promise.&lt;Event, (ArrayBuffer\|string)&gt;</code>
+    * [.create(file, content, [type])](#FileSystem.create) ⇒ <code>Promise.&lt;File&gt;</code>
+    * [.extension(name)](#FileSystem.extension) ⇒ <code>string</code>
+    * [.isImage(name)](#FileSystem.isImage) ⇒ <code>boolean</code>
+
+<a name="FileSystem.readRemote"></a>
+
+### FileSystem.readRemote(url, [type], [props]) ⇒ <code>Promise.&lt;(ArrayBuffer\|string)&gt;</code>
+**Kind**: static method of [<code>FileSystem</code>](#FileSystem)  
+**Returns**: <code>Promise.&lt;(ArrayBuffer\|string)&gt;</code> - - Content of the file. The format
+depends on the type parameter used.  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| url | <code>type</code> |  | URL to fetch the file from |
+| [type] | <code>type</code> | <code>&#x27;base64&#x27;</code> | Type of data to be read, values can be 'text', 'base64' and 'buffer'. This parameter is used for the read () function. |
+| [props] | <code>Object</code> | <code>{}</code> | Props to send to the Request object |
+
+<a name="FileSystem.read"></a>
+
+### FileSystem.read(file, [type]) ⇒ <code>Promise.&lt;Event, (ArrayBuffer\|string)&gt;</code>
+**Kind**: static method of [<code>FileSystem</code>](#FileSystem)  
+**Returns**: <code>Promise.&lt;Event, (ArrayBuffer\|string)&gt;</code> - - Promise that resolves to
+the Load event and content of the file. The format depends on the type
+parameter used.  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| file | <code>File</code> \| <code>Blob</code> |  | File to read |
+| [type] | <code>string</code> | <code>&quot;&#x27;text&#x27;&quot;</code> | Type of data to be read, values can be 'text', 'base64' and 'buffer'. |
+
+<a name="FileSystem.create"></a>
+
+### FileSystem.create(file, content, [type]) ⇒ <code>Promise.&lt;File&gt;</code>
+**Kind**: static method of [<code>FileSystem</code>](#FileSystem)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| file | <code>string</code> |  | Name of the file (Including extension) |
+| content | <code>ArrayBuffer</code> \| <code>ArrayBufferView</code> \| <code>Blob</code> \| <code>string</code> |  | Content to save in the file |
+| [type] | <code>string</code> | <code>&quot;&#x27;text/plain&#x27;&quot;</code> | Mime Type for the file |
+
+<a name="FileSystem.extension"></a>
+
+### FileSystem.extension(name) ⇒ <code>string</code>
+**Kind**: static method of [<code>FileSystem</code>](#FileSystem)  
+**Returns**: <code>string</code> - - File extension without the leading dot (.)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>string</code> | Name or full path of the file |
+
+<a name="FileSystem.isImage"></a>
+
+### FileSystem.isImage(name) ⇒ <code>boolean</code>
+**Kind**: static method of [<code>FileSystem</code>](#FileSystem)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>string</code> | Name or full path of the file |
+
+<a name="Form"></a>
+
+## Form
+Utility class that provides simple function for filling and retrieving values
+from froms. This class requires the use of the `data-form` attribute.
+
+**Kind**: global class  
+
+* [Form](#Form)
+    * [.fill(name, data)](#Form.fill)
+    * [.values(name)](#Form.values) ⇒ <code>Object</code>
+
+<a name="Form.fill"></a>
+
+### Form.fill(name, data)
+**Kind**: static method of [<code>Form</code>](#Form)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>string</code> | Form name. Must match the `data-form` attribute of the Form. |
+| data | <code>Object</code> | JSON object with key-value pairs to fill the inputs. |
+
+<a name="Form.values"></a>
+
+### Form.values(name) ⇒ <code>Object</code>
+**Kind**: static method of [<code>Form</code>](#Form)  
+**Returns**: <code>Object</code> - - Key-value JSON object  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>string</code> | Form name. Must match the `data-form` attribute of the Form. |
+
+<a name="Platform"></a>
+
+## Platform
+General checks for what kind of platform is the being used to run the app.
+
+**Kind**: global class  
+
+* [Platform](#Platform)
+    * [.retina()](#Platform.retina) ⇒ <code>boolean</code>
+    * [.portrait()](#Platform.portrait) ⇒ <code>boolean</code>
+    * [.landscape()](#Platform.landscape) ⇒ <code>boolean</code>
+    * [.orientation()](#Platform.orientation) ⇒ <code>string</code>
+    * [.electron()](#Platform.electron) ⇒ <code>boolean</code>
+    * [.cordova()](#Platform.cordova) ⇒ <code>boolean</code>
+    * [.desktop()](#Platform.desktop) ⇒ <code>boolean</code>
+    * [.mobile([platform])](#Platform.mobile) ⇒ <code>boolean</code>
+    * [.serviceWorkers()](#Platform.serviceWorkers) ⇒ <code>boolean</code>
+
+<a name="Platform.retina"></a>
+
+### Platform.retina() ⇒ <code>boolean</code>
+Check if the screen has a retina pixel ratio
+
+**Kind**: static method of [<code>Platform</code>](#Platform)  
+<a name="Platform.portrait"></a>
+
+### Platform.portrait() ⇒ <code>boolean</code>
+Check if the device is on portrait orientation
+
+**Kind**: static method of [<code>Platform</code>](#Platform)  
+<a name="Platform.landscape"></a>
+
+### Platform.landscape() ⇒ <code>boolean</code>
+Check if the device is on landscape orientation
+
+**Kind**: static method of [<code>Platform</code>](#Platform)  
+<a name="Platform.orientation"></a>
+
+### Platform.orientation() ⇒ <code>string</code>
+Get device Orientation
+
+**Kind**: static method of [<code>Platform</code>](#Platform)  
+**Returns**: <code>string</code> - portrait | landscape  
+<a name="Platform.electron"></a>
+
+### Platform.electron() ⇒ <code>boolean</code>
+Check if the app is running over Electron
+
+**Kind**: static method of [<code>Platform</code>](#Platform)  
+<a name="Platform.cordova"></a>
+
+### Platform.cordova() ⇒ <code>boolean</code>
+Check if the app is running over Cordova
+
+**Kind**: static method of [<code>Platform</code>](#Platform)  
+<a name="Platform.desktop"></a>
+
+### Platform.desktop() ⇒ <code>boolean</code>
+Check if the app is running in a desktop platform
+
+**Kind**: static method of [<code>Platform</code>](#Platform)  
+<a name="Platform.mobile"></a>
+
+### Platform.mobile([platform]) ⇒ <code>boolean</code>
+Check if the app is running in a mobile platform
+
+**Kind**: static method of [<code>Platform</code>](#Platform)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [platform] | <code>string</code> | <code>&quot;&#x27;Any&#x27;&quot;</code> | Check for a specific mobile platform [Android | iOS | Opera | Windows | BlackBerry | Any] |
+
+<a name="Platform.serviceWorkers"></a>
+
+### Platform.serviceWorkers() ⇒ <code>boolean</code>
+**Kind**: static method of [<code>Platform</code>](#Platform)  
+**Returns**: <code>boolean</code> - - Whether they're supported or not  
+<a name="Preload"></a>
+
+## Preload
+A simple class for asset preloading. This class assumes you have a service
+worker set up that will be caching all requests.
+
+**Kind**: global class  
+
+* [Preload](#Preload)
+    * [.image(route)](#Preload.image) ⇒ <code>Promise</code>
+    * [.file(route)](#Preload.file) ⇒ <code>Promise</code>
+
+<a name="Preload.image"></a>
+
+### Preload.image(route) ⇒ <code>Promise</code>
+**Kind**: static method of [<code>Preload</code>](#Preload)  
+**Returns**: <code>Promise</code> - - Resolves to the image object or gets rejected with
+the rejection event  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| route | <code>string</code> | Route to the image |
+
+<a name="Preload.file"></a>
+
+### Preload.file(route) ⇒ <code>Promise</code>
+**Kind**: static method of [<code>Preload</code>](#Preload)  
+**Returns**: <code>Promise</code> - - Resolves or rejects depending on request success  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| route | <code>string</code> | Route to the file |
+
+<a name="Request"></a>
+
+## Request
+Simple Wrapper for the fetch API, providing simple functions to handle requests
+
+**Kind**: global class  
+
+* [Request](#Request)
+    * [.serialize(data)](#Request.serialize) ⇒ <code>string</code>
+    * [.get(url, [data], [options])](#Request.get) ⇒ <code>Promise.&lt;Response&gt;</code>
+    * [.post(url, [data], [options])](#Request.post) ⇒ <code>Promise.&lt;Response&gt;</code>
+    * [.put(url, [data], [options])](#Request.put) ⇒ <code>Promise.&lt;Response&gt;</code>
+    * [.delete(url, [data], [options])](#Request.delete) ⇒ <code>Promise.&lt;Response&gt;</code>
+    * [.json(url, [data], [options])](#Request.json) ⇒ <code>Promise.&lt;Object&gt;</code>
+    * [.blob(url, [data], [options])](#Request.blob) ⇒ <code>Promise.&lt;Blob&gt;</code>
+
+<a name="Request.serialize"></a>
+
+### Request.serialize(data) ⇒ <code>string</code>
+**Kind**: static method of [<code>Request</code>](#Request)  
+**Returns**: <code>string</code> - - Serialized Data  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| data | <code>Object</code> | Key-value object of data to serialize |
+
+<a name="Request.get"></a>
+
+### Request.get(url, [data], [options]) ⇒ <code>Promise.&lt;Response&gt;</code>
+**Kind**: static method of [<code>Request</code>](#Request)  
+**Returns**: <code>Promise.&lt;Response&gt;</code> - - Resolves to the response of the request  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| url | <code>string</code> |  | URL to make the request to |
+| [data] | <code>Object</code> | <code>{}</code> | Parameters to send in the URL, represented as a JSON object. These parameters will be sent as a query in the URL |
+| [options] | <code>Object</code> | <code>{}</code> | Options object for configurations you want to use in the fetch () request made. |
+
+<a name="Request.post"></a>
+
+### Request.post(url, [data], [options]) ⇒ <code>Promise.&lt;Response&gt;</code>
+**Kind**: static method of [<code>Request</code>](#Request)  
+**Returns**: <code>Promise.&lt;Response&gt;</code> - - Resolves to the response of the request  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| url | <code>string</code> |  | URL to make the request |
+| [data] | <code>Object</code> | <code>{}</code> | Set of data to send in the URL, represented as a JSON object |
+| [options] | <code>Object</code> | <code>{}</code> | Options object for configurations you want to use in the fetch () request made. The Content-Type header is used to serialize data in the correct format and defaults to application/x-www-form-urlencoded |
+
+<a name="Request.put"></a>
+
+### Request.put(url, [data], [options]) ⇒ <code>Promise.&lt;Response&gt;</code>
+**Kind**: static method of [<code>Request</code>](#Request)  
+**Returns**: <code>Promise.&lt;Response&gt;</code> - - Resolves to the response of the request  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| url | <code>string</code> |  | URL to make the request |
+| [data] | <code>Object</code> | <code>{}</code> | Set of data to send in the URL, represented as a JSON object |
+| [options] | <code>Object</code> | <code>{}</code> | Options object for configurations you want to use in the fetch () request made. The Content-Type header is used to serialize data in the correct format and defaults to application/x-www-form-urlencoded |
+
+<a name="Request.delete"></a>
+
+### Request.delete(url, [data], [options]) ⇒ <code>Promise.&lt;Response&gt;</code>
+**Kind**: static method of [<code>Request</code>](#Request)  
+**Returns**: <code>Promise.&lt;Response&gt;</code> - - Resolves to the response of the request  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| url | <code>string</code> |  | URL to make the request |
+| [data] | <code>Object</code> | <code>{}</code> | Parameters to send in the URL, represented as a JSON object. These parameters will be sent as a query in the URL |
+| [options] | <code>Object</code> | <code>{}</code> | Options object for configurations you want to use in the fetch () request made. The Content-Type header is used to serialize data in the correct format and defaults to application/x-www-form-urlencoded |
+
+<a name="Request.json"></a>
+
+### Request.json(url, [data], [options]) ⇒ <code>Promise.&lt;Object&gt;</code>
+**Kind**: static method of [<code>Request</code>](#Request)  
+**Returns**: <code>Promise.&lt;Object&gt;</code> - - Resolves to the json object obtained from the request response  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| url | <code>string</code> |  | URL to make the request to |
+| [data] | <code>Object</code> | <code>{}</code> | Parameters to send in the URL, represented as a JSON object. These parameters will be sent as a query in the URL |
+| [options] | <code>Object</code> | <code>{}</code> | Options object for configurations you want to use in the fetch () request made. |
+
+<a name="Request.blob"></a>
+
+### Request.blob(url, [data], [options]) ⇒ <code>Promise.&lt;Blob&gt;</code>
+**Kind**: static method of [<code>Request</code>](#Request)  
+**Returns**: <code>Promise.&lt;Blob&gt;</code> - - Resolves to the blob obtained from the request response  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| url | <code>string</code> |  | URL to make the request to |
+| [data] | <code>Object</code> | <code>{}</code> | Parameters to send in the URL, represented as a JSON object. These parameters will be sent as a query in the URL |
+| [options] | <code>Object</code> | <code>{}</code> | Options object for configurations you want to use in the fetch () request made. |
+
+<a name="Space"></a>
+
+## Space
+Space provides a simple wrapper for different Storage APIs. It aims to
+provide data independence through storage namespaces and versioning, allowing
+transparent data formatting and content modifications through versions.
+
+While this class documentation provides some information, specific details may
+be addressed on the documentation of each adapter.
+
+**Kind**: global class  
+
+* [Space](#Space)
+    * [new exports.Space([adapter], [configuration])](#new_Space_new)
+    * [.configuration(object)](#Space+configuration) ⇒ <code>object</code>
+    * [.open()](#Space+open) ⇒ <code>Promise</code>
+    * [.set(key, value)](#Space+set) ⇒ <code>Promise.&lt;{key, value}&gt;</code>
+    * [.update(key, value)](#Space+update) ⇒ <code>Promise.&lt;{key, value}&gt;</code>
+    * [.get(key)](#Space+get) ⇒ <code>Promise.&lt;Object&gt;</code> \| <code>Promise.&lt;string&gt;</code> \| <code>Promise.&lt;Number&gt;</code>
+    * [.getAll()](#Space+getAll) ⇒ <code>Promise.&lt;Object&gt;</code>
+    * [.each(callback)](#Space+each) ⇒ <code>Promise</code>
+    * [.contains(key)](#Space+contains) ⇒ <code>Promise</code>
+    * [.upgrade(oldVersion, newVersion)](#Space+upgrade) ⇒ <code>Promise</code>
+    * [.rename(name)](#Space+rename) ⇒ <code>Promise</code>
+    * [.onCreate(callback)](#Space+onCreate)
+    * [.onUpdate(callback)](#Space+onUpdate)
+    * [.onDelete(callback)](#Space+onDelete)
+    * [.addTransformation(id, get, set)](#Space+addTransformation)
+    * [.removeTransformation(id)](#Space+removeTransformation)
+    * [.key(index, [full])](#Space+key) ⇒ <code>Promise.&lt;string&gt;</code>
+    * [.keys([full])](#Space+keys) ⇒ <code>Promise.&lt;Array.&lt;string&gt;&gt;</code>
+    * [.remove(key)](#Space+remove) ⇒ <code>Promise.&lt;key, value&gt;</code>
+    * [.clear()](#Space+clear) ⇒ <code>Promise</code>
+
+<a name="new_Space_new"></a>
+
+### new exports.Space([adapter], [configuration])
+Create a new Space Object. If no name and version is defined, the global LocalSpace space is used.
+
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [adapter] | [<code>SpaceAdapter</code>](#SpaceAdapter) | <code>SpaceAdapter.LocalStorage</code> | Space Adapter to use. Currently LocalStorage, SessionStorage, IndexedDB and Server are available |
+| [configuration] | <code>Object</code> | <code>{}</code> | Configuration object for the space. This configuration may change depending on the adapter used, however all adapters have support for a name, version and store properties. |
+| configuration.name | <code>string</code> |  | Name of the Space |
+| configuration.version | <code>string</code> |  | Version of the Space in Semantic versioning syntax |
+| configuration.store | <code>string</code> |  | Name of the Object Store to use |
+
+<a name="Space+configuration"></a>
+
+### space.configuration(object) ⇒ <code>object</code>
+Modify the space configuration, it will also be passed down to the adapter
+using its configuration () function.
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+**Returns**: <code>object</code> - - Configuration object if no param was passed  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| object | <code>object</code> | <code></code> | Configuration object to set up |
+
+<a name="Space+open"></a>
+
+### space.open() ⇒ <code>Promise</code>
+Open the Storage Object to be used depending on the SpaceAdapter
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+<a name="Space+set"></a>
+
+### space.set(key, value) ⇒ <code>Promise.&lt;{key, value}&gt;</code>
+Store a key-value pair
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| key | <code>string</code> | Key with which this value will be saved |
+| value | <code>Object</code> \| <code>string</code> \| <code>Number</code> | Value to save |
+
+<a name="Space+update"></a>
+
+### space.update(key, value) ⇒ <code>Promise.&lt;{key, value}&gt;</code>
+Update a key-value pair. In difference with the set () method, the update
+method will use an Object.assign () in the case of objects so no value is
+lost.
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| key | <code>string</code> | Key with which this value will be saved |
+| value | <code>Object</code> \| <code>string</code> \| <code>Number</code> | Value to save |
+
+<a name="Space+get"></a>
+
+### space.get(key) ⇒ <code>Promise.&lt;Object&gt;</code> \| <code>Promise.&lt;string&gt;</code> \| <code>Promise.&lt;Number&gt;</code>
+Retrieves a value from storage given it's key
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+**Returns**: <code>Promise.&lt;Object&gt;</code> \| <code>Promise.&lt;string&gt;</code> \| <code>Promise.&lt;Number&gt;</code> - - Resolves to the retreived value
+or its rejected if it doesn't exist.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| key | <code>string</code> | Key with which the value was saved |
+
+<a name="Space+getAll"></a>
+
+### space.getAll() ⇒ <code>Promise.&lt;Object&gt;</code>
+Retrieves all the values in the space in a key-value JSON object
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+**Returns**: <code>Promise.&lt;Object&gt;</code> - - Resolves to the retreived values  
+<a name="Space+each"></a>
+
+### space.each(callback) ⇒ <code>Promise</code>
+Iterate over every value in the space
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+**Returns**: <code>Promise</code> - - Resolves when all callbacks have been resolved.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | A callback function receiving the key and value of a value. Must return a callback |
+
+<a name="Space+contains"></a>
+
+### space.contains(key) ⇒ <code>Promise</code>
+Check if a space contains a given key. Not all adapters may give this information
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+**Returns**: <code>Promise</code> - - Promise gets resolved if it exists and rejected if
+doesn't  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| key | <code>string</code> | Key to look for. |
+
+<a name="Space+upgrade"></a>
+
+### space.upgrade(oldVersion, newVersion) ⇒ <code>Promise</code>
+Upgrade a Space Version. Not all adapters may provide this functionality
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+**Returns**: <code>Promise</code> - - Result of the upgrade operation  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| oldVersion | <code>string</code> | The version of the storage to be upgraded |
+| newVersion | <code>string</code> | The version to be upgraded to |
+
+<a name="Space+rename"></a>
+
+### space.rename(name) ⇒ <code>Promise</code>
+Rename a Space. Not all adapters may provide this functionality
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+**Returns**: <code>Promise</code> - Result of the rename operation  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>string</code> | New name to be used. |
+
+<a name="Space+onCreate"></a>
+
+### space.onCreate(callback)
+Add a callback function to be run every time a value is created.
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback Function. Key and Value pair will be sent as parameters when run. |
+
+<a name="Space+onUpdate"></a>
+
+### space.onUpdate(callback)
+Add a callback function to be run every time a value is updated.
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback Function. Key and Value pair will be sent as parameters when run. |
+
+<a name="Space+onDelete"></a>
+
+### space.onDelete(callback)
+Add a callback function to be run every time a value is deleted.
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback Function. Key and Value pair will be sent as parameters when run. |
+
+<a name="Space+addTransformation"></a>
+
+### space.addTransformation(id, get, set)
+Add a transformation function to the space.
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| id | <code>string</code> | Unique transformation name or identifier |
+| get | <code>function</code> \| <code>null</code> | Transformation function to apply to the content before returning the value when using the get () function . |
+| set | <code>function</code> \| <code>null</code> | Transformation function to apply to the content before saving it when using the set () function befo. |
+
+<a name="Space+removeTransformation"></a>
+
+### space.removeTransformation(id)
+Remove a transformation function given its id
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| id | <code>string</code> | Name or identifier of the transformation to remove |
+
+<a name="Space+key"></a>
+
+### space.key(index, [full]) ⇒ <code>Promise.&lt;string&gt;</code>
+Get the key that corresponds to a given index in the storage. Not all adapters may provide this functionality
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+**Returns**: <code>Promise.&lt;string&gt;</code> - - Resolves to the key's name  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| index | <code>Number</code> |  | Index to get the key from |
+| [full] | <code>boolean</code> | <code>false</code> | Whether to return the full key name including space id or just the key name |
+
+<a name="Space+keys"></a>
+
+### space.keys([full]) ⇒ <code>Promise.&lt;Array.&lt;string&gt;&gt;</code>
+Return all keys stored in the space. Not all adapters may provide this functionality
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+**Returns**: <code>Promise.&lt;Array.&lt;string&gt;&gt;</code> - - Array of keys  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [full] | <code>boolean</code> | <code>false</code> | Whether to return the full key name including space id or just the key name |
+
+<a name="Space+remove"></a>
+
+### space.remove(key) ⇒ <code>Promise.&lt;key, value&gt;</code>
+Delete a value from the space given it's key
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+**Returns**: <code>Promise.&lt;key, value&gt;</code> - - Resolves to the key and value of the deleted object  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| key | <code>string</code> | Key of the item to delete |
+
+<a name="Space+clear"></a>
+
+### space.clear() ⇒ <code>Promise</code>
+Clear the entire space
+
+**Kind**: instance method of [<code>Space</code>](#Space)  
+**Returns**: <code>Promise</code> - - Result of the clear operation  
+<a name="Text"></a>
+
+## Text
+Provides utility functions for texts
+
+**Kind**: global class  
+
+* [Text](#Text)
+    * [.capitalize(text)](#Text.capitalize) ⇒ <code>string</code>
+    * [.suffix(key, text)](#Text.suffix) ⇒ <code>string</code>
+    * [.selection()](#Text.selection) ⇒ <code>string</code>
+    * [.prefix(key, text)](#Text.prefix) ⇒ <code>string</code>
+    * [.friendly(text)](#Text.friendly) ⇒ <code>string</code>
+
+<a name="Text.capitalize"></a>
+
+### Text.capitalize(text) ⇒ <code>string</code>
+**Kind**: static method of [<code>Text</code>](#Text)  
+**Returns**: <code>string</code> - - Capitalized string  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| text | <code>string</code> | Text string to capitalize |
+
+<a name="Text.suffix"></a>
+
+### Text.suffix(key, text) ⇒ <code>string</code>
+**Kind**: static method of [<code>Text</code>](#Text)  
+**Returns**: <code>string</code> - - Suffix  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| key | <code>string</code> | Key part of the string |
+| text | <code>string</code> | Full string to extract the suffix from |
+
+<a name="Text.selection"></a>
+
+### Text.selection() ⇒ <code>string</code>
+**Kind**: static method of [<code>Text</code>](#Text)  
+**Returns**: <code>string</code> - - Text selection  
+<a name="Text.prefix"></a>
+
+### Text.prefix(key, text) ⇒ <code>string</code>
+**Kind**: static method of [<code>Text</code>](#Text)  
+**Returns**: <code>string</code> - - Prefix  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| key | <code>string</code> | Key part of the string |
+| text | <code>string</code> | Full string to extract the prefix from |
+
+<a name="Text.friendly"></a>
+
+### Text.friendly(text) ⇒ <code>string</code>
+**Kind**: static method of [<code>Text</code>](#Text)  
+**Returns**: <code>string</code> - - Friendly URL  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| text | <code>string</code> | The text to build the url from |
+
+<a name="Util"></a>
+
+## Util
+Provides diverse utility functions
+
+**Kind**: global class  
+<a name="DOM"></a>
+
+## DOM
+Simple DOM manipulation functions
+
+**Kind**: global class  
+
+* [DOM](#DOM)
+    * [new exports.DOM(selector)](#new_DOM_new)
+    * [new exports.DOM(selector)](#new_DOM_new)
+    * [.hide()](#DOM+hide)
+    * [.show([display])](#DOM+show)
+    * [.addClass(newClass)](#DOM+addClass)
+    * [.removeClass([oldClass])](#DOM+removeClass)
+    * [.toggleClass(classes)](#DOM+toggleClass)
+    * [.hasClass(classToCheck)](#DOM+hasClass) ⇒ <code>boolean</code>
+    * [.value(value)](#DOM+value) ⇒ <code>string</code>
+    * [.focus()](#DOM+focus)
+    * [.click(callback)](#DOM+click)
+    * [.keyup(callback)](#DOM+keyup)
+    * [.keydown(callback)](#DOM+keydown)
+    * [.submit(callback)](#DOM+submit)
+    * [.change(callback)](#DOM+change)
+    * [.scroll(callback)](#DOM+scroll)
+    * [.on(event, target, callback)](#DOM+on)
+    * [.filter(element)](#DOM+filter) ⇒ [<code>DOM</code>](#DOM)
+    * [.data(name, [value])](#DOM+data) ⇒ <code>string</code>
+    * [.text([value])](#DOM+text) ⇒ <code>type</code>
+    * [.html([value])](#DOM+html) ⇒ <code>type</code>
+    * [.append(element)](#DOM+append)
+    * [.prepend(element)](#DOM+prepend)
+    * [.each(callback)](#DOM+each)
+    * [.get(index)](#DOM+get) ⇒ <code>HTMLElement</code>
+    * [.first()](#DOM+first) ⇒ [<code>DOM</code>](#DOM)
+    * [.isVisible()](#DOM+isVisible) ⇒ <code>boolean</code>
+    * [.parent()](#DOM+parent) ⇒ [<code>DOM</code>](#DOM)
+    * [.find(selector)](#DOM+find) ⇒ [<code>DOM</code>](#DOM)
+    * [.offset()](#DOM+offset) ⇒ <code>Object</code>
+    * [.closest(selector)](#DOM+closest) ⇒ [<code>DOM</code>](#DOM)
+    * [.attribute(attribute, [value])](#DOM+attribute) ⇒ <code>type</code>
+    * [.after(content)](#DOM+after)
+    * [.before(content)](#DOM+before)
+    * [.style(properties, [value])](#DOM+style) ⇒ <code>string</code>
+    * [.animate(style, time)](#DOM+animate)
+    * [.fadeIn([time], callback)](#DOM+fadeIn)
+    * [.fadeOut([time], callback)](#DOM+fadeOut)
+    * [.matches(selector)](#DOM+matches) ⇒ <code>boolean</code>
+    * [.remove()](#DOM+remove)
+    * [.replaceWith()](#DOM+replaceWith)
+    * [.reset()](#DOM+reset)
+    * [.property(property, [value])](#DOM+property) ⇒ <code>string</code> \| <code>Number</code>
+    * [.hide()](#DOM+hide)
+    * [.show([display])](#DOM+show)
+    * [.addClass(newClass)](#DOM+addClass)
+    * [.removeClass([oldClass])](#DOM+removeClass)
+    * [.toggleClass(classes)](#DOM+toggleClass)
+    * [.hasClass(classToCheck)](#DOM+hasClass) ⇒ <code>boolean</code>
+    * [.value(value)](#DOM+value) ⇒ <code>string</code>
+    * [.focus()](#DOM+focus)
+    * [.click(callback)](#DOM+click)
+    * [.keyup(callback)](#DOM+keyup)
+    * [.keydown(callback)](#DOM+keydown)
+    * [.submit(callback)](#DOM+submit)
+    * [.change(callback)](#DOM+change)
+    * [.scroll(callback)](#DOM+scroll)
+    * [.on(event, target, callback)](#DOM+on)
+    * [.filter(element)](#DOM+filter) ⇒ [<code>DOM</code>](#DOM)
+    * [.data(name, [value])](#DOM+data) ⇒ <code>string</code>
+    * [.text([value])](#DOM+text) ⇒ <code>type</code>
+    * [.html([value])](#DOM+html) ⇒ <code>type</code>
+    * [.append(element)](#DOM+append)
+    * [.prepend(element)](#DOM+prepend)
+    * [.each(callback)](#DOM+each)
+    * [.get(index)](#DOM+get) ⇒ <code>HTMLElement</code>
+    * [.first()](#DOM+first) ⇒ [<code>DOM</code>](#DOM)
+    * [.isVisible()](#DOM+isVisible) ⇒ <code>boolean</code>
+    * [.parent()](#DOM+parent) ⇒ [<code>DOM</code>](#DOM)
+    * [.find(selector)](#DOM+find) ⇒ [<code>DOM</code>](#DOM)
+    * [.offset()](#DOM+offset) ⇒ <code>Object</code>
+    * [.closest(selector)](#DOM+closest) ⇒ [<code>DOM</code>](#DOM)
+    * [.attribute(attribute, [value])](#DOM+attribute) ⇒ <code>type</code>
+    * [.after(content)](#DOM+after)
+    * [.before(content)](#DOM+before)
+    * [.style(properties, [value])](#DOM+style) ⇒ <code>string</code>
+    * [.animate(style, time)](#DOM+animate)
+    * [.fadeIn([time], callback)](#DOM+fadeIn)
+    * [.fadeOut([time], callback)](#DOM+fadeOut)
+    * [.matches(selector)](#DOM+matches) ⇒ <code>boolean</code>
+    * [.remove()](#DOM+remove)
+    * [.replaceWith()](#DOM+replaceWith)
+    * [.reset()](#DOM+reset)
+    * [.property(property, [value])](#DOM+property) ⇒ <code>string</code> \| <code>Number</code>
+
+<a name="new_DOM_new"></a>
+
+### new exports.DOM(selector)
+Create a new DOM object
+
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> \| <code>Object</code> \| <code>array</code> | Selector or DOM element to use |
+
+<a name="new_DOM_new"></a>
+
+### new exports.DOM(selector)
+Create a new DOM object
+
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> \| <code>Object</code> \| <code>array</code> | Selector or DOM element to use |
+
+<a name="DOM+hide"></a>
+
+### doM.hide()
+Hide elements by setting their `display` property to 'none'.
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+show"></a>
+
+### doM.show([display])
+Show elements by setting their `display` property to the given value.
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [display] | <code>string</code> | <code>&quot;&#x27;block&#x27;&quot;</code> | Display property to set |
+
+<a name="DOM+addClass"></a>
+
+### doM.addClass(newClass)
+Add a class to the classList object
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| newClass | <code>string</code> | Class name to add |
+
+<a name="DOM+removeClass"></a>
+
+### doM.removeClass([oldClass])
+Remove a given class from the classList object
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [oldClass] | <code>string</code> | <code>null</code> | Class to remove. If it's empty or null, all classes will be removed |
+
+<a name="DOM+toggleClass"></a>
+
+### doM.toggleClass(classes)
+Toggle between two classes
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| classes | <code>string</code> | Space separated class names |
+
+<a name="DOM+hasClass"></a>
+
+### doM.hasClass(classToCheck) ⇒ <code>boolean</code>
+Check if the first element matching the selector has the given class
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>boolean</code> - - Whether the class is present or not  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| classToCheck | <code>string</code> | Class name to check for |
+
+<a name="DOM+value"></a>
+
+### doM.value(value) ⇒ <code>string</code>
+Get or set the value from the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>string</code> - - If no value was provided, this returns the value of the
+element instead of setting it  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| value | <code>string</code> | Value to set to the element. |
+
+<a name="DOM+focus"></a>
+
+### doM.focus()
+Focus on the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+click"></a>
+
+### doM.click(callback)
+Add a callback for the 'click' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+keyup"></a>
+
+### doM.keyup(callback)
+Add a callback for the 'keyup' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+keydown"></a>
+
+### doM.keydown(callback)
+Add a callback for the 'keydown' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+submit"></a>
+
+### doM.submit(callback)
+Add a callback for the 'submit' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+change"></a>
+
+### doM.change(callback)
+Add a callback for the 'change' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+scroll"></a>
+
+### doM.scroll(callback)
+Add a callback for the 'scroll' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+on"></a>
+
+### doM.on(event, target, callback)
+Add a callback function to a given event
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| event | <code>string</code> | Event to add the listener to |
+| target | <code>string</code> | Target element on which to detect the event |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+filter"></a>
+
+### doM.filter(element) ⇒ [<code>DOM</code>](#DOM)
+Filter from the current collection to only those matching the new selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - New DOM instance with the filtered collection  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>string</code> | Selector to filter the collection with |
+
+<a name="DOM+data"></a>
+
+### doM.data(name, [value]) ⇒ <code>string</code>
+Get or set a `data` property
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>string</code> - - If no value is set, this function returns it's current value  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>string</code> | Name of the data property |
+| [value] | <code>string</code> | Value of the property |
+
+<a name="DOM+text"></a>
+
+### doM.text([value]) ⇒ <code>type</code>
+Get or set the text of the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>type</code> - - If no value is present, this function returns its the
+element's current text.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [value] | <code>string</code> | Value to set the text to |
+
+<a name="DOM+html"></a>
+
+### doM.html([value]) ⇒ <code>type</code>
+Get or set the inner HTML of the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>type</code> - - If no value is present, this function returns its the
+element's current HTML.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [value] | <code>string</code> | Value to set the HTML to |
+
+<a name="DOM+append"></a>
+
+### doM.append(element)
+Append an element to the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>string</code> | String representation of the element to add |
+
+<a name="DOM+prepend"></a>
+
+### doM.prepend(element)
+Prepend an element to the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>string</code> | String representation of the element to add |
+
+<a name="DOM+each"></a>
+
+### doM.each(callback)
+Iterate over the collection of elements matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback to run for every element |
+
+<a name="DOM+get"></a>
+
+### doM.get(index) ⇒ <code>HTMLElement</code>
+Get an element from the collection given it's index
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>HTMLElement</code> - - HTML Element in the position indicated by the index  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| index | <code>int</code> | Index of the element to retrieve |
+
+<a name="DOM+first"></a>
+
+### doM.first() ⇒ [<code>DOM</code>](#DOM)
+Get the first element in the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - DOM instance with the first element  
+<a name="DOM+isVisible"></a>
+
+### doM.isVisible() ⇒ <code>boolean</code>
+Check if the elements in the collection are visible by chacking their
+display, offsetWidth and offsetHeight properties
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>boolean</code> - - Whether the elements are visible or not  
+<a name="DOM+parent"></a>
+
+### doM.parent() ⇒ [<code>DOM</code>](#DOM)
+Get the parent of the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - DOM instance of the parent element  
+<a name="DOM+find"></a>
+
+### doM.find(selector) ⇒ [<code>DOM</code>](#DOM)
+Find an element that matches the given selector in the first element of the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - Aegis instance with the element if found  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> | Selector to find the element with |
+
+<a name="DOM+offset"></a>
+
+### doM.offset() ⇒ <code>Object</code>
+Get the top and left offsets of the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>Object</code> - - Object with `top` and `left` offsets  
+<a name="DOM+closest"></a>
+
+### doM.closest(selector) ⇒ [<code>DOM</code>](#DOM)
+Find the closest element matching the given selector. This bubbles up
+from the initial object and then follows to its parents.
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - DOM instance with the closest HTML element matching the selector  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> | Selector to match the closest element with |
+
+<a name="DOM+attribute"></a>
+
+### doM.attribute(attribute, [value]) ⇒ <code>type</code>
+Get or set the value of a given attribute
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>type</code> - - If no value is provided, this function returns the current
+value of the provided attribute  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| attribute | <code>string</code> | Attribute's name |
+| [value] | <code>string</code> \| <code>Number</code> | Value to set the attribute to |
+
+<a name="DOM+after"></a>
+
+### doM.after(content)
+Insert content to the `after` property of an element
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| content | <code>string</code> | String representation of the content to add |
+
+<a name="DOM+before"></a>
+
+### doM.before(content)
+Insert content to the `before` property of an element
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| content | <code>string</code> | String representation of the content to add |
+
+<a name="DOM+style"></a>
+
+### doM.style(properties, [value]) ⇒ <code>string</code>
+Get or modify the `style` properties of the elements matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>string</code> - - If a peoperty is given but not a value for it, this
+function will return its current value  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| properties | <code>string</code> \| <code>Object</code> | Properties to change or get. Can be either an individual property or a JSON object with key-value pairs |
+| [value] | <code>string</code> | Value to set the property to when only changing one property |
+
+<a name="DOM+animate"></a>
+
+### doM.animate(style, time)
+Animate the given `style` properties on all elements in the collection in
+with a given time duration
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| style | <code>Object</code> | JSON object with the key-value pairs of properties to animate |
+| time | <code>int</code> | Time in milliseconds during which the properties will be animated |
+
+<a name="DOM+fadeIn"></a>
+
+### doM.fadeIn([time], callback)
+Use a fade in animation i the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [time] | <code>type</code> | <code>400</code> | Time duration for the animation |
+| callback | <code>type</code> |  | Callback function to run once the animation is over |
+
+<a name="DOM+fadeOut"></a>
+
+### doM.fadeOut([time], callback)
+Use a fade out animation i the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [time] | <code>type</code> | <code>400</code> | Time duration for the animation |
+| callback | <code>type</code> |  | Callback function to run once the animation is over |
+
+<a name="DOM+matches"></a>
+
+### doM.matches(selector) ⇒ <code>boolean</code>
+Check if the first element in the collection matches a given selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>boolean</code> - - Whether the element matches the selector or not  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> | Selector to match |
+
+<a name="DOM+remove"></a>
+
+### doM.remove()
+Remove all elemets in the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+replaceWith"></a>
+
+### doM.replaceWith()
+Replace the first element in the collection with a new one
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+reset"></a>
+
+### doM.reset()
+Reset every element in the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+property"></a>
+
+### doM.property(property, [value]) ⇒ <code>string</code> \| <code>Number</code>
+Get or set a property for the first element in the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>string</code> \| <code>Number</code> - - If no value is provided, this funcion will return the
+current value of the indicated property  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| property | <code>string</code> | Property name to set or get |
+| [value] | <code>string</code> \| <code>Number</code> | Value to set the property to |
+
+<a name="DOM+hide"></a>
+
+### doM.hide()
+Hide elements by setting their `display` property to 'none'.
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+show"></a>
+
+### doM.show([display])
+Show elements by setting their `display` property to the given value.
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [display] | <code>string</code> | <code>&quot;&#x27;block&#x27;&quot;</code> | Display property to set |
+
+<a name="DOM+addClass"></a>
+
+### doM.addClass(newClass)
+Add a class to the classList object
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| newClass | <code>string</code> | Class name to add |
+
+<a name="DOM+removeClass"></a>
+
+### doM.removeClass([oldClass])
+Remove a given class from the classList object
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [oldClass] | <code>string</code> | <code>null</code> | Class to remove. If it's empty or null, all classes will be removed |
+
+<a name="DOM+toggleClass"></a>
+
+### doM.toggleClass(classes)
+Toggle between two classes
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| classes | <code>string</code> | Space separated class names |
+
+<a name="DOM+hasClass"></a>
+
+### doM.hasClass(classToCheck) ⇒ <code>boolean</code>
+Check if the first element matching the selector has the given class
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>boolean</code> - - Whether the class is present or not  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| classToCheck | <code>string</code> | Class name to check for |
+
+<a name="DOM+value"></a>
+
+### doM.value(value) ⇒ <code>string</code>
+Get or set the value from the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>string</code> - - If no value was provided, this returns the value of the
+element instead of setting it  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| value | <code>string</code> | Value to set to the element. |
+
+<a name="DOM+focus"></a>
+
+### doM.focus()
+Focus on the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+click"></a>
+
+### doM.click(callback)
+Add a callback for the 'click' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+keyup"></a>
+
+### doM.keyup(callback)
+Add a callback for the 'keyup' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+keydown"></a>
+
+### doM.keydown(callback)
+Add a callback for the 'keydown' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+submit"></a>
+
+### doM.submit(callback)
+Add a callback for the 'submit' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+change"></a>
+
+### doM.change(callback)
+Add a callback for the 'change' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+scroll"></a>
+
+### doM.scroll(callback)
+Add a callback for the 'scroll' event on every element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+on"></a>
+
+### doM.on(event, target, callback)
+Add a callback function to a given event
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| event | <code>string</code> | Event to add the listener to |
+| target | <code>string</code> | Target element on which to detect the event |
+| callback | <code>function</code> | Callback function to run when the event is triggered |
+
+<a name="DOM+filter"></a>
+
+### doM.filter(element) ⇒ [<code>DOM</code>](#DOM)
+Filter from the current collection to only those matching the new selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - New DOM instance with the filtered collection  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>string</code> | Selector to filter the collection with |
+
+<a name="DOM+data"></a>
+
+### doM.data(name, [value]) ⇒ <code>string</code>
+Get or set a `data` property
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>string</code> - - If no value is set, this function returns it's current value  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>string</code> | Name of the data property |
+| [value] | <code>string</code> | Value of the property |
+
+<a name="DOM+text"></a>
+
+### doM.text([value]) ⇒ <code>type</code>
+Get or set the text of the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>type</code> - - If no value is present, this function returns its the
+element's current text.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [value] | <code>string</code> | Value to set the text to |
+
+<a name="DOM+html"></a>
+
+### doM.html([value]) ⇒ <code>type</code>
+Get or set the inner HTML of the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>type</code> - - If no value is present, this function returns its the
+element's current HTML.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [value] | <code>string</code> | Value to set the HTML to |
+
+<a name="DOM+append"></a>
+
+### doM.append(element)
+Append an element to the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>string</code> | String representation of the element to add |
+
+<a name="DOM+prepend"></a>
+
+### doM.prepend(element)
+Prepend an element to the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>string</code> | String representation of the element to add |
+
+<a name="DOM+each"></a>
+
+### doM.each(callback)
+Iterate over the collection of elements matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback to run for every element |
+
+<a name="DOM+get"></a>
+
+### doM.get(index) ⇒ <code>HTMLElement</code>
+Get an element from the collection given it's index
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>HTMLElement</code> - - HTML Element in the position indicated by the index  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| index | <code>int</code> | Index of the element to retrieve |
+
+<a name="DOM+first"></a>
+
+### doM.first() ⇒ [<code>DOM</code>](#DOM)
+Get the first element in the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - DOM instance with the first element  
+<a name="DOM+isVisible"></a>
+
+### doM.isVisible() ⇒ <code>boolean</code>
+Check if the elements in the collection are visible by chacking their
+display, offsetWidth and offsetHeight properties
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>boolean</code> - - Whether the elements are visible or not  
+<a name="DOM+parent"></a>
+
+### doM.parent() ⇒ [<code>DOM</code>](#DOM)
+Get the parent of the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - DOM instance of the parent element  
+<a name="DOM+find"></a>
+
+### doM.find(selector) ⇒ [<code>DOM</code>](#DOM)
+Find an element that matches the given selector in the first element of the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - Aegis instance with the element if found  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> | Selector to find the element with |
+
+<a name="DOM+offset"></a>
+
+### doM.offset() ⇒ <code>Object</code>
+Get the top and left offsets of the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>Object</code> - - Object with `top` and `left` offsets  
+<a name="DOM+closest"></a>
+
+### doM.closest(selector) ⇒ [<code>DOM</code>](#DOM)
+Find the closest element matching the given selector. This bubbles up
+from the initial object and then follows to its parents.
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: [<code>DOM</code>](#DOM) - - DOM instance with the closest HTML element matching the selector  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> | Selector to match the closest element with |
+
+<a name="DOM+attribute"></a>
+
+### doM.attribute(attribute, [value]) ⇒ <code>type</code>
+Get or set the value of a given attribute
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>type</code> - - If no value is provided, this function returns the current
+value of the provided attribute  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| attribute | <code>string</code> | Attribute's name |
+| [value] | <code>string</code> \| <code>Number</code> | Value to set the attribute to |
+
+<a name="DOM+after"></a>
+
+### doM.after(content)
+Insert content to the `after` property of an element
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| content | <code>string</code> | String representation of the content to add |
+
+<a name="DOM+before"></a>
+
+### doM.before(content)
+Insert content to the `before` property of an element
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| content | <code>string</code> | String representation of the content to add |
+
+<a name="DOM+style"></a>
+
+### doM.style(properties, [value]) ⇒ <code>string</code>
+Get or modify the `style` properties of the elements matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>string</code> - - If a peoperty is given but not a value for it, this
+function will return its current value  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| properties | <code>string</code> \| <code>Object</code> | Properties to change or get. Can be either an individual property or a JSON object with key-value pairs |
+| [value] | <code>string</code> | Value to set the property to when only changing one property |
+
+<a name="DOM+animate"></a>
+
+### doM.animate(style, time)
+Animate the given `style` properties on all elements in the collection in
+with a given time duration
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| style | <code>Object</code> | JSON object with the key-value pairs of properties to animate |
+| time | <code>int</code> | Time in milliseconds during which the properties will be animated |
+
+<a name="DOM+fadeIn"></a>
+
+### doM.fadeIn([time], callback)
+Use a fade in animation i the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [time] | <code>type</code> | <code>400</code> | Time duration for the animation |
+| callback | <code>type</code> |  | Callback function to run once the animation is over |
+
+<a name="DOM+fadeOut"></a>
+
+### doM.fadeOut([time], callback)
+Use a fade out animation i the first element matching the selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [time] | <code>type</code> | <code>400</code> | Time duration for the animation |
+| callback | <code>type</code> |  | Callback function to run once the animation is over |
+
+<a name="DOM+matches"></a>
+
+### doM.matches(selector) ⇒ <code>boolean</code>
+Check if the first element in the collection matches a given selector
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>boolean</code> - - Whether the element matches the selector or not  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> | Selector to match |
+
+<a name="DOM+remove"></a>
+
+### doM.remove()
+Remove all elemets in the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+replaceWith"></a>
+
+### doM.replaceWith()
+Replace the first element in the collection with a new one
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+reset"></a>
+
+### doM.reset()
+Reset every element in the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+<a name="DOM+property"></a>
+
+### doM.property(property, [value]) ⇒ <code>string</code> \| <code>Number</code>
+Get or set a property for the first element in the collection
+
+**Kind**: instance method of [<code>DOM</code>](#DOM)  
+**Returns**: <code>string</code> \| <code>Number</code> - - If no value is provided, this funcion will return the
+current value of the indicated property  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| property | <code>string</code> | Property name to set or get |
+| [value] | <code>string</code> \| <code>Number</code> | Value to set the property to |
+
+<a name="SpaceAdapter"></a>
+
+## SpaceAdapter
+List of Adapters Available
+
+**Kind**: global constant  
+<a name="$_"></a>
+
+## $_(selector) ⇒ [<code>DOM</code>](#DOM)
+Simple wrapper function to use the DOM library
+
+**Kind**: global function  
+**Returns**: [<code>DOM</code>](#DOM) - - DOM instance or class if no selector is used  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> \| <code>Object</code> \| <code>array</code> | Selector or DOM element to use |
+
+<a name="$_ready"></a>
+
+## $_ready(callback)
+Utility function to attach the 'load' listener to the window
+
+**Kind**: global function  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the window is ready |
+
+<a name="$_"></a>
+
+## $_(selector) ⇒ [<code>DOM</code>](#DOM)
+Simple wrapper function to use the DOM library
+
+**Kind**: global function  
+**Returns**: [<code>DOM</code>](#DOM) - - DOM instance or class if no selector is used  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>string</code> \| <code>Object</code> \| <code>array</code> | Selector or DOM element to use |
+
+<a name="$_ready"></a>
+
+## $_ready(callback)
+Utility function to attach the 'load' listener to the window
+
+**Kind**: global function  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | Callback function to run when the window is ready |
+
