@@ -5,6 +5,5 @@ node_modules/
 ._*
 package-lock.json
 .cache
-yarn.lock
 *.log
 .vscode
