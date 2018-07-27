@@ -307,13 +307,17 @@ export class DOM {
 	 */
 	append (element) {
 		if (this.length > 0) {
-			const div = document.createElement ('div');
 			if (typeof element === 'string') {
-				div.innerHTML = element.trim ();
+				const div = document.createElement ('div');
+				if (typeof element === 'string') {
+					div.innerHTML = element.trim ();
+				} else {
+					div.innerHTML = element;
+				}
+				this.collection[0].appendChild (div.firstChild);
 			} else {
-				div.innerHTML = element;
+				this.collection[0].appendChild (element);
 			}
-			this.collection[0].appendChild (div.firstChild);
 		}
 	}
 
@@ -324,18 +328,25 @@ export class DOM {
 	 */
 	prepend (element) {
 		if (this.length > 0) {
-			const div = document.createElement ('div');
 			if (typeof element === 'string') {
-				div.innerHTML = element.trim ();
+				const div = document.createElement ('div');
+				if (typeof element === 'string') {
+					div.innerHTML = element.trim ();
+				} else {
+					div.innerHTML = element;
+				}
+				if (this.collection[0].childNodes.length > 0) {
+					this.collection[0].insertBefore (div.firstChild, this.collection[0].childNodes[0]);
+				} else {
+					this.collection[0].appendChild (div.firstChild);
+				}
 			} else {
-				div.innerHTML = element;
+				if (this.collection[0].childNodes.length > 0) {
+					this.collection[0].insertBefore (element, this.collection[0].childNodes[0]);
+				} else {
+					this.collection[0].appendChild (element);
+				}
 			}
-			if (this.collection[0].childNodes.length > 0) {
-				this.collection[0].insertBefore (div.firstChild, this.collection[0].childNodes[0]);
-			} else {
-				this.collection[0].appendChild (div.firstChild);
-			}
-
 		}
 	}
 
@@ -424,7 +435,6 @@ export class DOM {
 		}
 	}
 
-
 	/**
 	 * Find the closest element matching the given selector. This bubbles up
 	 * from the initial object and then follows to its parents.
@@ -433,10 +443,20 @@ export class DOM {
 	 * @return {DOM} - DOM instance with the closest HTML element matching the selector
 	 */
 	closest (selector) {
-		let element = this.find (selector);
-		while (typeof element.get (0) == 'undefined' && typeof this.parent().get (0) != 'undefined') {
-			element = this.parent ().find (selector);
+		let found = null;
+		let element = this;
+		while (typeof element.get (0) !== 'undefined' && found === null) {
+			const search = element.find (selector);
+			if (search.length > 0) {
+				found = search;
+			}
+			element = element.parent ();
 		}
+
+		if (found !== null) {
+			return found;
+		}
+
 		return element;
 	}
 
