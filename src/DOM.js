@@ -479,6 +479,18 @@ export class DOM {
 	}
 
 	/**
+	 * Check whether an element has an attribute or not
+	 *
+	 * @param {string} attribute - The name of the attribute to check existance for
+	 * @returns {boolean} - Whether or not the attribute is present
+	 */
+	hasAttribute (attribute) {
+		if (this.collection[0]) {
+			return this.collection[0].hasAttribute (attribute);
+		}
+	}
+
+	/**
 	 * Insert content to the `after` property of an element
 	 *
 	 * @param  {string} content - String representation of the content to add
@@ -657,7 +669,7 @@ export class DOM {
 	replaceWith (element) {
 		const div = document.createElement ('div');
 		div.innerHTML = element;
-		this.collection[0].parentElement.replaceChild (div, this.collection[0]);
+		this.collection[0].parentElement.replaceChild (div.firstChild, this.collection[0]);
 	}
 
 	/**
