@@ -667,9 +667,11 @@ export class DOM {
 	 * Replace the first element in the collection with a new one
 	 */
 	replaceWith (element) {
-		const div = document.createElement ('div');
-		div.innerHTML = element;
-		this.collection[0].parentElement.replaceChild (div.firstChild, this.collection[0]);
+		if (this.collection[0]) {
+			const div = document.createElement ('div');
+			div.innerHTML = element;
+			this.collection[0].parentElement.replaceChild (div.firstChild, this.collection[0]);
+		}
 	}
 
 	/**
