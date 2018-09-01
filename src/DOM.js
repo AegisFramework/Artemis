@@ -383,6 +383,17 @@ export class DOM {
 	}
 
 	/**
+	 * Get the last element in the collection
+	 *
+	 * @return {DOM} - DOM instance with the last element
+	 */
+	last () {
+		if (this.length > 0) {
+			return new DOM (this.collection[this.collection.length - 1]);
+		}
+	}
+
+	/**
 	 * Check if the elements in the collection are visible by chacking their
 	 * display, offsetWidth and offsetHeight properties
 	 *
