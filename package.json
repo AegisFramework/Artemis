@@ -4,7 +4,7 @@
 	"description": "Aegis Framework Javascript Library",
 	"main": "./dist/artemis.min.js",
 	"repository": {
-	"type": "git",
+		"type": "git",
 		"url": "https://gitlab.com/AegisFramework/Artemis.git"
 	},
 	"bugs": {
@@ -25,7 +25,7 @@
 		"build": "parcel build ./index.js --global Artemis --out-file artemis.min.js --no-cache"
 	},
 	"devDependencies": {
-		"eslint": "^4.19.1",
+		"eslint": "^5.7.0",
 		"jsdoc": "^3.5.5",
 		"jsdoc-to-markdown": "^4.0.1",
 		"parcel": "^1.9.0"
