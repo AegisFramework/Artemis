@@ -146,6 +146,8 @@
 				console.log (event);
 			});
 
+			students.keys ().then(keys => console.log (keys));
+
 
 			const remoteSpace = new Space (SpaceAdapter.RemoteStorage, {
 				name: 'myRemote',

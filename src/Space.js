@@ -47,10 +47,10 @@ export class Space {
 	 */
 	constructor (adapter = SpaceAdapter.LocalStorage, configuration = {}) {
 		// Assign the provided configuration to the default one
-		this.configuration = Object.assign ({}, {name: '', version: '', store: ''}, configuration);
+		this._configuration = Object.assign ({}, {name: '', version: '', store: ''}, configuration);
 
 		// Set up the adapter instance to use
-		this.adapter = new adapter (this.configuration);
+		this.adapter = new adapter (this._configuration);
 
 		// This object stores all the callbacks the user can define for the
 		// space operations
@@ -77,10 +77,10 @@ export class Space {
 	 */
 	configuration (object = null) {
 		if (object !== null) {
-			this.configuration = Object.assign ({}, this.configuration, object);
+			this._configuration = Object.assign ({}, this._configuration, object);
 			this.adapter.configuration (object);
 		} else {
-			return this.configuration;
+			return this._configuration;
 		}
 	}
 

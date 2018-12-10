@@ -136,6 +136,11 @@ export class IndexedDB {
 	 */
 	update (key, value) {
 		return this.get (key).then ((currentValue) => {
+			// If this key did not exist on the storage, then create it using the
+			// set method
+			if (typeof currentValue === 'undefined') {
+				return this.set (key, value);
+			}
 			return new Promise ((resolve, reject) => {
 				const transaction = this.storage.transaction (this.store, 'readwrite').objectStore (this.store);
 				const op = transaction.put (Object.assign ({}, currentValue, value));
@@ -240,7 +245,7 @@ export class IndexedDB {
 		return this.open ().then (() => {
 			return new Promise ((resolve, reject) => {
 				const transaction = this.storage.transaction (this.store, 'readwrite').objectStore (this.store);
-				const op = transaction.keys ();
+				const op = transaction.getAllKeys ();
 				op.addEventListener ('success', (event) => {resolve (event.target.result);}, false);
 				op.addEventListener ('error', (event) => {reject (event);}, false);
 			});

@@ -1,6 +1,6 @@
 {
 	"name": "@aegis-framework/artemis",
-	"version": "0.3.7",
+	"version": "0.3.8",
 	"description": "Aegis Framework Javascript Library",
 	"main": "./dist/artemis.min.js",
 	"repository": {
@@ -25,7 +25,7 @@
 		"build": "parcel build ./index.js --global Artemis --out-file artemis.min.js --no-cache"
 	},
 	"devDependencies": {
-		"eslint": "^5.7.0",
+		"eslint": "^5.10.0",
 		"jsdoc": "^3.5.5",
 		"jsdoc-to-markdown": "^4.0.1",
 		"parcel": "^1.9.0"
