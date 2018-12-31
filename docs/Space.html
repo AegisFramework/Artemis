@@ -518,7 +518,7 @@ saving it when using the set () function befo.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line271">line 271</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line273">line 273</a>
     </li></ul></dd>
     
 
@@ -604,7 +604,7 @@ saving it when using the set () function befo.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line329">line 329</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line331">line 331</a>
     </li></ul></dd>
     
 
@@ -1570,7 +1570,7 @@ or its rejected if it doesn't exist.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line295">line 295</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line297">line 297</a>
     </li></ul></dd>
     
 
@@ -1747,7 +1747,7 @@ or its rejected if it doesn't exist.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line305">line 305</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line307">line 307</a>
     </li></ul></dd>
     
 
@@ -1904,7 +1904,7 @@ or its rejected if it doesn't exist.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line240">line 240</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line242">line 242</a>
     </li></ul></dd>
     
 
@@ -2039,7 +2039,7 @@ or its rejected if it doesn't exist.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line258">line 258</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line260">line 260</a>
     </li></ul></dd>
     
 
@@ -2174,7 +2174,7 @@ or its rejected if it doesn't exist.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line249">line 249</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line251">line 251</a>
     </li></ul></dd>
     
 
@@ -2413,7 +2413,7 @@ or its rejected if it doesn't exist.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line315">line 315</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line317">line 317</a>
     </li></ul></dd>
     
 
@@ -2570,7 +2570,7 @@ or its rejected if it doesn't exist.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line284">line 284</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line286">line 286</a>
     </li></ul></dd>
     
 
@@ -2705,7 +2705,7 @@ or its rejected if it doesn't exist.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line231">line 231</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line233">line 233</a>
     </li></ul></dd>
     
 
@@ -3127,7 +3127,7 @@ lost.
     
 
     
-    <h4 class="name" id="upgrade"><span class="type-signature"></span>upgrade<span class="signature">(oldVersion, newVersion)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
+    <h4 class="name" id="upgrade"><span class="type-signature"></span>upgrade<span class="signature">(oldVersion, newVersion, callback)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
     
 
     
@@ -3214,6 +3214,29 @@ lost.
         </tr>
 
     
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Function to transform the old stored values to the new version's format</td>
+        </tr>
+
+    
     </tbody>
 </table>
 
@@ -3251,7 +3274,7 @@ lost.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line219">line 219</a>
+        <a href="Space.js.html">Space.js</a>, <a href="Space.js.html#line221">line 221</a>
     </li></ul></dd>
     
 
@@ -3323,7 +3346,7 @@ lost.
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Tue Dec 11 2018 22:21:41 GMT-0600 (Central Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Dec 31 2018 02:09:03 GMT-0600 (Central Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -29,6 +29,8 @@ export class LocalStorage {
 		this.version = version;
 		this.store = store;
 
+		this.upgrades = {};
+
 		if (this.version === '') {
 			this.numericVersion = 0;
 		} else {
@@ -177,10 +179,11 @@ export class LocalStorage {
 	 * @param callback {function} - Function to transform the old stored values to the new version's format
 	 * @returns {Promise} Result of the upgrade operation
 	 */
-	upgrade (oldVersion, newVersion) {
+	upgrade (oldVersion, newVersion, callback) {
 		return this.open ().then (() => {
 			if (this.version !== newVersion) {
 				this.version = newVersion;
+				this.numericVersion = parseInt (this.version.replace (/\./g, ''));
 			}
 
 			// Get all keys from the previous version
@@ -204,6 +207,10 @@ export class LocalStorage {
 					}
 				} catch (exception) {
 					// Unable to parse to JSON
+				}
+
+				if (typeof callback === 'function') {
+					previous = callback.call (this, key, previous);
 				}
 
 				promises.push (this.set (key, previous).then (() => {

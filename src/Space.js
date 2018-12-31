@@ -214,10 +214,12 @@ export class Space {
 	 *
 	 * @param oldVersion {string} - The version of the storage to be upgraded
 	 * @param newVersion {string} - The version to be upgraded to
+	 * @param callback {function} - Function to transform the old stored values to the new version's format
+	 *
 	 * @returns {Promise} - Result of the upgrade operation
 	 */
-	upgrade (oldVersion, newVersion) {
-		return this.adapter.upgrade (oldVersion, newVersion).then (() => {
+	upgrade (oldVersion, newVersion, callback) {
+		return this.adapter.upgrade (oldVersion, newVersion, callback).then (() => {
 			return Promise.resolve (this);
 		});
 	}

@@ -207,11 +207,14 @@ export class IndexedDB {
 	 * Upgrade a Space Version. Upgrades must be declared before the open ()
 	 * method is executed.
 	 *
+	 * @param {string} oldVersion - The version to be upgraded
 	 * @param {string} newVersion - The version to be upgraded to
 	 * @param {function} callback - Function to transform the old stored values to the new version's format
 	 * @returns {Promise} - Result of the upgrade operation
 	 */
-	upgrade (newVersion, callback) {
+	upgrade (oldVersion, newVersion, callback) {
+		this.version = newVersion;
+		this.numericVersion = parseInt (this.version.replace (/\./g, ''));
 		this.upgrades[parseInt (newVersion.replace (/\./g, ''))] = callback;
 		return Promise.resolve ();
 	}

@@ -104,7 +104,10 @@
 				name: 'Artemis',
 				version: '0.1.1'
 			});
-			newSpace.upgrade ("0.1.0", "0.1.1").then ((storage) => {
+			newSpace.upgrade ("0.1.0", "0.1.1", (key, value) => {
+				console.log ('Upgrading', key, value);
+				return value;
+			}).then ((storage) => {
 				console.log (storage);
 				return storage.each (function (key, value) {
 					return this.set (key, value.value);
@@ -118,7 +121,7 @@
 
 			const students = new Space (SpaceAdapter.IndexedDB, {
 				name: 'Artemis',
-				version: '0.2.0',
+				version: '0.3.0',
 				store: 'Students',
 				props: {
 					keyPath: 'id',
@@ -135,16 +138,18 @@
 				}
 			});
 
-			students.upgrade ('0.2.0', function (event) {
+
+			students.set (null, {key: '018279', name: 'Diego', lastName: 'Islas'}).catch ((event) => {
 				console.log (event);
+			});
+
+			students.upgrade ('0.2.0', '0.3.0', function (event) {
+				console.log ('AAA', event);
 
 			}).then (function (storage) {
 				return storage.update (1, { key: '2'});
 			});
 
-			students.set (null, {key: '018279', name: 'Diego', lastName: 'Islas'}).catch ((event) => {
-				console.log (event);
-			});
 
 			students.keys ().then(keys => console.log (keys));
 
