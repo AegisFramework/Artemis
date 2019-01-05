@@ -67,6 +67,7 @@ export class IndexedDB {
 			return this.storage;
 		} else {
 			this.storage = new Promise ((resolve, reject) => {
+				let upgradesToApply = [];
 				const storage = window.indexedDB.open (this.name, this.numericVersion);
 
 				storage.onerror = (event) => {
@@ -74,26 +75,49 @@ export class IndexedDB {
 				};
 
 				storage.onsuccess = (event) => {
-					resolve (event.target.result);
+					resolve ({ storage: event.target.result, upgrades: upgradesToApply });
 				};
 
 				storage.onupgradeneeded = (event) => {
+					// If the previous version is less than one, it means that
+					// the database needs to be created first
 					if (event.oldVersion < 1) {
+						// Create all the needed Stores
 						const store = event.target.result.createObjectStore (this.store, this.props);
 						for (const index of Object.keys (this.index)) {
 							store.createIndex (this.index[index].name, this.index[index].field, this.index[index].props);
 						}
-					} else if (typeof this.upgrades[event.newVersion] === 'function') {
-						this.upgrades[event.newVersion].call (this, event);
+					} else {
+						// Check what upgrade functions have been declared in their respective order
+						const availableUpgrades = Object.keys (this.upgrades).sort ();
+						
+						// Find the first update that needs to be applied to the database given
+						// the old version it currently has.
+						const startFrom = availableUpgrades.findIndex (u => {
+							const [old, ] = u.split ('::');
+							return parseInt (old) === event.oldVersion;
+						});
+
+						if (startFrom > -1) {
+							upgradesToApply = availableUpgrades.slice (startFrom).filter ((u) => {
+								const [old, next] = u.split ('::');
+								return parseInt (old) < this.numericVersion && parseInt (next) <= this.numericVersion;
+							});
+						}
 					}
+
+					// Once the transaction is done, resolve the storage object
 					const transaction = event.target.transaction;
 					transaction.addEventListener ('success', () => {
-						resolve (event.target.result);
+						resolve ({ storage: event.target.result, upgrades: upgradesToApply });
 					});
 				};
-			}).then ((storage) => {
+			}).then (({ storage, upgrades }) => {
 				this.storage = storage;
-				return Promise.resolve (this);
+				return new Promise ((resolve) => {
+					const res = () => resolve (storage);
+					this._upgrade (upgrades, res, event);
+				});
 			});
 			return this.storage;
 		}
@@ -210,13 +234,24 @@ export class IndexedDB {
 	 * @param {string} oldVersion - The version to be upgraded
 	 * @param {string} newVersion - The version to be upgraded to
 	 * @param {function} callback - Function to transform the old stored values to the new version's format
-	 * @returns {Promise} - Result of the upgrade operation
+	 * @returns {Promise}
 	 */
 	upgrade (oldVersion, newVersion, callback) {
-		this.version = newVersion;
-		this.numericVersion = parseInt (this.version.replace (/\./g, ''));
-		this.upgrades[parseInt (newVersion.replace (/\./g, ''))] = callback;
+		this.upgrades[`${parseInt (oldVersion.replace (/\./g, ''))}::${parseInt (newVersion.replace (/\./g, ''))}`] = callback;
 		return Promise.resolve ();
+	}
+
+	// This function acts as a helper for the upgrade progress by executing the
+	// needed upgrade callbacks in the correct order and sychronously.
+	_upgrade (upgradesToApply, resolve, event) {
+		// Check if there are still upgrades to apply
+		if (upgradesToApply.length > 0) {
+			this.upgrades[upgradesToApply[0]].call (this, this, event).then (() => {
+				this._upgrade (upgradesToApply.slice (1), resolve, event);
+			}).catch ((e) => console.error (e));
+		} else {
+			resolve ();
+		}
 	}
 
 	/**

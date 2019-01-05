@@ -52,7 +52,7 @@
 		<h1>Artemis Test</h1>
 
 		<script>
-		const { $_, $_ready, Space, SpaceAdapter, FileSystem } = Artemis;
+		const { $_, $_ready, Space, SpaceAdapter, FileSystem, Util } = Artemis;
 
 		$_ready (() => {
 			FileSystem.readRemote ('./index.js', 'text', {mode: 'no-cors'}).then ((content) => {
@@ -65,6 +65,28 @@
 				version: '0.1.0'
 			});
 
+			/*space.upgrade ("0.1.0", "0.1.1", (storage) => {
+				return storage.get ('Test').then ((value) => {
+					console.log (value);
+					return storage.update ('Test', { upgrades: ['0.1.1'] });
+				});
+			});
+
+			space.upgrade ("0.1.1", "0.2.0", (storage) => {
+				return storage.get ('Test').then ((value) => {
+					console.log (value);
+					const newValue = [...value.upgrades, '0.2.0'];
+					return storage.update ('Test', { upgrades: newValue });
+				});
+			});
+
+			space.upgrade ("0.2.0", "0.2.1", (storage) => {
+				return storage.get ('Test').then ((value) => {
+					console.log (value);
+					const newValue = [...value.upgrades, '0.2.1'];
+					return storage.update ('Test', { upgrades: newValue });
+				});
+			});*/
 
 			space.addTransformation ({
 				id: "myTransform",
@@ -100,20 +122,6 @@
 				$_("body").append (`<p>Space Correctly Cleared Up</p>`);
 			});
 
-			const newSpace = new Space (SpaceAdapter.LocalStorage, {
-				name: 'Artemis',
-				version: '0.1.1'
-			});
-			newSpace.upgrade ("0.1.0", "0.1.1", (key, value) => {
-				console.log ('Upgrading', key, value);
-				return value;
-			}).then ((storage) => {
-				console.log (storage);
-				return storage.each (function (key, value) {
-					return this.set (key, value.value);
-				})
-
-			});
 
 			const global = new Space ();
 
@@ -121,7 +129,7 @@
 
 			const students = new Space (SpaceAdapter.IndexedDB, {
 				name: 'Artemis',
-				version: '0.3.0',
+				version: '0.1.0',
 				store: 'Students',
 				props: {
 					keyPath: 'id',
@@ -143,11 +151,24 @@
 				console.log (event);
 			});
 
-			students.upgrade ('0.2.0', '0.3.0', function (event) {
+			students.upgrade ('0.2.0', '0.3.0', function (storage, event) {
 				console.log ('AAA', event);
+				return this.update (1, { key: '28'});
+			});
 
-			}).then (function (storage) {
-				return storage.update (1, { key: '2'});
+			students.upgrade ('0.3.0', '0.3.1', function (storage, event) {
+				console.log ('AAA', event);
+				return this.update (1, { key: '29'});
+			});
+
+			students.upgrade ('0.3.1', '0.3.2', function (storage, event) {
+				console.log ('AAA', event);
+				return this.update (1, { key: '30'});
+			});
+
+			students.upgrade ('0.3.2', '0.3.3', function (storage, event) {
+				console.log ('AAA', event);
+				return this.update (1, { key: '31'});
 			});
 
 
@@ -174,6 +195,8 @@
 			});
 
 			console.log (FileSystem.isImage ('./some/file/image.png'));
+
+			console.log (Util.uuid ());
 		});
 		</script>
 	</body>

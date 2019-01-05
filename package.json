@@ -1,6 +1,6 @@
 {
 	"name": "@aegis-framework/artemis",
-	"version": "0.3.9",
+	"version": "0.3.10",
 	"description": "Aegis Framework Javascript Library",
 	"main": "./dist/artemis.min.js",
 	"module": "./index.js",
@@ -26,10 +26,10 @@
 		"build": "parcel build ./index.js --global Artemis --out-file artemis.min.js --no-cache --public-url ."
 	},
 	"devDependencies": {
-		"eslint": "^5.10.0",
+		"eslint": "^5.12.0",
 		"jsdoc": "^3.5.5",
 		"jsdoc-to-markdown": "^4.0.1",
-		"parcel": "^1.9.0"
+		"parcel": "^1.11.0"
 	},
 	"files": [
 		"index.js",

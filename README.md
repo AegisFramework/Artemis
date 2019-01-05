@@ -37,9 +37,9 @@ Artemis core library focuses on DOM manipulation, providing a jQuery-like experi
 
 ```javascript
 $_ready (()=> {
-	$_("body").append ("<h1>Some Title</h1>");
-    $_("h1").text ("A different title");
-    $_("h1").style ("color", "#424242");
+	$_('body').append ('<h1>Some Title</h1>');
+    $_('h1').text ('A different title');
+    $_('h1').style ('color', '#424242');
 });
 ```
 
@@ -54,12 +54,12 @@ Artemis also includes a small form utility class that helps with filling and ret
 ```
 
 ```javascript
-Form.fill ("MyForm", {
-	"SomeInput": "Here is some Value",
-    "OtherInput": "And here's another one"
+Form.fill ('MyForm', {
+	'SomeInput': 'Here is some Value',
+    'OtherInput': 'And here’s another one'
 });
 
-console.log (Form.values ("MyForm"));
+console.log (Form.values ('MyForm'));
 ```
 
 ### Space
@@ -68,60 +68,101 @@ The Space Library is a wrapper for simple storage solutions as Local and Session
 
 ```javascript
 let space = new Space (SpaceAdapter.LocalStorage, {
-	name: "Storage",
-	version: "0.1.0"
+	name: 'Storage',
+	version: '0.1.0'
 });
 
-space.set ("Test", {
-    value: "Some Value"
+space.set ('Test', {
+    value: 'Some Value'
 }).then (({key, value}) => {
-    console.log ("The value was inserted correctly!");
+    console.log ('The value was inserted correctly!');
 });
 
-space.get ("Test").then ((value) => {
+space.get ('Test').then ((value) => {
     return value;
 }).then (({key, value}) => {
     console.log (value);
 });
 
 space = new Space (SpaceAdapter.LocalStorage, {
-	name: "Storage",
-	version: "0.1.1"
+	name: 'Storage',
+	version: '0.1.1'
 });
-space.upgrade ("0.1.0", "0.1.1", (key, value) => {
-    return new Promise ((resolve, reject) => {
-        console.log (key);
-        resolve (value.value);
-    });
+
+space.upgrade ('0.1.0', '0.1.1', (storage) => {
+    return storage.set ('Test', {
+		value: 'Other Value'
+	});
+});
+```
+
+### Request
+The request library provides a simple way to send HTTP requests using the fetch API.
+
+```javascript
+Request.get ('https://example.com/api/', {
+	'someQueryParam': 'Some Query Value!'
+}).then ((response) => {
+	return response.text ();
+}).then ((text) => {
+	console.log (text);
+});
+
+Request.post ('https://example.com/api/', {
+	'someKey': 'Some Value!'
+}).then ((response) => {
+	return response.text ();
+}).then ((text) => {
+	console.log (text);
 });
 ```
 
 ### Platform
-The platform library provides several utility classes to obtain information about the platform in which the code is running.
+The platform library provides several utility methods to obtain information about the platform in which the code is running.
 
 ```javascript
-if (Platform.mobile ("Android")) {
-	console.log ("You are running this on Android!");
+if (Platform.mobile ('Android')) {
+	console.log ('You are running this on Android!');
 } else if (Platform.mobile ()) {
-	console.log ("You are running this on some kind of mobile device!");
-} else if (Platform.desktop ("macOS")) {
-	console.log ("You are running this on a Mac!");
+	console.log ('You are running this on some kind of mobile device!');
+} else if (Platform.desktop ('macOS')) {
+	console.log ('You are running this on a Mac!');
 }
 
 if (Platform.electron ()) {
-	console.log ("You are running this on a Electron!");
+	console.log ('You are running this on a Electron!');
 } else if (Platform.cordova ()) {
-	console.log ("You are running this on a Cordova!");
+	console.log ('You are running this on a Cordova!');
 }
 ```
 
 ### Text
-The text library provides simple utility classes to perform text transformations or other text related functions.
+The text library provides simple utility methods to perform text transformations or other text related functions.
 
 ```javascript
-console.log (Text.capitalize ("is this text capitalized?"));
+console.log (Text.capitalize ('is this text capitalized?'));
+// Logs: Is This Text Capitalized?
 
-console.log (Text.suffix ("Hello", "Hello how are you?"));
+console.log (Text.suffix ('Hello', 'Hello how are you?'));
+// Logs: how are you?
 
-console.log (Text.prefix ("how are you?", "Hello how are you?"));
+console.log (Text.prefix ('how are you?', 'Hello how are you?'));
+// Logs: Hello 
+```
+
+### Util
+The util library provides diverse methods that could be useful for some applications
+
+```javascript
+console.log (Util.uuid ());
+// Logs: Some UUID such as 116a7d96-8c6c-46ee-a9e1-3c7183e691b5
+
+function test () {
+	console.log ('A simple Function');
+}
+
+Util.callAsync (test).then (() => {
+	console.log ('Test was executed and a promise was inserted so test behaves like a function using promises');
+});
+
 ```
