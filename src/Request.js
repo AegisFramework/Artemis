@@ -60,6 +60,7 @@ export class Request {
 	 */
 	static post (url, data, options = {}) {
 		let formData;
+
 		if (typeof options.headers !== 'undefined') {
 			const contentType = options.headers['Content-Type'];
 			if (typeof contentType !== 'undefined') {
@@ -78,13 +79,22 @@ export class Request {
 			formData = Request.serialize (data);
 		}
 
-		return fetch (url, Object.assign ({}, {
+		const props = Object.assign ({}, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded'
 			},
 			body: formData
-		}, options));
+		}, options);
+
+		// Delete the explicit multipart/form-data header to allow boundary automatic filling
+		if (typeof props.headers !== 'undefined') {
+			if (props.headers['Content-Type'] === 'multipart/form-data') {
+				delete props.headers['Content-Type'];
+			}
+		}
+
+		return fetch (url, props);
 	}
 
 	/**
