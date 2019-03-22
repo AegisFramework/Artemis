@@ -1,3 +1,4 @@
+export * from './src/Debug';
 export * from './src/DOM';
 export * from './src/FileSystem';
 export * from './src/Form';
