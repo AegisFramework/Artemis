@@ -457,6 +457,13 @@ export class DOM {
 		let found = null;
 		let element = this;
 		while (typeof element.get (0) !== 'undefined' && found === null) {
+			// Check if the current element matches the selector
+			const matches = element.matches (selector);
+
+			if (matches === true) {
+				return element;
+			}
+
 			const search = element.find (selector);
 			if (search.length > 0) {
 				found = search;
