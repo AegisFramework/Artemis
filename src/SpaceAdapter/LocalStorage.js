@@ -61,7 +61,7 @@ export class LocalStorage {
 		} else {
 			this.storage = new Promise ((resolve) => {
 				let upgradesToApply = [];
-	
+
 				// Check if this space is versioned
 				if (this.version !== '') {
 					// Get the versionless part of the ID to check if an upgrade needs
@@ -73,7 +73,7 @@ export class LocalStorage {
 					} else if (this.name !== '' && this.version !== '') {
 						versionless = `${this.name}::`;
 					}
-	
+
 					// Get all the currently stored keys that contain the versionless
 					// ID, which means they belong to this space
 					const storedVersions = Object.keys (window.localStorage).filter ((key) => {
@@ -86,7 +86,7 @@ export class LocalStorage {
 						// Filter all that didn't match the versionless part fully
 						return key.indexOf ('::') === -1;
 					}).sort ();
-	
+
 					if (storedVersions.length > 0) {
 						// We'll only take the lowest one every time
 						const oldVersion = storedVersions[0];
@@ -95,41 +95,41 @@ export class LocalStorage {
 						if (oldVersionNumeric < this.numericVersion) {
 							// Check what upgrade functions have been declared in their respective order
 							const availableUpgrades = Object.keys (this.upgrades).sort ();
-								
+
 							// Find the first update that needs to be applied to the database given
 							// the old version it currently has.
 							const startFrom = availableUpgrades.findIndex (u => {
 								const [old, ] = u.split ('::');
 								return parseInt (old) === oldVersionNumeric;
 							});
-		
+
 							if (startFrom > -1) {
 								upgradesToApply = availableUpgrades.slice (startFrom).filter ((u) => {
 									const [old, next] = u.split ('::');
 									return parseInt (old) < this.numericVersion && parseInt (next) <= this.numericVersion;
 								});
 							}
-		
+
 							// Get the previous ID using the old version
 							let previousId = `${this.name}::${oldVersion}_`;
-		
+
 							if (this.name !== '' && this.version !== '' && this.store !== '') {
 								previousId = `${this.name}::${this.store}::${oldVersion}_`;
 							} else if (this.name !== '' && this.version !== '') {
 								previousId = `${this.name}::${oldVersion}_`;
 							}
-		
+
 							// Get all keys from the previous version
 							const keys = Object.keys (window.localStorage).filter ((key) => {
 								return key.indexOf (previousId) === 0;
 							}).map ((key) => {
 								return key.replace (previousId, '');
 							});
-		
+
 							for (const key of keys) {
 								// Get the value stored with the previous version
 								const previous = window.localStorage.getItem (`${previousId}${key}`);
-		
+
 								// Re-insert the value using the new ID as a key
 								window.localStorage.setItem (this.id + key, previous);
 
@@ -190,6 +190,9 @@ export class LocalStorage {
 			} else {
 				this.storage.setItem (this.id + key, value);
 			}
+			return Promise.resolve ({key, value});
+		}).catch (() => {
+			this.storage.setItem (this.id + key, value);
 			return Promise.resolve ({key, value});
 		});
 	}
