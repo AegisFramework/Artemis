@@ -192,8 +192,7 @@ export class LocalStorage {
 			}
 			return Promise.resolve ({key, value});
 		}).catch (() => {
-			this.storage.setItem (this.id + key, value);
-			return Promise.resolve ({key, value});
+			return this.set (key, value);
 		});
 	}
 
