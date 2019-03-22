@@ -679,9 +679,13 @@ export class DOM {
 	 */
 	replaceWith (element) {
 		if (this.collection[0]) {
-			const div = document.createElement ('div');
-			div.innerHTML = element;
-			this.collection[0].parentElement.replaceChild (div.firstChild, this.collection[0]);
+			if (typeof element === 'string') {
+				const div = document.createElement ('div');
+				div.innerHTML = element;
+				this.collection[0].parentElement.replaceChild (div.firstChild, this.collection[0]);
+			} else {
+				this.collection[0].parentElement.replaceChild (element, this.collection[0]);
+			}
 		}
 	}
 
