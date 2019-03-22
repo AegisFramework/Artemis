@@ -52,7 +52,7 @@
 		<h1>Artemis Test</h1>
 
 		<script>
-		const { $_, $_ready, Space, SpaceAdapter, FileSystem, Util } = Artemis;
+		const { $_, $_ready, Space, SpaceAdapter, FileSystem, Util, Request } = Artemis;
 
 		$_ready (() => {
 			FileSystem.readRemote ('./index.js', 'text', {mode: 'no-cors'}).then ((content) => {
@@ -197,6 +197,12 @@
 			console.log (FileSystem.isImage ('./some/file/image.png'));
 
 			console.log (Util.uuid ());
+
+			console.log (Request.serialize ({
+				name: 'John',
+				lastName: 'Doe',
+				age: 22
+			}));
 		});
 		</script>
 	</body>
