@@ -109,14 +109,12 @@ export class DOM {
 	 * @return {boolean} - Whether the class is present or not
 	 */
 	hasClass (classToCheck) {
-		if (this.collection[0]) {
-			for (let j = 0; j < this.collection[0].classList.length; j++) {
-				if (this.collection[0].classList[j] == classToCheck) {
-					return true;
-				}
+		for (const element of this.collection) {
+			if (!element.classList.contains (classToCheck)) {
+				return false;
 			}
 		}
-		return false;
+		return true;
 	}
 
 	/**
@@ -127,11 +125,13 @@ export class DOM {
 	 * element instead of setting it
 	 */
 	value (value) {
-		if (this.length > 0) {
-			if (typeof value === 'undefined') {
+		if (typeof value !== 'undefined') {
+			for (const element of this.collection) {
+				element.value = value;
+			}
+		} else {
+			if (this.collection[0]) {
 				return this.collection[0].value;
-			} else {
-				this.collection[0].value = value;
 			}
 		}
 	}
@@ -257,11 +257,13 @@ export class DOM {
 	 * @return {string} - If no value is set, this function returns it's current value
 	 */
 	data (name, value) {
-		if (this.length > 0) {
-			if (typeof value === 'undefined') {
+		if (typeof value !== 'undefined') {
+			for (const element of this.collection) {
+				element.dataset[name] = value;
+			}
+		} else {
+			if (this.collection[0]) {
 				return this.collection[0].dataset[name];
-			} else {
-				this.collection[0].dataset[name] = value;
 			}
 		}
 	}
@@ -274,11 +276,13 @@ export class DOM {
 	 * element's current text.
 	 */
 	text (value) {
-		if (this.length > 0) {
-			if (typeof value === 'undefined') {
+		if (typeof value !== 'undefined') {
+			for (const element of this.collection) {
+				element.textContent = value;
+			}
+		} else {
+			if (this.collection[0]) {
 				return this.collection[0].textContent;
-			} else {
-				this.collection[0].textContent = value;
 			}
 		}
 	}
@@ -291,11 +295,13 @@ export class DOM {
 	 * element's current HTML.
 	 */
 	html (value) {
-		if (this.length > 0) {
-			if (typeof value === 'undefined') {
+		if (typeof value !== 'undefined') {
+			for (const element of this.collection) {
+				element.innerHTML = value;
+			}
+		} else {
+			if (this.collection[0]) {
 				return this.collection[0].innerHTML;
-			} else {
-				this.collection[0].innerHTML = value;
 			}
 		}
 	}
@@ -394,7 +400,7 @@ export class DOM {
 	}
 
 	/**
-	 * Check if the elements in the collection are visible by chacking their
+	 * Check if the elements in the collection are visible by checking their
 	 * display, offsetWidth and offsetHeight properties
 	 *
 	 * @return {boolean} - Whether the elements are visible or not
@@ -487,11 +493,13 @@ export class DOM {
 	 * value of the provided attribute
 	 */
 	attribute (attribute, value) {
-		if (this.collection[0]) {
-			if (typeof value === 'undefined') {
-				this.collection[0].getAttribute (attribute);
-			} else {
-				return this.collection[0].setAttribute (attribute, value);
+		if (typeof value !== 'undefined') {
+			for (const element of this.collection) {
+				element.setAttribute (attribute, value);
+			}
+		} else {
+			if (this.collection[0]) {
+				return this.collection[0].getAttribute (attribute);
 			}
 		}
 	}
@@ -503,9 +511,12 @@ export class DOM {
 	 * @returns {boolean} - Whether or not the attribute is present
 	 */
 	hasAttribute (attribute) {
-		if (this.collection[0]) {
-			return this.collection[0].hasAttribute (attribute);
+		for (const element of this.collection) {
+			if (!element.hasAttribute (attribute)) {
+				return false;
+			}
 		}
+		return true;
 	}
 
 	/**
@@ -537,7 +548,7 @@ export class DOM {
 	 * either an individual property or a JSON object with key-value pairs
 	 * @param  {string} [value] - Value to set the property to when only changing
 	 * one property
-	 * @return {string} - If a peoperty is given but not a value for it, this
+	 * @return {string} - If a property is given but not a value for it, this
 	 * function will return its current value
 	 */
 	style (properties, value) {
@@ -673,7 +684,7 @@ export class DOM {
 	}
 
 	/**
-	 * Remove all elemets in the collection
+	 * Remove all elements in the collection
 	 */
 	remove () {
 		for (const element of this.collection) {
@@ -684,15 +695,17 @@ export class DOM {
 	/**
 	 * Replace the first element in the collection with a new one
 	 */
-	replaceWith (element) {
-		if (this.collection[0]) {
-			if (typeof element === 'string') {
-				const div = document.createElement ('div');
-				div.innerHTML = element;
-				this.collection[0].parentElement.replaceChild (div.firstChild, this.collection[0]);
-			} else {
-				this.collection[0].parentElement.replaceChild (element, this.collection[0]);
-			}
+	replaceWith (newElement) {
+		let replaceElement = newElement;
+
+		if (typeof newElement === 'string') {
+			const div = document.createElement ('div');
+			div.innerHTML = newElement;
+			replaceElement = div.firstChild;
+		}
+
+		for (const element of this.collection) {
+			element.parentElement.replaceChild (replaceElement, element);
 		}
 	}
 
@@ -700,8 +713,8 @@ export class DOM {
 	 * Reset every element in the collection
 	 */
 	reset () {
-		if (this.length > 0) {
-			this.collection[0].reset ();
+		for (const element of this.collection) {
+			element.reset ();
 		}
 	}
 
@@ -710,14 +723,16 @@ export class DOM {
 	 *
 	 * @param  {string} property - Property name to set or get
 	 * @param  {string|Number} [value] - Value to set the property to
-	 * @return {string|Number} - If no value is provided, this funcion will return the
+	 * @return {string|Number} - If no value is provided, this function will return the
 	 * current value of the indicated property
 	 */
 	property (property, value) {
-		if (this.collection[0]) {
-			if (typeof value !== 'undefined') {
-				this.collection[0][property] = value;
-			} else {
+		if (typeof value !== 'undefined') {
+			for (const element of this.collection) {
+				element[property] = value;
+			}
+		} else {
+			if (this.collection[0]) {
 				return this.collection[0][property];
 			}
 		}
