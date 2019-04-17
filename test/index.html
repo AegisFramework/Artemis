@@ -44,6 +44,10 @@
 			    font-size: 2em;
 				font-weight: lighter;
 			}
+
+			simple-component p {
+				color: red;
+			}
 		</style>
 		<script src="./../dist/artemis.min.js"></script>
 	</head>
@@ -52,7 +56,7 @@
 		<h1>Artemis Test</h1>
 
 		<script>
-		const { $_, $_ready, Space, SpaceAdapter, FileSystem, Util, Request } = Artemis;
+		const { $_, $_ready, Space, SpaceAdapter, FileSystem, Util, Request, Component } = Artemis;
 
 		$_ready (() => {
 			FileSystem.readRemote ('./index.js', 'text', {mode: 'no-cors'}).then ((content) => {
@@ -203,6 +207,26 @@
 				lastName: 'Doe',
 				age: 22
 			}));
+
+
+			class SimpleComponent extends Component {
+
+				render () {
+					return `<p>${this.props.text}</p>`;
+				}
+			}
+
+			SimpleComponent._id = 'simple-component';
+
+			<simple-component text="Hello World!"></simple-component>
+
+			const element = SimpleComponent.instantiate ({
+				text: 'Hello World!'
+			});
+
+			console.log (element);
+
+			$_('body').append (element);
 		});
 		</script>
 	</body>

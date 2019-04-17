@@ -22,9 +22,19 @@ export class DOM {
 		if (typeof selector == 'string') {
 			this.collection = document.querySelectorAll (selector);
 			this.length = this.collection.length;
+			this._selector = selector;
 		} else if (selector instanceof NodeList) {
 			this.collection = selector;
 			this.length = selector.length;
+			this._selector = selector;
+		} else if (selector instanceof DOM) {
+			this.collection = selector.collection;
+			this.length = this.collection.length;
+			this._selector = selector._selector;
+		} else if (selector instanceof HTMLElement) {
+			this.collection = [selector];
+			this.length = this.collection.length;
+			this._selector = selector;
 		} else if (typeof selector == 'object') {
 			if (selector.length >= 1) {
 				this.collection = selector;
@@ -32,9 +42,11 @@ export class DOM {
 				this.collection = [selector];
 			}
 			this.length = this.collection.length;
+			this._selector = selector;
 		} else {
 			return null;
 		}
+
 	}
 
 	/**
@@ -228,8 +240,16 @@ export class DOM {
 					element.addEventListener(event[j], target, false);
 				} else if (typeof target === 'string' && typeof callback === 'function') {
 					element.addEventListener(event[j], (e) => {
-						if (e.target && $_(e.target).matches (target)) {
-							callback.call (e.target, e);
+						if (!e.target) {
+							return;
+						}
+
+						const targetElement = $_(e.target).closestParent (target, this._selector);
+
+						if (targetElement !== null) {
+							callback.call (targetElement.get (0), e);
+						} else {
+							return;
 						}
 					}, false);
 				}
@@ -457,6 +477,7 @@ export class DOM {
 	 * from the initial object and then follows to its parents.
 	 *
 	 * @param  {string} selector - Selector to match the closest element with
+	 *
 	 * @return {DOM} - DOM instance with the closest HTML element matching the selector
 	 */
 	closest (selector) {
@@ -482,6 +503,39 @@ export class DOM {
 		}
 
 		return element;
+	}
+
+	/**
+	 * Find the closest parent matching the given selector and within the limit
+	 * provided. This bubbles up from the initial object and then follows to its
+	 * parents.
+	 *
+	 * @param {string} selector - Selector to match the closest element with
+	 * @param {string} [limit = null] - Selector that matches the limit element
+	 *
+	 * @return {DOM} - DOM instance with the closest HTML element matching the selector
+	 */
+	closestParent (selector, limit = null) {
+		let element = this;
+		while (typeof element.get (0) !== 'undefined') {
+
+			// Check if the current element matches the selector
+			const matches = element.matches (selector);
+
+			if (matches === true) {
+				return element;
+			}
+
+			if (typeof limit === 'string') {
+				if (element.matches (limit)) {
+					break;
+				}
+			}
+
+			element = element.parent ();
+		}
+
+		return null;
 	}
 
 	/**
@@ -680,6 +734,7 @@ export class DOM {
 		const polyfill = check.matches || check.webkitMatchesSelector || check.mozMatchesSelector || check.msMatchesSelector || function () {
 			return [].indexOf.call (document.querySelectorAll (selector), this) !== -1;
 		};
+
 		return polyfill.call (this.collection[0], selector);
 	}
 
