@@ -19,6 +19,13 @@ export class DOM {
 	 * @return {DOM} - New instance of DOM
 	 */
 	constructor (selector) {
+
+		if (selector === null) {
+			this.collection = [];
+			this.length = 0;
+			return;
+		}
+
 		if (typeof selector == 'string') {
 			this.collection = document.querySelectorAll (selector);
 			this.length = this.collection.length;
@@ -44,7 +51,7 @@ export class DOM {
 			this.length = this.collection.length;
 			this._selector = selector;
 		} else {
-			return null;
+			return undefined;
 		}
 
 	}
@@ -142,7 +149,7 @@ export class DOM {
 				element.value = value;
 			}
 		} else {
-			if (this.collection[0]) {
+			if (this.length > 0) {
 				return this.collection[0].value;
 			}
 		}
@@ -246,7 +253,7 @@ export class DOM {
 
 						const targetElement = $_(e.target).closestParent (target, this._selector);
 
-						if (targetElement !== null) {
+						if (typeof targetElement !== 'undefined') {
 							callback.call (targetElement.get (0), e);
 						} else {
 							return;
@@ -282,7 +289,7 @@ export class DOM {
 				element.dataset[name] = value;
 			}
 		} else {
-			if (this.collection[0]) {
+			if (this.length > 0) {
 				return this.collection[0].dataset[name];
 			}
 		}
@@ -301,7 +308,7 @@ export class DOM {
 				element.textContent = value;
 			}
 		} else {
-			if (this.collection[0]) {
+			if (this.length > 0) {
 				return this.collection[0].textContent;
 			}
 		}
@@ -320,7 +327,7 @@ export class DOM {
 				element.innerHTML = value;
 			}
 		} else {
-			if (this.collection[0]) {
+			if (this.length > 0) {
 				return this.collection[0].innerHTML;
 			}
 		}
@@ -440,7 +447,7 @@ export class DOM {
 	 * @return {DOM} - DOM instance of the parent element
 	 */
 	parent () {
-		if (this.collection[0]) {
+		if (this.length > 0) {
 			return new DOM (this.collection[0].parentElement);
 		}
 	}
@@ -452,7 +459,7 @@ export class DOM {
 	 * @return {DOM} - Aegis instance with the element if found
 	 */
 	find (selector) {
-		if (this.collection[0]) {
+		if (this.length > 0) {
 			return new DOM (this.collection[0].querySelectorAll (selector));
 		}
 	}
@@ -463,7 +470,7 @@ export class DOM {
 	 * @return {Object} - Object with `top` and `left` offsets
 	 */
 	offset () {
-		if (this.collection[0]) {
+		if (this.length > 0) {
 			const rect = this.collection[0].getBoundingClientRect ();
 			return {
 				top: rect.top + document.body.scrollTop,
@@ -477,13 +484,12 @@ export class DOM {
 	 * from the initial object and then follows to its parents.
 	 *
 	 * @param  {string} selector - Selector to match the closest element with
-	 *
 	 * @return {DOM} - DOM instance with the closest HTML element matching the selector
 	 */
 	closest (selector) {
 		let found = null;
 		let element = this;
-		while (typeof element.get (0) !== 'undefined' && found === null) {
+		while (typeof element !== 'undefined' && found === null) {
 			// Check if the current element matches the selector
 			const matches = element.matches (selector);
 
@@ -492,8 +498,10 @@ export class DOM {
 			}
 
 			const search = element.find (selector);
-			if (search.length > 0) {
-				found = search;
+			if (search) {
+				if (search.length > 0) {
+					found = search;
+				}
 			}
 			element = element.parent ();
 		}
@@ -505,19 +513,9 @@ export class DOM {
 		return element;
 	}
 
-	/**
-	 * Find the closest parent matching the given selector and within the limit
-	 * provided. This bubbles up from the initial object and then follows to its
-	 * parents.
-	 *
-	 * @param {string} selector - Selector to match the closest element with
-	 * @param {string} [limit = null] - Selector that matches the limit element
-	 *
-	 * @return {DOM} - DOM instance with the closest HTML element matching the selector
-	 */
-	closestParent (selector, limit = null) {
+	closestParent (selector, limit) {
 		let element = this;
-		while (typeof element.get (0) !== 'undefined') {
+		while (typeof element !== 'undefined') {
 
 			// Check if the current element matches the selector
 			const matches = element.matches (selector);
@@ -534,8 +532,6 @@ export class DOM {
 
 			element = element.parent ();
 		}
-
-		return null;
 	}
 
 	/**
@@ -552,7 +548,7 @@ export class DOM {
 				element.setAttribute (attribute, value);
 			}
 		} else {
-			if (this.collection[0]) {
+			if (this.length > 0) {
 				return this.collection[0].getAttribute (attribute);
 			}
 		}
@@ -675,7 +671,7 @@ export class DOM {
 	 * @param  {type} callback - Callback function to run once the animation is over
 	 */
 	fadeIn (time = 400, callback) {
-		if (this.collection[0]) {
+		if (this.length > 0) {
 			const element = this.collection[0];
 			element.style.opacity = 0;
 
@@ -705,7 +701,7 @@ export class DOM {
 	 * @param  {type} callback - Callback function to run once the animation is over
 	 */
 	fadeOut (time = 400, callback) {
-		if (this.collection[0]) {
+		if (this.length > 0) {
 			let last = +new Date ();
 			const element = this.collection[0];
 			const tick = () => {
@@ -735,7 +731,11 @@ export class DOM {
 			return [].indexOf.call (document.querySelectorAll (selector), this) !== -1;
 		};
 
-		return polyfill.call (this.collection[0], selector);
+		if (this.length > 0) {
+			return polyfill.call (this.collection[0], selector);
+		}
+
+		return false;
 	}
 
 	/**
@@ -787,7 +787,7 @@ export class DOM {
 				element[property] = value;
 			}
 		} else {
-			if (this.collection[0]) {
+			if (this.length > 0) {
 				return this.collection[0][property];
 			}
 		}
