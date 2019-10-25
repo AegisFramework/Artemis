@@ -1,6 +1,6 @@
 {
 	"name": "@aegis-framework/artemis",
-	"version": "0.3.19",
+	"version": "0.3.20",
 	"description": "Aegis Framework Javascript Library",
 	"main": "./dist/artemis.min.js",
 	"module": "./index.js",
@@ -27,11 +27,11 @@
 		"watch": "parcel watch ./index.js --global Artemis --out-file artemis.min.js --no-cache --public-url ."
 	},
 	"devDependencies": {
-		"@babel/core": "^7.4.3",
-		"eslint": "^5.16.0",
-		"jsdoc": "^3.5.5",
-		"jsdoc-to-markdown": "^4.0.1",
-		"parcel": "^1.12.3"
+		"@babel/core": "^7.6.4",
+		"eslint": "^6.5.1",
+		"jsdoc": "^3.6.3",
+		"jsdoc-to-markdown": "^5.0.2",
+		"parcel": "^1.12.4"
 	},
 	"files": [
 		"index.js",
@@ -39,7 +39,7 @@
 		"dist/*"
 	],
 	"dependencies": {
-		"@babel/plugin-proposal-object-rest-spread": "^7.4.3"
+		"@babel/plugin-proposal-object-rest-spread": "^7.6.2"
 	},
 	"browserslist": [
 		"> 5%"
