@@ -296,6 +296,20 @@ export class DOM {
 	}
 
 	/**
+	 * Remove a data property from all the elements on the collection given its
+	 * name.
+	 *
+	 * @param {string} name - Name of the data property to remove
+	 *
+	 * @return {void}
+	 */
+	removeData (name) {
+		for (const element of this.collection) {
+			delete element.dataset[name];
+		}
+	}
+
+	/**
 	 * Get or set the text of the first element matching the selector
 	 *
 	 * @param  {string} [value] - Value to set the text to
