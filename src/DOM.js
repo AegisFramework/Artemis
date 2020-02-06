@@ -274,6 +274,8 @@ export class DOM {
 		if (this.length > 0) {
 			return new DOM (this.collection[0].querySelector (selector));
 		}
+
+		return new DOM (null);
 	}
 
 	/**
@@ -427,6 +429,8 @@ export class DOM {
 		if (this.length > 0) {
 			return new DOM (this.collection[0]);
 		}
+
+		return new DOM (null);
 	}
 
 	/**
@@ -438,6 +442,8 @@ export class DOM {
 		if (this.length > 0) {
 			return new DOM (this.collection[this.collection.length - 1]);
 		}
+
+		return new DOM (null);
 	}
 
 	/**
@@ -464,6 +470,8 @@ export class DOM {
 		if (this.length > 0) {
 			return new DOM (this.collection[0].parentElement);
 		}
+
+		return new DOM (null);
 	}
 
 	/**
@@ -476,6 +484,8 @@ export class DOM {
 		if (this.length > 0) {
 			return new DOM (this.collection[0].querySelectorAll (selector));
 		}
+
+		return new DOM (null);
 	}
 
 	/**
