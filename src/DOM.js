@@ -279,6 +279,15 @@ export class DOM {
 	}
 
 	/**
+	 * Check if there are any elements that match the selector.
+	 *
+	 * @return {boolean} - Whether elements matching the selector existed or not
+	 */
+	exists () {
+		return this.length > 0;
+	}
+
+	/**
 	 * Get or set a `data` property
 	 *
 	 * @param  {string} name - Name of the data property
