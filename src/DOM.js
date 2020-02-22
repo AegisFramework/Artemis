@@ -253,7 +253,7 @@ export class DOM {
 
 						const targetElement = $_(e.target).closestParent (target, this._selector);
 
-						if (typeof targetElement !== 'undefined') {
+						if (targetElement.exists ()) {
 							callback.call (targetElement.get (0), e);
 						} else {
 							return;
@@ -522,7 +522,7 @@ export class DOM {
 	closest (selector) {
 		let found = null;
 		let element = this;
-		while (typeof element !== 'undefined' && found === null) {
+		while (element.exists () && found === null) {
 			// Check if the current element matches the selector
 			const matches = element.matches (selector);
 
@@ -548,7 +548,7 @@ export class DOM {
 
 	closestParent (selector, limit) {
 		let element = this;
-		while (typeof element !== 'undefined') {
+		while (element.exists ()) {
 
 			// Check if the current element matches the selector
 			const matches = element.matches (selector);
@@ -565,6 +565,8 @@ export class DOM {
 
 			element = element.parent ();
 		}
+
+		return new DOM (null);
 	}
 
 	/**
