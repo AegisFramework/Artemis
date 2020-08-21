@@ -76,7 +76,9 @@ export class RemoteStorage {
 	 */
 	set (key, value) {
 		return this.open ().then (() => {
-			return this.storage.post (this.endpoint + key, value, this.props);
+			return this.storage.post (this.endpoint + key, value, this.props).then ((response) => {
+				return Promise.resolve ({ key, response: response.json () });
+			});
 		});
 	}
 
@@ -92,7 +94,7 @@ export class RemoteStorage {
 	update (key, value) {
 		return this.get (key).then ((currentValue) => {
 			return this.storage.put (this.endpoint + key, Object.assign ({}, currentValue, value), this.props).then ((response) => {
-				return response.json ();
+				return Promise.resolve ({ key, response: response.json () });
 			});
 		});
 	}
