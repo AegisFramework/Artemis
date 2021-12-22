@@ -58,33 +58,45 @@ export class DOM {
 
 	/**
 	 * Hide elements by setting their `display` property to 'none'.
+	 *
+	 * @return {DOM} - Current instance
 	 */
 	hide () {
 		for (const element of this.collection) {
 			element.style.display = 'none';
 		}
+
+		return this;
 	}
 
 	/**
 	 * Show elements by setting their `display` property to the given value.
 	 *
 	 * @param {string} [display='block'] - Display property to set
+	 *
+	 * @return {DOM} - Current instance
 	 */
 	show (display = 'block') {
 		for (const element of this.collection) {
 			element.style.display = display;
 		}
+
+		return this;
 	}
 
 	/**
 	 * Add a class to the classList object
 	 *
 	 * @param  {string} newClass - Class name to add
+	 *
+	 * @return {DOM} - Current instance
 	 */
 	addClass (newClass) {
 		for (const element of this.collection) {
 			element.classList.add (newClass);
 		}
+
+		return this;
 	}
 
 	/**
@@ -92,6 +104,8 @@ export class DOM {
 	 *
 	 * @param  {string} [oldClass=null] - Class to remove. If it's empty or null,
 	 * all classes will be removed
+	 *
+	 * @return {DOM} - Current instance
 	 */
 	removeClass (oldClass = null) {
 		if (oldClass !== null) {
@@ -105,12 +119,16 @@ export class DOM {
 				}
 			}
 		}
+
+		return this;
 	}
 
 	/**
 	 * Toggle between two classes
 	 *
 	 * @param  {string} classes - Space separated class names
+	 *
+	 * @return {DOM} - Current instance
 	 */
 	toggleClass (classes) {
 		classes = classes.split (' ');
@@ -119,12 +137,15 @@ export class DOM {
 				element.classList.toggle (classes[j]);
 			}
 		}
+
+		return this;
 	}
 
 	/**
 	 * Check if the first element matching the selector has the given class
 	 *
 	 * @param  {string} classToCheck - Class name to check for
+	 *
 	 * @return {boolean} - Whether the class is present or not
 	 */
 	hasClass (classToCheck) {
@@ -140,14 +161,18 @@ export class DOM {
 	 * Get or set the value from the first element matching the selector
 	 *
 	 * @param  {string} value - Value to set to the element.
-	 * @return {string} - If no value was provided, this returns the value of the
-	 * element instead of setting it
+	 *
+	 * @return {string|DOM} - If a value is provided, this returns the current
+	 * instance, otherwise it returns the value of the element instead of
+	 * setting it
 	 */
 	value (value) {
 		if (typeof value !== 'undefined') {
 			for (const element of this.collection) {
 				element.value = value;
 			}
+
+			return this;
 		} else {
 			if (this.length > 0) {
 				return this.collection[0].value;
@@ -157,77 +182,105 @@ export class DOM {
 
 	/**
 	 * Focus on the first element matching the selector
+	 *
+	 * @return {DOM} - Current instance
 	 */
 	focus () {
 		if (this.length > 0) {
 			this.collection[0].focus ();
 		}
+
+		return this;
 	}
 
 	/**
 	 * Add a callback for the 'click' event on every element matching the selector
 	 *
 	 * @param  {function} callback - Callback function to run when the event is triggered
+	 *
+	 * @return {DOM} - Current instance
 	 */
 	click (callback) {
 		for (const element of this.collection) {
 			element.addEventListener ('click', callback, false);
 		}
+
+		return this;
 	}
 
 	/**
 	 * Add a callback for the 'keyup' event on every element matching the selector
 	 *
 	 * @param  {function} callback - Callback function to run when the event is triggered
+	 *
+	 * @return {DOM} - Current instance
 	 */
 	keyup (callback) {
 		for (const element of this.collection) {
 			element.addEventListener ('keyup', callback, false);
 		}
+
+		return this;
 	}
 
 	/**
 	 * Add a callback for the 'keydown' event on every element matching the selector
 	 *
 	 * @param  {function} callback - Callback function to run when the event is triggered
+	 *
+	 * @return {DOM} - Current instance
 	 */
 	keydown (callback) {
 		for (const element of this.collection) {
 			element.addEventListener ('keydown', callback, false);
 		}
+
+		return this;
 	}
 
 	/**
 	 * Add a callback for the 'submit' event on every element matching the selector
 	 *
 	 * @param  {function} callback - Callback function to run when the event is triggered
+	 *
+	 * @return {DOM} - Current instance
 	 */
 	submit (callback) {
 		for (const element of this.collection) {
 			element.addEventListener ('submit', callback, false);
 		}
+
+		return this;
 	}
 
 	/**
 	 * Add a callback for the 'change' event on every element matching the selector
 	 *
 	 * @param  {function} callback - Callback function to run when the event is triggered
+	 *
+	 * @return {DOM} - Current instance
 	 */
 	change (callback) {
 		for (const element of this.collection) {
 			element.addEventListener ('change', callback, false);
 		}
+
+		return this;
 	}
 
 	/**
 	 * Add a callback for the 'scroll' event on every element matching the selector
 	 *
 	 * @param  {function} callback - Callback function to run when the event is triggered
+	 *
+	 * @return {DOM} - Current instance
 	 */
 	scroll (callback) {
 		for (const element of this.collection) {
 			element.addEventListener ('scroll', callback, false);
 		}
+
+		return this;
 	}
 
 	/**
@@ -236,6 +289,8 @@ export class DOM {
 	 * @param  {string} event - Event to add the listener to
 	 * @param  {string} target - Target element on which to detect the event
 	 * @param  {function} callback - Callback function to run when the event is triggered
+	 *
+	 * @return {DOM} - Current instance
 	 */
 	on (event, target, callback) {
 		event = event.split(' ');
@@ -262,12 +317,15 @@ export class DOM {
 				}
 			}
 		}
+
+		return this;
 	}
 
 	/**
 	 * Filter from the current collection to only those matching the new selector
 	 *
 	 * @param  {string} element - Selector to filter the collection with
+	 *
 	 * @return {DOM} - New DOM instance with the filtered collection
 	 */
 	filter (selector) {
@@ -292,13 +350,17 @@ export class DOM {
 	 *
 	 * @param  {string} name - Name of the data property
 	 * @param  {string} [value] - Value of the property
-	 * @return {string} - If no value is set, this function returns it's current value
+	 *
+	 * @return {string|DOM} - If no value is provided, this function returns
+	 * the first matching element value, otherwise it returns the current instance
 	 */
 	data (name, value) {
 		if (typeof value !== 'undefined') {
 			for (const element of this.collection) {
 				element.dataset[name] = value;
 			}
+
+			return this;
 		} else {
 			if (this.length > 0) {
 				return this.collection[0].dataset[name];
@@ -312,26 +374,32 @@ export class DOM {
 	 *
 	 * @param {string} name - Name of the data property to remove
 	 *
-	 * @return {void}
+	 * @return {DOM} - Current instance
 	 */
 	removeData (name) {
 		for (const element of this.collection) {
 			delete element.dataset[name];
 		}
+
+		return this;
 	}
 
 	/**
 	 * Get or set the text of the first element matching the selector
 	 *
 	 * @param  {string} [value] - Value to set the text to
-	 * @return {type} - If no value is present, this function returns its the
-	 * element's current text.
+	 *
+	 * @return {string|DOM} - If no value is provided, this function returns the
+	 * inner text of the first matching element. Otherwise it returns the current
+	 * instance.
 	 */
 	text (value) {
 		if (typeof value !== 'undefined') {
 			for (const element of this.collection) {
 				element.textContent = value;
 			}
+
+			return this;
 		} else {
 			if (this.length > 0) {
 				return this.collection[0].textContent;
@@ -343,14 +411,17 @@ export class DOM {
 	 * Get or set the inner HTML of the first element matching the selector
 	 *
 	 * @param  {string} [value] - Value to set the HTML to
-	 * @return {type} - If no value is present, this function returns its the
-	 * element's current HTML.
+	 *
+	 * @return {string|DOM} - If no value is provided, this function returns the
+	 * first matching element HTML. Otherwise it returns the current instance
 	 */
 	html (value) {
 		if (typeof value !== 'undefined') {
 			for (const element of this.collection) {
 				element.innerHTML = value;
 			}
+
+			return this;
 		} else {
 			if (this.length > 0) {
 				return this.collection[0].innerHTML;
@@ -362,6 +433,8 @@ export class DOM {
 	 * Append an element to the first element matching the selector
 	 *
 	 * @param  {string} element - String representation of the element to add
+	 *
+	 * @return {DOM} - Current instance
 	 */
 	append (element) {
 		if (this.length > 0) {
@@ -377,12 +450,16 @@ export class DOM {
 				this.collection[0].appendChild (element);
 			}
 		}
+
+		return this;
 	}
 
 	/**
 	 * Prepend an element to the first element matching the selector
 	 *
 	 * @param  {string} element - String representation of the element to add
+	 *
+	 * @return {DOM} - Current instance
 	 */
 	prepend (element) {
 		if (this.length > 0) {
@@ -406,23 +483,30 @@ export class DOM {
 				}
 			}
 		}
+
+		return this;
 	}
 
 	/**
 	 * Iterate over the collection of elements matching the selector
 	 *
 	 * @param  {function} callback - Callback to run for every element
+	 *
+	 * @return {DOM} - Current instance
 	 */
 	each (callback) {
 		for (const element of this.collection) {
 			callback (element);
 		}
+
+		return this;
 	}
 
 	/**
 	 * Get an element from the collection given it's index
 	 *
 	 * @param  {int} index - Index of the element to retrieve
+	 *
 	 * @return {HTMLElement} - HTML Element in the position indicated by the index
 	 */
 	get (index) {
@@ -487,7 +571,8 @@ export class DOM {
 	 * Find an element that matches the given selector in the first element of the collection
 	 *
 	 * @param  {string} selector - Selector to find the element with
-	 * @return {DOM} - Aegis instance with the element if found
+	 *
+	 * @return {DOM} - DOM instance with the element if found
 	 */
 	find (selector) {
 		if (this.length > 0) {
@@ -500,7 +585,7 @@ export class DOM {
 	/**
 	 * Get the top and left offsets of the first element matching the selector
 	 *
-	 * @return {Object} - Object with `top` and `left` offsets
+	 * @return {object|void} - Object with `top` and `left` offsets
 	 */
 	offset () {
 		if (this.length > 0) {
@@ -517,6 +602,7 @@ export class DOM {
 	 * from the initial object and then follows to its parents.
 	 *
 	 * @param  {string} selector - Selector to match the closest element with
+	 *
 	 * @return {DOM} - DOM instance with the closest HTML element matching the selector
 	 */
 	closest (selector) {
@@ -546,6 +632,17 @@ export class DOM {
 		return element;
 	}
 
+	/**
+	 * Find the closest parent element matching the given selector. This bubbles up
+	 * from the initial object and then follows to its parents.
+	 *
+	 * @param  {string} selector - Selector to match the closest element with
+	 * @param  {string} limit - Selector for limit element. If the limit is reached
+	 * and no element matching the provided selector was found, it will cause an
+	 * early return.
+	 *
+	 * @return {DOM} - DOM instance with the closest HTML element matching the selector
+	 */
 	closestParent (selector, limit) {
 		let element = this;
 		while (element.exists ()) {
@@ -574,7 +671,8 @@ export class DOM {
 	 *
 	 * @param  {string} attribute - Attribute's name
 	 * @param  {string|Number} [value] - Value to set the attribute to
-	 * @return {type} - If no value is provided, this function returns the current
+	 *
+	 * @return {string|number|DOM} - If no value is provided, this function returns the current
 	 * value of the provided attribute
 	 */
 	attribute (attribute, value) {
@@ -582,6 +680,8 @@ export class DOM {
 			for (const element of this.collection) {
 				element.setAttribute (attribute, value);
 			}
+
+			return this;
 		} else {
 			if (this.length > 0) {
 				return this.collection[0].getAttribute (attribute);
@@ -593,6 +693,7 @@ export class DOM {
 	 * Check whether an element has an attribute or not
 	 *
 	 * @param {string} attribute - The name of the attribute to check existance for
+	 *
 	 * @returns {boolean} - Whether or not the attribute is present
 	 */
 	hasAttribute (attribute) {
@@ -608,22 +709,30 @@ export class DOM {
 	 * Insert content to the `after` property of an element
 	 *
 	 * @param  {string} content - String representation of the content to add
+	 *
+	 * @return {DOM} - Current instance
 	 */
 	after (content) {
 		for (const element of this.collection) {
 			element.insertAdjacentHTML ('afterend', content);
 		}
+
+		return this;
 	}
 
 	/**
 	 * Insert content to the `before` property of an element
 	 *
 	 * @param  {string} content - String representation of the content to add
+	 *
+	 * @return {DOM} - Current instance
 	 */
 	before (content) {
 		for (const element of this.collection) {
 			element.insertAdjacentHTML ('beforebegin', content);
 		}
+
+		return this;
 	}
 
 	/**
@@ -633,19 +742,24 @@ export class DOM {
 	 * either an individual property or a JSON object with key-value pairs
 	 * @param  {string} [value] - Value to set the property to when only changing
 	 * one property
-	 * @return {string} - If a property is given but not a value for it, this
+	 *
+	 * @return {string|DOM} - If a property is given but not a value for it, this
 	 * function will return its current value
 	 */
 	style (properties, value) {
 		for (let i = 0; i < this.collection.length; i++) {
 			if (typeof properties === 'string' && value !== 'undefined') {
 				this.collection[i].style[properties] = value;
+
+				return this;
 			} else if (typeof properties === 'string' && value === 'undefined') {
 				return this.collection[i].style[properties];
 			} else if (typeof properties === 'object') {
 				for (const property in properties) {
 					this.collection[i].style[property] = properties[property];
 				}
+
+				return this;
 			}
 		}
 	}
@@ -658,6 +772,8 @@ export class DOM {
 	 * to animate
 	 * @param  {int} time - Time in milliseconds during which the properties will
 	 * be animated
+	 *
+	 * @return {DOM} - Current instance
 	 */
 	animate (style, time) {
 		for (let i = 0; i < this.collection.length; i++) {
@@ -697,6 +813,8 @@ export class DOM {
 				}
 			}
 		}
+
+		return this;
 	}
 
 	/**
@@ -704,6 +822,8 @@ export class DOM {
 	 *
 	 * @param  {type} [time=400] - Time duration for the animation
 	 * @param  {type} callback - Callback function to run once the animation is over
+	 *
+	 * @return {DOM} - Current instance
 	 */
 	fadeIn (time = 400, callback) {
 		if (this.length > 0) {
@@ -727,6 +847,8 @@ export class DOM {
 
 			tick();
 		}
+
+		return this;
 	}
 
 	/**
@@ -734,6 +856,8 @@ export class DOM {
 	 *
 	 * @param  {type} [time=400] - Time duration for the animation
 	 * @param  {type} callback - Callback function to run once the animation is over
+	 *
+	 * @return {DOM} - Current instance
 	 */
 	fadeOut (time = 400, callback) {
 		if (this.length > 0) {
@@ -753,11 +877,14 @@ export class DOM {
 			};
 			tick ();
 		}
+
+		return this;
 	}
 
 	/**	Check if the first element in the collection matches a given selector
 	 *
 	 * @param  {string} selector - Selector to match
+	 *
 	 * @return {boolean} - Whether the element matches the selector or not
 	 */
 	matches (selector) {
@@ -775,15 +902,21 @@ export class DOM {
 
 	/**
 	 * Remove all elements in the collection
+	 *
+	 * @return {DOM} - Current instance
 	 */
 	remove () {
 		for (const element of this.collection) {
 			element.parentNode.removeChild (element);
 		}
+
+		return this;
 	}
 
 	/**
 	 * Replace the first element in the collection with a new one
+	 *
+	 * @return {DOM} - Current instance
 	 */
 	replaceWith (newElement) {
 		let replaceElement = newElement;
@@ -797,15 +930,21 @@ export class DOM {
 		for (const element of this.collection) {
 			element.parentElement.replaceChild (replaceElement, element);
 		}
+
+		return this;
 	}
 
 	/**
 	 * Reset every element in the collection
+	 *
+	 * @return {DOM} - Current instance
 	 */
 	reset () {
 		for (const element of this.collection) {
 			element.reset ();
 		}
+
+		return this;
 	}
 
 	/**
@@ -813,6 +952,7 @@ export class DOM {
 	 *
 	 * @param  {string} property - Property name to set or get
 	 * @param  {string|Number} [value] - Value to set the property to
+	 *
 	 * @return {string|Number} - If no value is provided, this function will return the
 	 * current value of the indicated property
 	 */
@@ -821,6 +961,8 @@ export class DOM {
 			for (const element of this.collection) {
 				element[property] = value;
 			}
+
+			return this;
 		} else {
 			if (this.length > 0) {
 				return this.collection[0][property];
@@ -833,6 +975,7 @@ export class DOM {
  * Simple wrapper function to use the DOM library
  *
  * @param  {string|Object|array} selector - Selector or DOM element to use
+ *
  * @return {DOM} - DOM instance or class if no selector is used
  */
 export function $_ (selector) {

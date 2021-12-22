@@ -56,178 +56,162 @@
 		<h1>Artemis Test</h1>
 
 		<script>
-		const { $_, $_ready, Space, SpaceAdapter, FileSystem, Util, Request, Component } = Artemis;
+			const { $_, $_ready, Space, SpaceAdapter, FileSystem, Util, Request, Component } = Artemis;
 
-		$_ready (() => {
-			FileSystem.readRemote ('./index.js', 'text', {mode: 'no-cors'}).then ((content) => {
-				console.log (content);
-			});
-
-			$_("body").append ("<h2>Space Test</h2>");
-			const space = new Space (SpaceAdapter.LocalStorage, {
-				name: 'Artemis',
-				version: '0.1.0'
-			});
-
-			/*space.upgrade ("0.1.0", "0.1.1", (storage) => {
-				return storage.get ('Test').then ((value) => {
-					console.log (value);
-					return storage.update ('Test', { upgrades: ['0.1.1'] });
+			$_ready (() => {
+				FileSystem.readRemote ('./index.js', 'text', {mode: 'no-cors'}).then ((content) => {
+					console.log (content);
 				});
-			});
 
-			space.upgrade ("0.1.1", "0.2.0", (storage) => {
-				return storage.get ('Test').then ((value) => {
-					console.log (value);
-					const newValue = [...value.upgrades, '0.2.0'];
-					return storage.update ('Test', { upgrades: newValue });
+				$_("body").append ("<h2>Space Test</h2>");
+				const space = new Space (SpaceAdapter.LocalStorage, {
+					name: 'Artemis',
+					version: '0.1.0'
 				});
-			});
 
-			space.upgrade ("0.2.0", "0.2.1", (storage) => {
-				return storage.get ('Test').then ((value) => {
-					console.log (value);
-					const newValue = [...value.upgrades, '0.2.1'];
-					return storage.update ('Test', { upgrades: newValue });
+				/*space.upgrade ("0.1.0", "0.1.1", (storage) => {
+					return storage.get ('Test').then ((value) => {
+						console.log (value);
+						return storage.update ('Test', { upgrades: ['0.1.1'] });
+					});
 				});
-			});*/
 
-			space.addTransformation ({
-				id: "myTransform",
-				get: (key, value) => {
-					if (typeof value === 'object') {
-						value.a = 'b';
+				space.upgrade ("0.1.1", "0.2.0", (storage) => {
+					return storage.get ('Test').then ((value) => {
+						console.log (value);
+						const newValue = [...value.upgrades, '0.2.0'];
+						return storage.update ('Test', { upgrades: newValue });
+					});
+				});
+
+				space.upgrade ("0.2.0", "0.2.1", (storage) => {
+					return storage.get ('Test').then ((value) => {
+						console.log (value);
+						const newValue = [...value.upgrades, '0.2.1'];
+						return storage.update ('Test', { upgrades: newValue });
+					});
+				});*/
+
+				space.addTransformation ({
+					id: "myTransform",
+					get: (key, value) => {
+						if (typeof value === 'object') {
+							value.a = 'b';
+						}
+						return value;
 					}
+				});
+
+				space.onCreate((key, value) => {
+					if (typeof value === 'object') {
+						value = JSON.stringify (value);
+					}
+					$_("body").append (`<p><b>${key}</b> correctly inserted with value [${value}]</p>`);
+				});
+
+				space.set ("Test", {
+					value: "Some Value"
+				});
+
+				space.get ("Test").then ((value) => {
 					return value;
-				}
-			});
-
-			space.onCreate((key, value) => {
-				if (typeof value === 'object') {
+				}).then ((value) => {
 					value = JSON.stringify (value);
-				}
-				$_("body").append (`<p><b>${key}</b> correctly inserted with value [${value}]</p>`);
-			});
+					$_("body").append (`<p><b>Test</b> correctly retrieved value [${value}]</p>`);
+				});
 
-			space.set ("Test", {
-				value: "Some Value"
-			});
+				space.rename ("Aegis");
 
-			space.get ("Test").then ((value) => {
-				return value;
-			}).then ((value) => {
-				value = JSON.stringify (value);
-				$_("body").append (`<p><b>Test</b> correctly retrieved value [${value}]</p>`);
-			});
-
-			space.rename ("Aegis");
-
-			space.clear ().then (() => {
-				$_("body").append (`<p>Space Correctly Cleared Up</p>`);
-			});
+				space.clear ().then (() => {
+					$_("body").append (`<p>Space Correctly Cleared Up</p>`);
+				});
 
 
-			const global = new Space ();
+				const global = new Space ();
 
-			global.set ("a", "b");
+				global.set ("a", "b");
 
-			const students = new Space (SpaceAdapter.IndexedDB, {
-				name: 'Artemis',
-				version: '0.1.0',
-				store: 'Students',
-				props: {
-					keyPath: 'id',
-					autoIncrement: true
-				},
-				index: {
-					key: {
-						name: 'Key Index',
-						field: 'key',
-						props: {
-							unique: true
+				const students = new Space (SpaceAdapter.IndexedDB, {
+					name: 'Artemis',
+					version: '0.1.0',
+					store: 'Students',
+					props: {
+						keyPath: 'id',
+						autoIncrement: true
+					},
+					index: {
+						key: {
+							name: 'Key Index',
+							field: 'key',
+							props: {
+								unique: true
+							}
 						}
 					}
-				}
+				});
+
+
+				const key = Util.uuid();
+				students.set (key, {key: key, name: 'Diego', lastName: 'Islas'}).catch ((event) => {
+					console.error (event);
+				});
+
+				students.upgrade ('0.2.0', '0.3.0', function (storage, event) {
+					console.log ('AAA', event);
+					return this.update (1, { key: '28'});
+				});
+
+				students.upgrade ('0.3.0', '0.3.1', function (storage, event) {
+					console.log ('AAA', event);
+					return this.update (1, { key: '29'});
+				});
+
+				students.upgrade ('0.3.1', '0.3.2', function (storage, event) {
+					console.log ('AAA', event);
+					return this.update (1, { key: '30'});
+				});
+
+				students.upgrade ('0.3.2', '0.3.3', function (storage, event) {
+					console.log ('AAA', event);
+					return this.update (1, { key: '31'});
+				});
+
+
+				students.keys ().then(keys => console.log (keys));
+
+
+				const remoteSpace = new Space (SpaceAdapter.RemoteStorage, {
+					name: 'myRemote',
+					version: '0.1.0',
+					endpoint: 'https://hyuchia.com/',
+					store: 'post'
+				});
+
+				remoteSpace.get ('Something').then ((value) => {
+					console.log (value);
+				}).catch ((error) => {
+					console.error (error);
+				});
+
+				remoteSpace.set ('Something', {hey: 'This works!'}).then ((value) => {
+					console.log (value);
+				}).catch ((error) => {
+					console.error (error);
+				});
+
+				console.log (FileSystem.isImage ('./some/file/image.png'));
+
+				console.log (Util.uuid ());
+
+				console.log (Request.serialize ({
+					name: 'John',
+					lastName: 'Doe',
+					age: 22
+				}));
+
+
+
 			});
-
-
-			students.set (null, {key: '018279', name: 'Diego', lastName: 'Islas'}).catch ((event) => {
-				console.log (event);
-			});
-
-			students.upgrade ('0.2.0', '0.3.0', function (storage, event) {
-				console.log ('AAA', event);
-				return this.update (1, { key: '28'});
-			});
-
-			students.upgrade ('0.3.0', '0.3.1', function (storage, event) {
-				console.log ('AAA', event);
-				return this.update (1, { key: '29'});
-			});
-
-			students.upgrade ('0.3.1', '0.3.2', function (storage, event) {
-				console.log ('AAA', event);
-				return this.update (1, { key: '30'});
-			});
-
-			students.upgrade ('0.3.2', '0.3.3', function (storage, event) {
-				console.log ('AAA', event);
-				return this.update (1, { key: '31'});
-			});
-
-
-			students.keys ().then(keys => console.log (keys));
-
-
-			const remoteSpace = new Space (SpaceAdapter.RemoteStorage, {
-				name: 'myRemote',
-				version: '0.1.0',
-				endpoint: 'https://hyuchia.com/',
-				store: 'post'
-			});
-
-			remoteSpace.get ('Something').then ((value) => {
-				console.log (value);
-			}).catch ((error) => {
-				console.error (error);
-			});
-
-			remoteSpace.set ('Something', {hey: 'This works!'}).then ((value) => {
-				console.log (value);
-			}).catch ((error) => {
-				console.error (error);
-			});
-
-			console.log (FileSystem.isImage ('./some/file/image.png'));
-
-			console.log (Util.uuid ());
-
-			console.log (Request.serialize ({
-				name: 'John',
-				lastName: 'Doe',
-				age: 22
-			}));
-
-
-			class SimpleComponent extends Component {
-
-				render () {
-					return `<p>${this.props.text}</p>`;
-				}
-			}
-
-			SimpleComponent._id = 'simple-component';
-
-			<simple-component text="Hello World!"></simple-component>
-
-			const element = SimpleComponent.instantiate ({
-				text: 'Hello World!'
-			});
-
-			console.log (element);
-
-			$_('body').append (element);
-		});
 		</script>
 	</body>
 </html>

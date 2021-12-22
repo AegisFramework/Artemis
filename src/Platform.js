@@ -53,6 +53,7 @@ export class Platform {
 		}
 
 		// Main process
+		// eslint-disable-next-line no-undef
 		if (typeof process !== 'undefined' && typeof process.versions === 'object' && !!process.versions.electron) {
 			return true;
 		}

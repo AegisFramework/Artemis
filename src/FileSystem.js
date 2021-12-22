@@ -40,6 +40,7 @@ export class FileSystem {
 	 * @param  {File|Blob} file - File to read
 	 * @param  {string} [type = 'text'] - Type of data to be read, values can be
 	 * 'text', 'base64' and 'buffer'.
+	 *
 	 * @return {Promise<Event, ArrayBuffer|string>} - Promise that resolves to
 	 * the Load event and content of the file. The format depends on the type
 	 * parameter used.
@@ -75,6 +76,7 @@ export class FileSystem {
 	 * @param  {string} file - Name of the file (Including extension)
 	 * @param  {ArrayBuffer|ArrayBufferView|Blob|string} content - Content to save in the file
 	 * @param  {string} [type = 'text/plain'] - Mime Type for the file
+	 *
 	 * @return {Promise<File>}
 	 */
 	static create (name, content, type = 'text/plain') {
@@ -85,6 +87,7 @@ export class FileSystem {
 	 * @static extension - Returns the extension of a file given its file name.
 	 *
 	 * @param  {string} name - Name or full path of the file
+	 *
 	 * @return {string} - File extension without the leading dot (.)
 	 */
 	static extension (name) {
@@ -95,6 +98,7 @@ export class FileSystem {
 	 * @static isImage - Check if a file is an image by its extension.
 	 *
 	 * @param  {string} name - Name or full path of the file
+	 *
 	 * @return {boolean}
 	 */
 	static isImage (name) {

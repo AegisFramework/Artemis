@@ -1,9 +1,10 @@
 {
 	"name": "@aegis-framework/artemis",
-	"version": "0.3.24",
+	"version": "0.3.25",
 	"description": "Aegis Framework Javascript Library",
-	"main": "./dist/artemis.min.js",
-	"module": "./index.js",
+	"main": "./dist/index.js",
+	"module": "./dist/artemis.js",
+	"legacy": "./dist/artemis.min.js",
 	"repository": {
 		"type": "git",
 		"url": "https://gitlab.com/AegisFramework/Artemis.git"
@@ -20,28 +21,59 @@
 		"javascript",
 		"library"
 	],
+	"targets": {
+		"module": {
+			"source": "index.js",
+			"engines": {
+				"browsers": "Chrome 80"
+			},
+			"outputFormat": "esmodule",
+			"isLibrary": true,
+			"optimize": true,
+			"includeNodeModules": true
+		},
+		"main": {
+			"source": "index.js",
+			"engines": {
+				"node": ">= 12"
+			},
+			"outputFormat": "commonjs",
+			"isLibrary": true,
+			"optimize": true,
+			"includeNodeModules": true
+		},
+		"legacy": {
+			"source": "browser.js",
+			"context": "browser",
+			"outputFormat": "global",
+			"engines": {
+				"browsers": "> 0.5%, last 2 versions, not dead"
+			},
+			"isLibrary": false,
+			"optimize": true,
+			"includeNodeModules": true
+		}
+	},
 	"scripts": {
 		"eslint": "eslint index.js src",
 		"jsdoc": "jsdoc ./src -c ./.jsdoc.json && jsdoc2md -f ./src/* -c ./.jsdoc.json >> ./docs/README.md",
-		"build": "parcel build ./index.js --global Artemis --out-file artemis.min.js --no-cache --public-url .",
-		"watch": "parcel watch ./index.js --global Artemis --out-file artemis.min.js --no-cache --public-url ."
+		"build": "yarn build:main && yarn build:module && yarn build:legacy",
+		"build:main": "parcel build --target main --no-cache --public-url .",
+		"build:module": "parcel build --target module --no-cache --public-url .",
+		"build:legacy": "parcel build --target legacy --no-cache --public-url .",
+		"watch": "parcel watch ./index.js --no-cache --public-url ."
 	},
 	"devDependencies": {
-		"@babel/core": "^7.11.4",
-		"eslint": "^7.7.0",
+		"eslint": "^8.5.0",
 		"jsdoc": "^3.6.5",
-		"jsdoc-to-markdown": "^6.0.1",
-		"parcel": "^1.12.4"
+		"jsdoc-to-markdown": "^7.1.0",
+		"parcel": "^2.0.1"
 	},
 	"files": [
 		"index.js",
 		"src/*",
 		"dist/*"
 	],
-	"dependencies": {
-		"@babel/plugin-proposal-object-rest-spread": "^7.11.0"
-	},
-	"browserslist": [
-		"> 5%"
-	]
+	"dependencies": {},
+	"browserslist": "> 0.5%, last 2 versions, not dead"
 }

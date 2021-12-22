@@ -3,7 +3,7 @@
 Artemis is a JavaScript Library that aims to provide common utilities needed during development such as DOM manipulation, a wrapper for client based Storage and other functions that may be useful for web app development.
 
 ## Using it
-Artemis is provided as an UMD, therefore it's possible to use it either on a browser as a global library, using es6 modules or nodejs modules.
+Artemis is provided as a CommonJS, ES6 and global library.
 
 ### Browser
 
@@ -147,7 +147,7 @@ console.log (Text.suffix ('Hello', 'Hello how are you?'));
 // Logs: how are you?
 
 console.log (Text.prefix ('how are you?', 'Hello how are you?'));
-// Logs: Hello 
+// Logs: Hello
 ```
 
 ### Util
