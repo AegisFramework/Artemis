@@ -90,7 +90,7 @@ export class IndexedDB {
 					} else {
 						// Check what upgrade functions have been declared in their respective order
 						const availableUpgrades = Object.keys (this.upgrades).sort ();
-						
+
 						// Find the first update that needs to be applied to the database given
 						// the old version it currently has.
 						const startFrom = availableUpgrades.findIndex (u => {
@@ -187,7 +187,14 @@ export class IndexedDB {
 				const transaction = this.storage.transaction (this.store).objectStore (this.store);
 				const op = transaction.get (key);
 
-				op.addEventListener ('success', (event) => {resolve (event.target.result);});
+				op.addEventListener ('success', (event) => {
+					const value = event.target.result;
+					if (typeof value !== 'undefined' && value !== null) {
+						resolve (value);
+					} else {
+						reject ();
+					}
+				});
 				op.addEventListener ('error', (event) => {reject (event);});
 			});
 		});
