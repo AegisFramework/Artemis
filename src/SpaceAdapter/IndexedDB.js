@@ -32,8 +32,10 @@ export class IndexedDB {
 		this.name = name;
 		this.version = version;
 		this.store = store;
-		this.props = props;
+		this.props = props || {};
 		this.index = index;
+
+		this.keyPath = props.keyPath || 'id';
 
 		this.upgrades = {};
 
@@ -138,7 +140,9 @@ export class IndexedDB {
 				const transaction = this.storage.transaction (this.store, 'readwrite').objectStore (this.store);
 				let op;
 				if (key !== null) {
-					op = transaction.put (Object.assign ({}, {id: key}, value));
+					const temp = {};
+					temp[this.keyPath] = key;
+					op = transaction.put (Object.assign ({}, temp, value));
 				} else {
 					op = transaction.add (value);
 				}
@@ -211,7 +215,16 @@ export class IndexedDB {
 				const transaction = this.storage.transaction (this.store).objectStore (this.store);
 				const op = transaction.getAll ();
 
-				op.addEventListener ('success', (event) => {resolve (event.target.result);});
+				op.addEventListener ('success', (event) => {
+					const results = {};
+					event.target.result.forEach((item) => {
+						const id = item[this.keyPath];
+						delete item[this.keyPath];
+
+						results[id] = item;
+					});
+					resolve (results);
+				});
 				op.addEventListener ('error', (event) => {reject (event);});
 			});
 		});

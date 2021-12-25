@@ -179,6 +179,10 @@
 
 				students.keys ().then(keys => console.log (keys));
 
+				students.each((key, value) => {
+					console.log(key, value);
+				});
+
 
 				const remoteSpace = new Space (SpaceAdapter.RemoteStorage, {
 					name: 'myRemote',
