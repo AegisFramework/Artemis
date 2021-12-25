@@ -1,6 +1,6 @@
 {
 	"name": "@aegis-framework/artemis",
-	"version": "0.3.27",
+	"version": "0.3.28",
 	"description": "Aegis Framework Javascript Library",
 	"main": "./dist/index.js",
 	"module": "./dist/artemis.js",
@@ -61,7 +61,7 @@
 		"build:main": "parcel build --target main --no-cache --public-url .",
 		"build:module": "parcel build --target module --no-cache --public-url .",
 		"build:legacy": "parcel build --target legacy --no-cache --public-url .",
-		"watch": "parcel watch ./index.js --no-cache --public-url ."
+		"watch": "parcel watch --target legacy --no-cache --public-url ."
 	},
 	"devDependencies": {
 		"eslint": "^8.5.0",

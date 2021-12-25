@@ -748,20 +748,17 @@ export class DOM {
 	 */
 	style (properties, value) {
 		for (let i = 0; i < this.collection.length; i++) {
-			if (typeof properties === 'string' && value !== 'undefined') {
+			if (typeof properties === 'string' && typeof value !== 'undefined') {
 				this.collection[i].style[properties] = value;
-
-				return this;
-			} else if (typeof properties === 'string' && value === 'undefined') {
+			} else if (typeof properties === 'string' && typeof value === 'undefined') {
 				return this.collection[i].style[properties];
 			} else if (typeof properties === 'object') {
 				for (const property in properties) {
 					this.collection[i].style[property] = properties[property];
 				}
-
-				return this;
 			}
 		}
+		return this;
 	}
 
 	/**
