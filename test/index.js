@@ -1,5 +1,5 @@
 /* global require */
 
-const { Text } = require ('./../dist/artemis.min.js');
+const { Text } = require ('./../dist/artemis.js');
 
 console.log (Text.capitalize ('hello world'));

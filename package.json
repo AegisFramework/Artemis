@@ -1,10 +1,24 @@
 {
 	"name": "@aegis-framework/artemis",
-	"version": "0.3.28",
+	"version": "0.4.0",
 	"description": "Aegis Framework Javascript Library",
-	"main": "./dist/index.js",
+	"type": "module",
+	"main": "./dist/artemis.js",
 	"module": "./dist/artemis.js",
-	"legacy": "./dist/artemis.min.js",
+	"types": "./dist/types/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/types/index.d.ts",
+			"import": "./dist/artemis.js",
+			"default": "./dist/artemis.js"
+		},
+		"./browser": {
+			"types": "./dist/types/index.d.ts",
+			"import": "./dist/artemis.browser.js",
+			"default": "./dist/artemis.browser.js"
+		}
+	},
+	"sideEffects": false,
 	"repository": {
 		"type": "git",
 		"url": "https://gitlab.com/AegisFramework/Artemis.git"
@@ -13,67 +27,42 @@
 		"url": "https://gitlab.com/AegisFramework/Artemis/issues"
 	},
 	"homepage": "https://aegisframework.com/",
-	"author": "Diego Islas Ocampo <dev@hyuchia.com>",
+	"author": "Diana Islas Ocampo <dev@hyuchia.com>",
 	"license": "MIT",
 	"keywords": [
 		"artemis",
 		"dom",
 		"javascript",
+		"typescript",
 		"library"
 	],
-	"targets": {
-		"module": {
-			"source": "index.js",
-			"engines": {
-				"browsers": "Chrome 80"
-			},
-			"outputFormat": "esmodule",
-			"isLibrary": true,
-			"optimize": true,
-			"includeNodeModules": true
-		},
-		"main": {
-			"source": "index.js",
-			"engines": {
-				"node": ">= 12"
-			},
-			"outputFormat": "commonjs",
-			"isLibrary": true,
-			"optimize": true,
-			"includeNodeModules": true
-		},
-		"legacy": {
-			"source": "browser.js",
-			"context": "browser",
-			"outputFormat": "global",
-			"engines": {
-				"browsers": "> 0.5%, last 2 versions, not dead"
-			},
-			"isLibrary": false,
-			"optimize": true,
-			"includeNodeModules": true
-		}
-	},
 	"scripts": {
-		"eslint": "eslint index.js src",
-		"jsdoc": "jsdoc ./src -c ./.jsdoc.json && jsdoc2md -f ./src/* -c ./.jsdoc.json >> ./docs/README.md",
-		"build": "yarn build:main && yarn build:module && yarn build:legacy",
-		"build:main": "parcel build --target main --no-cache --public-url .",
-		"build:module": "parcel build --target module --no-cache --public-url .",
-		"build:legacy": "parcel build --target legacy --no-cache --public-url .",
-		"watch": "parcel watch --target legacy --no-cache --public-url ."
+		"build": "yarn clean && yarn lint && yarn check && yarn build:module && yarn build:legacy && yarn build:types",
+		"build:module": "bun build ./src/index.ts --target browser --format esm --outdir ./dist --sourcemap=linked --minify && mv ./dist/index.js ./dist/artemis.js && mv ./dist/index.js.map ./dist/artemis.js.map && sed -i 's/index.js.map/artemis.js.map/' ./dist/artemis.js",
+		"build:legacy": "bun build ./src/browser.ts --target browser --format esm --outdir ./dist --sourcemap=linked --minify && mv ./dist/browser.js ./dist/artemis.browser.js && mv ./dist/browser.js.map ./dist/artemis.browser.js.map && sed -i 's/browser.js.map/artemis.browser.js.map/' ./dist/artemis.browser.js",
+		"build:types": "tsc --emitDeclarationOnly --declarationDir ./dist/types",
+		"check": "tsc --noEmit",
+		"lint": "eslint ./src/**/*.ts",
+		"clean": "rm -rf dist",
+		"test": "http-server -p 3000 -c-1"
 	},
 	"devDependencies": {
-		"eslint": "^8.5.0",
-		"jsdoc": "^3.6.5",
-		"jsdoc-to-markdown": "^7.1.0",
-		"parcel": "^2.0.1"
+		"@babel/eslint-parser": "^7.28.5",
+		"@eslint/js": "^9.39.1",
+		"@typescript-eslint/eslint-plugin": "^8.48.1",
+		"@typescript-eslint/parser": "^8.48.1",
+		"bun": "^1.3.3",
+		"eslint": "^9.39.1",
+		"http-server": "^14.1.1",
+		"typescript": "^5.9.3",
+		"typescript-eslint": "^8.48.1"
 	},
 	"files": [
-		"index.js",
-		"src/*",
-		"dist/*"
+		"dist/",
+		"LICENSE",
+		"README.md",
+		"package.json"
 	],
-	"dependencies": {},
-	"browserslist": "> 0.5%, last 2 versions, not dead"
+	"browserslist": "> 0.5%, last 2 versions, not dead",
+	"packageManager": "yarn@4.12.0"
 }
