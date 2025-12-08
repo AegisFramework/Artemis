@@ -452,6 +452,7 @@ export class DOM {
 	 * @returns Current instance
 	 */
 	append(element: string | Element): this {
+		let isFirstElement = true;
 		for (const el of this.collection) {
 			if (typeof element === 'string') {
 				const div = document.createElement('div');
@@ -460,7 +461,16 @@ export class DOM {
 					el.appendChild(div.firstChild.cloneNode(true));
 				}
 			} else {
-				el.appendChild(element.cloneNode(true));
+				// For the first target, append the original element to preserve
+				// custom element state/props. For subsequent targets, clone.
+				// Note: Cloned custom elements will have their constructor re-run,
+				// which may reset state/props to defaults.
+				if (isFirstElement) {
+					el.appendChild(element);
+					isFirstElement = false;
+				} else {
+					el.appendChild(element.cloneNode(true));
+				}
 			}
 		}
 		return this;
@@ -473,6 +483,8 @@ export class DOM {
 	 * @returns Current instance
 	 */
 	prepend(element: string | Element): this {
+		let isFirstElement = true;
+
 		for (const el of this.collection) {
 			if (typeof element === 'string') {
 				const div = document.createElement('div');
@@ -485,10 +497,19 @@ export class DOM {
 					}
 				}
 			} else {
+				// For the first target, use the original element to preserve
+				// custom element state/props. For subsequent targets, clone.
+				// Note: Cloned custom elements will have their constructor re-run,
+				// which may reset state/props to defaults.
+				const nodeToInsert = isFirstElement ? element : element.cloneNode(true);
+				if (isFirstElement) {
+					isFirstElement = false;
+				}
+
 				if (el.childNodes.length > 0) {
-					el.insertBefore(element.cloneNode(true), el.childNodes[0]);
+					el.insertBefore(nodeToInsert, el.childNodes[0]);
 				} else {
-					el.appendChild(element.cloneNode(true));
+					el.appendChild(nodeToInsert);
 				}
 			}
 		}
