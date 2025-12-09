@@ -4,129 +4,107 @@
  * ==============================
  */
 
-/**
- * Provides utility functions for texts
- */
-export class Text {
-	/**
-	 * Capitalizes every word in a string
-	 *
-	 * @param text - Text string to capitalize
-	 * @returns Capitalized string
-	 */
-	static capitalize(text: string): string {
-		return text.replace(/\w\S*/g, (txt) => {
-			return txt.charAt(0).toUpperCase() + txt.substring(1).toLowerCase();
-		});
-	}
-
-	/**
-	 * Gets the suffix of a string given a key
-	 *
-	 * @param key - Key part of the string
-	 * @param text - Full string to extract the suffix from
-	 * @returns Suffix
-	 */
-	static suffix(key: string, text: string): string {
-		let suffix = '';
-		let position = text.indexOf(key);
-		if (position !== -1) {
-			position += key.length;
-			suffix = text.substring(position);
-		}
-		return suffix;
-	}
-
-	/**
-	 * Get the currently selected text
-	 *
-	 * @returns Text selection
-	 */
-	static selection(): string {
-		const selection = window.getSelection();
-		if (selection) {
-			return selection.toString();
-		}
-		return '';
-	}
-
-	/**
-	 * Gets the prefix of a string given a key
-	 *
-	 * @param key - Key part of the string
-	 * @param text - Full string to extract the prefix from
-	 * @returns Prefix
-	 */
-	static prefix(key: string, text: string): string {
-		let prefix = '';
-		const position = text.indexOf(key);
-		if (position !== -1) {
-			prefix = text.substring(0, position);
-		}
-		return prefix;
-	}
-
-	/**
-	 * Transforms a given text into a friendly URL string replacing all special characters
-	 *
-	 * @param text - The text to build the url from
-	 * @returns Friendly URL
-	 */
-	static friendly(text: string): string {
-		const regex: RegExp[] = [
-			/[áàâãªä]/g,
-			/[ÁÀÂÃÄ]/g,
-			/[ÍÌÎÏ]/g,
-			/[íìîï]/g,
-			/[éèêë]/g,
-			/[ÉÈÊË]/g,
-			/[óòôõºö]/g,
-			/[ÓÒÔÕÖ]/g,
-			/[úùûü]/g,
-			/[ÚÙÛÜ]/g,
-			/ç/g,
-			/Ç/g,
-			/ñ/g,
-			/Ñ/g,
-			/_/g,
-			/[''‹›<>']/g,
-			/[""«»„"]/g,
-			/[(){}[\]]/g,
-			/[?¿!¡#$%&^*´`~/°|]/g,
-			/[,.:;]/g,
-			/ /g
-		];
-
-		const replacements: string[] = [
-			'a',
-			'A',
-			'I',
-			'i',
-			'e',
-			'E',
-			'o',
-			'O',
-			'u',
-			'U',
-			'c',
-			'C',
-			'n',
-			'N',
-			'-',
-			'',
-			'',
-			'',
-			'',
-			'',
-			'-'
-		];
-
-		let result = text;
-		for (let i = 0; i < regex.length; i++) {
-			result = result.replace(regex[i], replacements[i]);
-		}
-
-		return result;
-	}
+export interface CapitalizeOptions {
+  preserveCase?: boolean; // Wether to preserve the case of letters after the first character
 }
 
+export class Text {
+
+  /**
+   * Capitalize the first letter of each word.
+   *
+   * @param text - Text to capitalize
+   * @param options - Capitalization options
+   * @returns Capitalized text
+   */
+  static capitalize(text: string, options: CapitalizeOptions = {}): string {
+    const { preserveCase = false } = options;
+
+    return text.replace(/\w\S*/g, (word) => {
+      const firstChar = word.charAt(0).toUpperCase();
+      const rest = preserveCase ? word.substring(1) : word.substring(1).toLowerCase();
+      return firstChar + rest;
+    });
+  }
+
+  /**
+   * Get the currently selected text in the document.
+   */
+  static selection(): string {
+    return window.getSelection()?.toString() || '';
+  }
+
+  /**
+   * Get the text after a given key/substring.
+   *
+   * @param key - The substring to search for
+   * @param text - The text to search in
+   * @returns Text after the key, or empty string if not found
+   */
+  static suffix(key: string, text: string): string {
+    const index = text.indexOf(key);
+
+    if (index === -1) {
+      return '';
+    }
+
+    return text.slice(index + key.length);
+  }
+
+  /**
+   * Get the text before a given key/substring.
+   *
+   * @param key - The substring to search for
+   * @param text - The text to search in
+   * @returns Text before the key, or empty string if not found
+   */
+  static prefix(key: string, text: string): string {
+    const index = text.indexOf(key);
+
+    if (index === -1) {
+      return '';
+    }
+
+    return text.slice(0, index);
+  }
+
+  /**
+   * Convert text to a URL-friendly slug.
+   *
+   * @param text - Text to convert
+   * @returns URL-friendly slug
+   */
+  static friendly(text: string): string {
+    return text
+      .toString()                     // Ensure it's a string
+      .normalize('NFD')               // Split accents from letters (e.g. é -> e + ´)
+      .replace(/[\u0300-\u036f]/g, '') // Remove the separated accents
+      .toLowerCase()                  // Standardize to lowercase
+      .trim()                         // Remove leading/trailing whitespace
+      .replace(/\s+/g, '-')           // Replace spaces with -
+      .replace(/[^\w-]+/g, '')        // Remove all non-word chars (except -)
+      .replace(/--+/g, '-');          // Replace multiple - with single -
+  }
+
+  /**
+   * Truncate text to a maximum length with ellipsis.
+   *
+   * @param text - Text to truncate
+   * @param maxLength - Maximum length (including ellipsis)
+   * @param ellipsis - Ellipsis string to append (default: '...')
+   */
+  static truncate(text: string, maxLength: number, ellipsis: string = '...'): string {
+    if (text.length <= maxLength) {
+      return text;
+    }
+
+    return text.slice(0, maxLength - ellipsis.length).trimEnd() + ellipsis;
+  }
+
+  /**
+   * Check if a string is empty or contains only whitespace.
+   */
+  static isBlank(text: string | null | undefined): boolean {
+    return text === null || text === undefined || text.trim() === '';
+  }
+}
