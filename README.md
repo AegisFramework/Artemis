@@ -4,26 +4,30 @@ Artemis is a lightweight JavaScript/TypeScript library providing common utilitie
 
 ## Installation
 
-### Browser
+```bash
+# Using npm
+npm install @aegis-framework/artemis
 
-```html
-<script src="./artemis.min.js"></script>
+# Using yarn
+yarn add @aegis-framework/artemis
+
+# Using bun
+bun add @aegis-framework/artemis
 ```
 
-```javascript
-const { $_, Text, Space, SpaceAdapter } = Artemis;
-```
-
-### ES6 Modules
+### ES Modules
 
 ```javascript
 import { $_, Text, Space, SpaceAdapter } from '@aegis-framework/artemis';
 ```
 
-### Node.js
+### Browser (Script Tag)
 
-```javascript
-const { Text, Util } = require('@aegis-framework/artemis');
+```html
+<script src="path/to/artemis.browser.js"></script>
+<script>
+  const { $_, Text, Space, SpaceAdapter } = Artemis;
+</script>
 ```
 
 ---
@@ -577,8 +581,30 @@ await Preload.addAllToCache('my-cache', ['/a.js', '/b.js', '/c.css']);
 Artemis is written in TypeScript and includes full type definitions.
 
 ```typescript
-import { $_, DOM, Space, SpaceAdapter, StorageValue } from '@aegis-framework/artemis';
-import type { SpaceConfiguration, KeyValueResult } from '@aegis-framework/artemis';
+import {
+  $_,
+  DOM,
+  Space,
+  SpaceAdapter,
+  Request,
+  Platform,
+  Text,
+  FileSystem,
+  Form,
+  Util,
+  Debug,
+  DebugLevel,
+  Preload
+} from '@aegis-framework/artemis';
+
+import type {
+  SpaceConfiguration,
+  DesktopPlatform,
+  MobilePlatform,
+  Orientation,
+  FileReadType,
+  CapitalizeOptions
+} from '@aegis-framework/artemis';
 
 const config: SpaceConfiguration = {
   name: 'MyApp',

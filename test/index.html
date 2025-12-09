@@ -2,219 +2,857 @@
 <!--Aegis Framework | MIT License | http://www.aegisframework.com/ -->
 <html lang="en">
 	<head>
-		<title>Artemis Test</title>
+		<title>Artemis Test Suite</title>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<style>
-			html {
-				width: 100%;
-				height: 100%;
+			:root {
+				--color-primary: #f75c5f;
+				--color-primary-hover: #c5494c;
+				--color-text: #424242;
+				--color-text-muted: #666;
+				--color-success: #4caf50;
+				--color-warning: #f9a825;
+				--color-error: #ff6b6b;
+				--border: rgba(66, 66, 66, 0.11);
 			}
 
-		    body {
+			* {
+				box-sizing: border-box;
+			}
+
+			html, body {
 				width: 100%;
-				height: 100%;
-    		    text-align: center;
-    		    color: rgb(84, 84, 84);
-				font-family: -apple-system, BlinkMacSystemFont,
-					"Segoe UI", "Roboto", "Oxygen",
-					"Ubuntu", "Cantarell", "Open Sans", "Fira Sans",
-					"Droid Sans", "Helvetica Neue", sans-serif;
+				min-height: 100%;
 				margin: 0;
-		    }
-
-			body > div {
-			   margin: 0 auto;
-			   top: 50%;
-			   left: 50%;
-			   -webkit-transform: translate(-50%, -50%);
-			   -moz-transform: translate(-50%, -50%);
-			   -o-transform: translate(-50%, -50%);
-			   -ms-transform: translate(-50%, -50%);
-			   position: absolute;
-			   max-height: 100%;
+				padding: 0;
+				background: #fff;
 			}
 
-			h1 {
-				font-size: 4em;
-				font-weight: lighter;
+			body {
+				font-family: system-ui, -apple-system, sans-serif;
+				color: var(--color-text);
+				padding: 2rem;
+			}
+
+			.intro {
+				background: linear-gradient(135deg, #f75c5f11, #f75c5f05);
+				border-radius: 12px;
+				padding: 2rem;
+				margin-bottom: 2rem;
+			}
+
+			.intro h1 {
+				font-size: 2.5rem;
+				font-weight: 700;
+				color: var(--color-primary);
+				margin: 0;
+			}
+
+			.intro p {
+				color: var(--color-text-muted);
+				margin: 0.5rem 0 0;
+			}
+
+			.badge {
+				display: inline-block;
+				padding: 0.25rem 0.5rem;
+				background: var(--color-primary);
+				color: white;
+				border-radius: 4px;
+				font-size: 0.75rem;
+				font-weight: 600;
+				margin-left: 0.5rem;
+				vertical-align: middle;
 			}
 
 			h2 {
-			    font-size: 2em;
-				font-weight: lighter;
+				font-size: 1.5rem;
+				font-weight: 600;
+				margin: 2rem 0 1rem;
+				padding-bottom: 0.5rem;
+				border-bottom: 1px solid var(--border);
 			}
 
-			simple-component p {
-				color: red;
+			.grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+				gap: 1.5rem;
 			}
+
+			.card {
+				border-radius: 8px;
+				padding: 1.5rem;
+				border: 1px solid var(--border);
+				background: #fafafa;
+			}
+
+			.card h3 {
+				font-size: 1rem;
+				font-weight: 600;
+				margin: 0 0 1rem;
+				color: var(--color-primary);
+			}
+
+			.card p {
+				margin: 0.5rem 0;
+				font-size: 0.9rem;
+				color: var(--color-text-muted);
+			}
+
+			.controls {
+				display: flex;
+				gap: 0.5rem;
+				margin-bottom: 1rem;
+				flex-wrap: wrap;
+			}
+
+			button {
+				padding: 0.75rem 1.5rem;
+				border-radius: 8px;
+				border: none;
+				background: var(--color-primary);
+				color: white;
+				font-size: 0.9rem;
+				cursor: pointer;
+				transition: background 0.2s;
+				font-family: inherit;
+			}
+
+			button:hover {
+				background: var(--color-primary-hover);
+			}
+
+			button.secondary {
+				background: transparent;
+				border: 2px solid var(--color-primary);
+				color: var(--color-primary);
+			}
+
+			button.secondary:hover {
+				background: var(--color-primary);
+				color: white;
+			}
+
+			.test-result {
+				display: flex;
+				align-items: center;
+				gap: 0.75rem;
+				padding: 0.5rem 0;
+				border-bottom: 1px solid var(--border);
+			}
+
+			.test-result:last-child {
+				border-bottom: none;
+			}
+
+			.test-status {
+				width: 8px;
+				height: 8px;
+				border-radius: 50%;
+				flex-shrink: 0;
+			}
+
+			.test-status.pass { background: var(--color-success); }
+			.test-status.fail { background: var(--color-error); }
+			.test-status.warn { background: var(--color-warning); }
+
+			.test-name {
+				flex: 1;
+				color: var(--color-text-muted);
+				font-size: 0.9rem;
+			}
+
+			.test-value {
+				font-family: inherit;
+				color: var(--color-text);
+				background: white;
+				padding: 0.25rem 0.5rem;
+				border-radius: 4px;
+				font-size: 0.85em;
+				border: 1px solid var(--border);
+			}
+
+			form[data-form] {
+				display: grid;
+				gap: 1rem;
+				max-width: 400px;
+			}
+
+			form[data-form] input,
+			form[data-form] select {
+				background: white;
+				border: 1px solid var(--border);
+				color: var(--color-text);
+				padding: 0.75rem;
+				border-radius: 8px;
+				font-family: inherit;
+			}
+
+			form[data-form] input:focus,
+			form[data-form] select:focus {
+				outline: none;
+				border-color: var(--color-primary);
+			}
+
+			form[data-form] label {
+				display: flex;
+				align-items: center;
+				gap: 0.5rem;
+				font-size: 0.9rem;
+				color: var(--color-text-muted);
+			}
+
+			.demo-box {
+				background: white;
+				padding: 1rem;
+				border-radius: 8px;
+				margin: 1rem 0;
+				border: 1px solid var(--border);
+			}
+
+			#animation-target {
+				width: 100px;
+				height: 100px;
+				background: linear-gradient(135deg, var(--color-primary), #ff8a80);
+				border-radius: 8px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				color: white;
+				font-weight: bold;
+			}
+
+			code {
+				background: #fafafa;
+				padding: 0.2rem 0.4rem;
+				border-radius: 4px;
+				font-size: 0.9em;
+				border: 1px solid var(--border);
+			}
+
+			.log-output {
+				border: 1px solid var(--border);
+				border-radius: 8px;
+				padding: 1rem;
+				max-height: 200px;
+				overflow-y: auto;
+				font-size: 0.85em;
+				background: #fafafa;
+			}
+
+			.log-entry {
+				padding: 0.25rem 0;
+				border-bottom: 1px solid var(--border);
+				color: var(--color-text-muted);
+			}
+
+			.log-entry:last-child {
+				border-bottom: none;
+			}
+
+			.log-entry.error { color: var(--color-error); }
+			.log-entry.success { color: var(--color-success); }
 		</style>
 		<script src="./../dist/artemis.browser.js"></script>
 	</head>
 
 	<body>
-		<h1>Artemis Test</h1>
+		<div class="intro">
+			<h1>Artemis <span class="badge">Test Suite</span></h1>
+			<p>Interactive testing for the Artemis JavaScript utility library</p>
+		</div>
+
+		<div class="controls">
+			<button id="run-all">Run All Tests</button>
+			<button id="clear-storage" class="secondary">Clear Storage</button>
+			<button id="clear-logs" class="secondary">Clear Logs</button>
+		</div>
+
+		<h2>Core Utilities</h2>
+		<div class="grid">
+			<!-- Text Tests -->
+			<div class="card">
+				<h3>Text Utilities</h3>
+				<div id="text-tests"></div>
+			</div>
+
+			<!-- Util Tests -->
+			<div class="card">
+				<h3>Util Utilities</h3>
+				<div id="util-tests"></div>
+			</div>
+
+			<!-- Platform Tests -->
+			<div class="card">
+				<h3>Platform Detection</h3>
+				<div id="platform-tests"></div>
+			</div>
+
+			<!-- FileSystem Tests -->
+			<div class="card">
+				<h3>FileSystem</h3>
+				<div id="filesystem-tests"></div>
+			</div>
+		</div>
+
+		<h2>DOM Manipulation</h2>
+		<div class="card">
+			<h3>Animation & Classes</h3>
+			<div class="demo-box">
+				<div id="animation-target">Box</div>
+			</div>
+			<div class="controls">
+				<button id="fade-out">Fade Out</button>
+				<button id="fade-in">Fade In</button>
+				<button id="toggle-class" class="secondary">Toggle Class</button>
+				<button id="animate-box" class="secondary">Animate</button>
+			</div>
+			<div id="dom-tests"></div>
+		</div>
+
+		<h2>Form Handling</h2>
+		<div class="card">
+			<h3>Form Data</h3>
+			<form data-form="TestForm">
+				<input type="text" name="username" placeholder="Username">
+				<input type="email" name="email" placeholder="Email">
+				<input type="number" name="age" placeholder="Age">
+				<select name="country">
+					<option value="">Select Country</option>
+					<option value="us">United States</option>
+					<option value="uk">United Kingdom</option>
+					<option value="mx">Mexico</option>
+				</select>
+				<label>
+					<input type="checkbox" name="newsletter"> Subscribe to newsletter
+				</label>
+			</form>
+			<div class="controls" style="margin-top: 1rem;">
+				<button id="fill-form">Fill Form</button>
+				<button id="get-values" class="secondary">Get Values</button>
+				<button id="reset-form" class="secondary">Reset Form</button>
+			</div>
+			<div id="form-tests"></div>
+		</div>
+
+		<h2>Network & Storage</h2>
+		<div class="grid">
+			<!-- Request Tests -->
+			<div class="card">
+				<h3>Request API</h3>
+				<div class="controls">
+					<button id="test-serialize">Test Serialize</button>
+					<button id="test-json" class="secondary">Test JSON Request</button>
+				</div>
+				<div id="request-tests"></div>
+			</div>
+
+			<!-- Space Tests -->
+			<div class="card">
+				<h3>Space Storage</h3>
+				<div class="controls">
+					<button id="test-localstorage">LocalStorage</button>
+					<button id="test-sessionstorage" class="secondary">SessionStorage</button>
+					<button id="test-indexeddb" class="secondary">IndexedDB</button>
+				</div>
+				<div id="space-tests"></div>
+			</div>
+		</div>
+
+		<h2>Advanced Features</h2>
+		<div class="grid">
+			<div class="card">
+				<h3>Preload</h3>
+				<div class="controls">
+					<button id="test-preload">Test Preload</button>
+					<button id="test-cache" class="secondary">Test Cache API</button>
+				</div>
+				<div id="preload-tests"></div>
+			</div>
+
+			<div class="card">
+				<h3>Debug Tools</h3>
+				<div class="controls">
+					<button id="test-debug">Run Debug Tests</button>
+					<button id="set-debug-level" class="secondary">Set Level: DEBUG</button>
+				</div>
+				<p>Check browser console for debug output</p>
+			</div>
+		</div>
+
+		<h2>Test Output</h2>
+		<div class="card">
+			<h3>Test Log</h3>
+			<div id="log-output" class="log-output"></div>
+		</div>
 
 		<script>
-			const { $_, $_ready, Space, SpaceAdapter, FileSystem, Util, Request, Component } = Artemis;
+			const {
+				$_, $_ready, $_create,
+				Space, SpaceAdapter,
+				FileSystem, Util, Request,
+				Text, Platform, Form,
+				Debug, DebugLevel,
+				Preload
+			} = Artemis;
 
-			$_ready (() => {
-				FileSystem.readRemote ('./index.js', 'text', {mode: 'no-cors'}).then ((content) => {
-					console.log (content);
-				});
+			// Test logging utility
+			function log(message, type = 'info') {
+				const logOutput = $_('#log-output');
+				const entry = document.createElement('div');
+				entry.className = `log-entry ${type}`;
+				entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+				logOutput.prepend(entry);
+			}
 
-				$_("body").append ("<h2>Space Test</h2>");
-				const space = new Space (SpaceAdapter.LocalStorage, {
-					name: 'Artemis',
-					version: '0.1.0'
-				});
+			function addTestResult(containerId, name, value, status = 'pass') {
+				const container = $_(containerId);
+				container.append(`
+					<div class="test-result">
+						<div class="test-status ${status}"></div>
+						<span class="test-name">${name}</span>
+						<span class="test-value">${value}</span>
+					</div>
+				`);
+			}
 
-				/*space.upgrade ("0.1.0", "0.1.1", (storage) => {
-					return storage.get ('Test').then ((value) => {
-						console.log (value);
-						return storage.update ('Test', { upgrades: ['0.1.1'] });
+			$_ready(() => {
+				log('Artemis loaded successfully', 'success');
+
+				// ========== Text Tests ==========
+				function runTextTests() {
+					$_('#text-tests').empty();
+
+					addTestResult('#text-tests', 'capitalize("hello world")',
+						Text.capitalize('hello world'));
+
+					addTestResult('#text-tests', 'capitalize("API docs", {preserveCase: true})',
+						Text.capitalize('API docs', { preserveCase: true }));
+
+					addTestResult('#text-tests', 'friendly("Hello World!")',
+						Text.friendly('Hello World!'));
+
+					addTestResult('#text-tests', 'truncate("Long text here", 10)',
+						Text.truncate('Long text here', 10));
+
+					addTestResult('#text-tests', 'isBlank("  ")',
+						String(Text.isBlank('  ')));
+
+					addTestResult('#text-tests', 'suffix("@", "user@example.com")',
+						Text.suffix('@', 'user@example.com'));
+
+					addTestResult('#text-tests', 'prefix("@", "user@example.com")',
+						Text.prefix('@', 'user@example.com'));
+
+					log('Text tests completed');
+				}
+
+				// ========== Util Tests ==========
+				function runUtilTests() {
+					$_('#util-tests').empty();
+
+					const uuid = Util.uuid();
+					addTestResult('#util-tests', 'uuid()',
+						uuid.substring(0, 20) + '...',
+						uuid.length === 36 ? 'pass' : 'fail');
+
+					// Test debounce exists
+					addTestResult('#util-tests', 'debounce exists',
+						String(typeof Util.debounce === 'function'));
+
+					// Test throttle exists
+					addTestResult('#util-tests', 'throttle exists',
+						String(typeof Util.throttle === 'function'));
+
+					// Test callAsync
+					Util.callAsync(() => 'async result', null).then(result => {
+						addTestResult('#util-tests', 'callAsync()',
+							result, result === 'async result' ? 'pass' : 'fail');
 					});
+
+					log('Util tests completed');
+				}
+
+				// ========== Platform Tests ==========
+				function runPlatformTests() {
+					$_('#platform-tests').empty();
+
+					addTestResult('#platform-tests', 'desktop()',
+						String(Platform.desktop()));
+
+					addTestResult('#platform-tests', 'mobile()',
+						String(Platform.mobile()));
+
+					addTestResult('#platform-tests', 'touch',
+						String(Platform.touch));
+
+					addTestResult('#platform-tests', 'orientation',
+						Platform.orientation);
+
+					addTestResult('#platform-tests', 'retina',
+						String(Platform.retina));
+
+					addTestResult('#platform-tests', 'darkMode',
+						String(Platform.darkMode));
+
+					addTestResult('#platform-tests', 'reducedMotion',
+						String(Platform.reducedMotion));
+
+					addTestResult('#platform-tests', 'standalone',
+						String(Platform.standalone));
+
+					addTestResult('#platform-tests', 'electron',
+						String(Platform.electron));
+
+					addTestResult('#platform-tests', 'serviceWorkers',
+						String(Platform.serviceWorkers));
+
+					addTestResult('#platform-tests', 'canHover',
+						String(Platform.canHover));
+
+					addTestResult('#platform-tests', 'coarsePointer',
+						String(Platform.coarsePointer));
+
+					addTestResult('#platform-tests', 'finePointer',
+						String(Platform.finePointer));
+
+					log('Platform tests completed');
+				}
+
+				// ========== FileSystem Tests ==========
+				function runFileSystemTests() {
+					$_('#filesystem-tests').empty();
+
+					addTestResult('#filesystem-tests', 'isImage("photo.jpg")',
+						String(FileSystem.isImage('photo.jpg')));
+
+					addTestResult('#filesystem-tests', 'isVideo("movie.mp4")',
+						String(FileSystem.isVideo('movie.mp4')));
+
+					addTestResult('#filesystem-tests', 'isAudio("song.mp3")',
+						String(FileSystem.isAudio('song.mp3')));
+
+					addTestResult('#filesystem-tests', 'extension("file.txt")',
+						FileSystem.extension('file.txt'));
+
+					addTestResult('#filesystem-tests', 'humanSize(1536)',
+						FileSystem.humanSize(1536));
+
+					addTestResult('#filesystem-tests', 'humanSize(1048576)',
+						FileSystem.humanSize(1048576));
+
+					log('FileSystem tests completed');
+				}
+
+				// ========== DOM Tests ==========
+				function runDOMTests() {
+					$_('#dom-tests').empty();
+
+					const box = $_('#animation-target');
+
+					addTestResult('#dom-tests', '$_() exists',
+						String(box.exists()));
+
+					addTestResult('#dom-tests', 'width()',
+						box.width() + 'px');
+
+					addTestResult('#dom-tests', 'height()',
+						box.height() + 'px');
+
+					addTestResult('#dom-tests', 'hasClass("test")',
+						String(box.hasClass('test')));
+
+					// Test $_create
+					const newEl = $_create('div', { class: 'created', id: 'new-element' });
+					addTestResult('#dom-tests', '$_create() works',
+						String(newEl.exists()));
+
+					log('DOM tests completed');
+				}
+
+				// Run all tests on load
+				runTextTests();
+				runUtilTests();
+				runPlatformTests();
+				runFileSystemTests();
+				runDOMTests();
+
+				// ========== Event Handlers ==========
+
+				$_('#run-all').click(() => {
+					runTextTests();
+					runUtilTests();
+					runPlatformTests();
+					runFileSystemTests();
+					runDOMTests();
+					log('All tests re-run', 'success');
 				});
 
-				space.upgrade ("0.1.1", "0.2.0", (storage) => {
-					return storage.get ('Test').then ((value) => {
-						console.log (value);
-						const newValue = [...value.upgrades, '0.2.0'];
-						return storage.update ('Test', { upgrades: newValue });
-					});
+				$_('#clear-logs').click(() => {
+					$_('#log-output').empty();
 				});
 
-				space.upgrade ("0.2.0", "0.2.1", (storage) => {
-					return storage.get ('Test').then ((value) => {
-						console.log (value);
-						const newValue = [...value.upgrades, '0.2.1'];
-						return storage.update ('Test', { upgrades: newValue });
-					});
-				});*/
+				$_('#clear-storage').click(() => {
+					localStorage.clear();
+					sessionStorage.clear();
+					log('Storage cleared', 'success');
+				});
 
-				space.addTransformation ({
-					id: "myTransform",
-					get: (key, value) => {
-						if (typeof value === 'object') {
-							value.a = 'b';
+				// DOM animation handlers
+				$_('#fade-out').click(() => {
+					$_('#animation-target').fadeOut(400, () => log('Fade out complete'));
+				});
+
+				$_('#fade-in').click(() => {
+					$_('#animation-target').fadeIn(400, () => log('Fade in complete'));
+				});
+
+				$_('#toggle-class').click(() => {
+					$_('#animation-target').toggleClass('active');
+					log('Class toggled');
+				});
+
+				$_('#animate-box').click(() => {
+					$_('#animation-target').animate([
+						{ transform: 'scale(1) rotate(0deg)' },
+						{ transform: 'scale(1.2) rotate(180deg)' },
+						{ transform: 'scale(1) rotate(360deg)' }
+					], { duration: 600, easing: 'ease-in-out' });
+					log('Animation triggered');
+				});
+
+				// Form handlers
+				$_('#fill-form').click(() => {
+					Form.fill('TestForm', {
+						username: 'john_doe',
+						email: 'john@example.com',
+						age: 28,
+						country: 'us',
+						newsletter: true
+					});
+					log('Form filled');
+				});
+
+				$_('#get-values').click(() => {
+					const values = Form.values('TestForm');
+					$_('#form-tests').empty();
+					Object.entries(values).forEach(([key, value]) => {
+						addTestResult('#form-tests', key, String(value));
+					});
+					log('Form values retrieved');
+				});
+
+				$_('#reset-form').click(() => {
+					Form.reset('TestForm');
+					$_('#form-tests').empty();
+					log('Form reset');
+				});
+
+				// Request handlers
+				$_('#test-serialize').click(() => {
+					$_('#request-tests').empty();
+
+					const simple = Request.serialize({ name: 'John', age: 30 });
+					addTestResult('#request-tests', 'Simple object', simple);
+
+					const nested = Request.serialize({
+						user: { name: 'John' },
+						tags: ['a', 'b']
+					});
+					addTestResult('#request-tests', 'Nested object', nested.substring(0, 50) + '...');
+
+					log('Serialize tests completed');
+				});
+
+				$_('#test-json').click(() => {
+					$_('#request-tests').empty();
+					addTestResult('#request-tests', 'Fetching...', 'pending', 'warn');
+
+					Request.json('https://jsonplaceholder.typicode.com/todos/1')
+						.then(data => {
+							$_('#request-tests').empty();
+							addTestResult('#request-tests', 'JSON Response', JSON.stringify(data).substring(0, 40) + '...', 'pass');
+							log('JSON request successful', 'success');
+						})
+						.catch(err => {
+							$_('#request-tests').empty();
+							addTestResult('#request-tests', 'Error', err.message, 'fail');
+							log('JSON request failed: ' + err.message, 'error');
+						});
+				});
+
+				// Space handlers
+				$_('#test-localstorage').click(async () => {
+					$_('#space-tests').empty();
+
+					try {
+						const space = new Space(SpaceAdapter.LocalStorage, {
+							name: 'ArtemisTest',
+							version: '1.0.0'
+						});
+
+						await space.open();
+						addTestResult('#space-tests', 'LocalStorage opened', 'OK', 'pass');
+
+						await space.set('testKey', { value: 'Hello World', timestamp: Date.now() });
+						addTestResult('#space-tests', 'set() completed', 'OK', 'pass');
+
+						const value = await space.get('testKey');
+						addTestResult('#space-tests', 'get() result', JSON.stringify(value).substring(0, 30) + '...', 'pass');
+
+						const keys = await space.keys();
+						addTestResult('#space-tests', 'keys()', keys.join(', '), 'pass');
+
+						await space.remove('testKey');
+						addTestResult('#space-tests', 'remove() completed', 'OK', 'pass');
+
+						log('LocalStorage tests passed', 'success');
+					} catch (err) {
+						addTestResult('#space-tests', 'Error', err.message, 'fail');
+						log('LocalStorage test failed: ' + err.message, 'error');
+					}
+				});
+
+				$_('#test-sessionstorage').click(async () => {
+					$_('#space-tests').empty();
+
+					try {
+						const space = new Space(SpaceAdapter.SessionStorage, {
+							name: 'ArtemisSession',
+							version: '1.0.0'
+						});
+
+						await space.open();
+						addTestResult('#space-tests', 'SessionStorage opened', 'OK', 'pass');
+
+						await space.set('sessionKey', { temp: true });
+						addTestResult('#space-tests', 'set() completed', 'OK', 'pass');
+
+						const value = await space.get('sessionKey');
+						addTestResult('#space-tests', 'get() result', JSON.stringify(value), 'pass');
+
+						log('SessionStorage tests passed', 'success');
+					} catch (err) {
+						addTestResult('#space-tests', 'Error', err.message, 'fail');
+						log('SessionStorage test failed: ' + err.message, 'error');
+					}
+				});
+
+				$_('#test-indexeddb').click(async () => {
+					$_('#space-tests').empty();
+
+					try {
+						const space = new Space(SpaceAdapter.IndexedDB, {
+							name: 'ArtemisIDB',
+							version: '1.0.0',
+							store: 'TestStore',
+							props: { keyPath: 'id' }
+						});
+
+						await space.open();
+						addTestResult('#space-tests', 'IndexedDB opened', 'OK', 'pass');
+
+						await space.set('record1', { id: 'record1', data: 'Test data' });
+						addTestResult('#space-tests', 'set() completed', 'OK', 'pass');
+
+						const value = await space.get('record1');
+						addTestResult('#space-tests', 'get() result', JSON.stringify(value).substring(0, 30) + '...', 'pass');
+
+						const keys = await space.keys();
+						addTestResult('#space-tests', 'keys()', keys.join(', '), 'pass');
+
+						log('IndexedDB tests passed', 'success');
+					} catch (err) {
+						addTestResult('#space-tests', 'Error', err.message, 'fail');
+						log('IndexedDB test failed: ' + err.message, 'error');
+					}
+				});
+
+				// Preload handlers
+				$_('#test-preload').click(async () => {
+					$_('#preload-tests').empty();
+
+					try {
+						// Test preloading an image
+						addTestResult('#preload-tests', 'Preloading image...', 'pending', 'warn');
+						const img = await Preload.image('https://via.placeholder.com/100');
+						$_('#preload-tests').empty();
+						addTestResult('#preload-tests', 'image()', `${img.width}x${img.height}`, 'pass');
+
+						// Test file preload
+						const response = await Preload.file('https://jsonplaceholder.typicode.com/todos/1', 'low');
+						addTestResult('#preload-tests', 'file()', `Status: ${response.status}`, 'pass');
+
+						log('Preload tests passed', 'success');
+					} catch (err) {
+						$_('#preload-tests').empty();
+						addTestResult('#preload-tests', 'Error', err.message, 'fail');
+						log('Preload test failed: ' + err.message, 'error');
+					}
+				});
+
+				$_('#test-cache').click(async () => {
+					$_('#preload-tests').empty();
+
+					try {
+						// Check if Cache API is available
+						const hasCache = 'caches' in window;
+						addTestResult('#preload-tests', 'Cache API available',
+							String(hasCache), hasCache ? 'pass' : 'warn');
+
+						if (hasCache) {
+							const isCached = await Preload.isCached('test-cache', '/test.txt');
+							addTestResult('#preload-tests', 'isCached()', String(isCached), 'pass');
 						}
-						return value;
+
+						log('Cache API tests completed', 'success');
+					} catch (err) {
+						addTestResult('#preload-tests', 'Error', err.message, 'fail');
+						log('Cache test failed: ' + err.message, 'error');
 					}
 				});
 
-				space.onCreate((key, value) => {
-					if (typeof value === 'object') {
-						value = JSON.stringify (value);
-					}
-					$_("body").append (`<p><b>${key}</b> correctly inserted with value [${value}]</p>`);
+				// Debug handlers
+				$_('#set-debug-level').click(() => {
+					Debug.setLevel(DebugLevel.DEBUG);
+					log('Debug level set to DEBUG', 'success');
 				});
 
-				space.set ("Test", {
-					value: "Some Value"
+				$_('#test-debug').click(() => {
+					Debug.setLevel(DebugLevel.DEBUG);
+
+					Debug.log('This is a log message');
+					Debug.info('This is an info message');
+					Debug.warning('This is a warning message');
+					Debug.error('This is an error message');
+
+					Debug.group('Grouped logs');
+					Debug.log('Inside group 1');
+					Debug.log('Inside group 2');
+					Debug.groupEnd();
+
+					Debug.table([
+						{ name: 'Alice', age: 25 },
+						{ name: 'Bob', age: 30 }
+					]);
+
+					Debug.time('Timer test');
+					setTimeout(() => {
+						Debug.timeEnd('Timer test');
+					}, 100);
+
+					Debug.count('Counter');
+					Debug.count('Counter');
+					Debug.count('Counter');
+
+					Debug.assert(1 === 1, 'This should not appear');
+					Debug.assert(1 === 2, 'This assertion failed!');
+
+					log('Debug tests completed - check browser console', 'success');
 				});
 
-				space.get ("Test").then ((value) => {
-					return value;
-				}).then ((value) => {
-					value = JSON.stringify (value);
-					$_("body").append (`<p><b>Test</b> correctly retrieved value [${value}]</p>`);
-				});
-
-				space.rename ("Aegis");
-
-				space.clear ().then (() => {
-					$_("body").append (`<p>Space Correctly Cleared Up</p>`);
-				});
-
-
-				const global = new Space ();
-
-				global.set ("a", "b");
-
-				const students = new Space (SpaceAdapter.IndexedDB, {
-					name: 'Artemis',
-					version: '0.1.0',
-					store: 'Students',
-					props: {
-						keyPath: 'id',
-						autoIncrement: true
-					},
-					index: {
-						key: {
-							name: 'Key Index',
-							field: 'key',
-							props: {
-								unique: true
-							}
-						}
-					}
-				});
-
-
-				const key = Util.uuid();
-				students.set (key, {key: key, name: 'Diego', lastName: 'Islas'}).catch ((event) => {
-					console.error (event);
-				});
-
-				students.upgrade ('0.2.0', '0.3.0', function (storage, event) {
-					console.log ('AAA', event);
-					return this.update (1, { key: '28'});
-				});
-
-				students.upgrade ('0.3.0', '0.3.1', function (storage, event) {
-					console.log ('AAA', event);
-					return this.update (1, { key: '29'});
-				});
-
-				students.upgrade ('0.3.1', '0.3.2', function (storage, event) {
-					console.log ('AAA', event);
-					return this.update (1, { key: '30'});
-				});
-
-				students.upgrade ('0.3.2', '0.3.3', function (storage, event) {
-					console.log ('AAA', event);
-					return this.update (1, { key: '31'});
-				});
-
-
-				students.keys ().then(keys => console.log (keys));
-
-				students.each((key, value) => {
-					console.log(key, value);
-				});
-
-
-				const remoteSpace = new Space (SpaceAdapter.RemoteStorage, {
-					name: 'myRemote',
-					version: '0.1.0',
-					endpoint: 'https://hyuchia.com/',
-					store: 'post'
-				});
-
-				remoteSpace.get ('Something').then ((value) => {
-					console.log (value);
-				}).catch ((error) => {
-					console.error (error);
-				});
-
-				remoteSpace.set ('Something', {hey: 'This works!'}).then ((value) => {
-					console.log (value);
-				}).catch ((error) => {
-					console.error (error);
-				});
-
-				console.log (FileSystem.isImage ('./some/file/image.png'));
-
-				console.log (Util.uuid ());
-
-				console.log (Request.serialize ({
-					name: 'John',
-					lastName: 'Doe',
-					age: 22
-				}));
-
-
-
+				log('Test suite initialized', 'success');
 			});
 		</script>
 	</body>

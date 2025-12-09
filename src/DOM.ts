@@ -70,7 +70,7 @@ export class DOM {
 	}
 
 	/**
-	 * Remove a class from all elements
+	 * Remove a class or all classes from all elements
 	 *
 	 * @param oldClass - Class name to remove (if omitted, removes all classes)
 	 */

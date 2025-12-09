@@ -26,9 +26,6 @@ export const SpaceAdapter = {
  */
 export type SpaceAdapterType = SpaceAdapterInterface;
 
-/**
- * Space adapter constructor type
- */
 export type SpaceAdapterConstructor = typeof LocalStorage | typeof SessionStorage | typeof IndexedDB | typeof RemoteStorage;
 
 /**
