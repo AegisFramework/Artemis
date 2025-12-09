@@ -1,6 +1,6 @@
 {
 	"name": "@aegis-framework/artemis",
-	"version": "0.4.1",
+	"version": "0.5.0",
 	"description": "Aegis Framework Javascript Library",
 	"type": "module",
 	"main": "./dist/artemis.js",
@@ -37,7 +37,7 @@
 		"library"
 	],
 	"scripts": {
-		"build": "yarn clean && yarn lint && yarn check && yarn build:module && yarn build:legacy && yarn build:types",
+		"build": "bun run clean && bun run lint && bun run check && bun run build:module && bun run build:legacy && bun run build:types",
 		"build:module": "bun build ./src/index.ts --target browser --format esm --outdir ./dist --sourcemap=linked --minify && mv ./dist/index.js ./dist/artemis.js && mv ./dist/index.js.map ./dist/artemis.js.map && sed -i 's/index.js.map/artemis.js.map/' ./dist/artemis.js",
 		"build:legacy": "bun build ./src/browser.ts --target browser --format esm --outdir ./dist --sourcemap=linked --minify && mv ./dist/browser.js ./dist/artemis.browser.js && mv ./dist/browser.js.map ./dist/artemis.browser.js.map && sed -i 's/browser.js.map/artemis.browser.js.map/' ./dist/artemis.browser.js",
 		"build:types": "tsc --emitDeclarationOnly --declarationDir ./dist/types",
@@ -63,6 +63,5 @@
 		"README.md",
 		"package.json"
 	],
-	"browserslist": "> 0.5%, last 2 versions, not dead",
-	"packageManager": "yarn@4.12.0"
+	"browserslist": "> 0.5%, last 2 versions, not dead"
 }
