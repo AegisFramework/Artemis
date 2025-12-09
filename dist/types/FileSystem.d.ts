@@ -4,66 +4,83 @@
  * ==============================
  */
 import { RequestOptions } from './Request';
+export type FileReadType = 'text' | 'base64' | 'buffer' | 'binary';
 /**
- * File read type options
- */
-export type FileReadType = 'text' | 'base64' | 'buffer';
-/**
- * File read result type based on read type
+ * Return type mapping for file read operations
  */
 export interface FileReadResult {
-    event: ProgressEvent<FileReader>;
-    content: string | ArrayBuffer | null;
+    text: string;
+    base64: string;
+    buffer: ArrayBuffer;
+    binary: string;
 }
 /**
- * A simple class wrapper for the File and FileReader web API, while this class
- * doesn't actually provide access to the host file system, it does provide useful
- * utilities for form file inputs and remote content loading.
+ * A utility wrapper for File/Blob operations
  */
 export declare class FileSystem {
     /**
-     * Read a file from a remote location given a URL. This function will fetch
-     * the file blob using the Request class and then use the read() function
-     * to read the blob in the format required.
+     * Read a file from a remote URL.
      *
-     * @param url - URL to fetch the file from
-     * @param type - Type of data to be read, values can be 'text', 'base64' and 'buffer'
-     * @param props - Props to send to the Request object
-     * @returns Content of the file. The format depends on the type parameter used.
+     * @param url - The URL to fetch
+     * @param type - The format to return ('text', 'base64', 'buffer', 'binary')
+     * @param options - Request options
      */
-    static readRemote(url: string, type?: FileReadType, props?: RequestOptions): Promise<FileReadResult>;
+    static readRemote<T extends FileReadType>(url: string, type?: T, options?: RequestOptions): Promise<FileReadResult[T]>;
     /**
-     * Read a given File or Blob object.
+     * Read a local File or Blob.
      *
-     * @param file - File to read
-     * @param type - Type of data to be read, values can be 'text', 'base64' and 'buffer'
-     * @returns Promise that resolves to the load event and content of the file
+     * @param file - The File or Blob to read
+     * @param type - The format to return
      */
-    static read(file: File | Blob, type?: FileReadType): Promise<FileReadResult>;
+    static read<T extends FileReadType>(file: File | Blob, type?: T): Promise<FileReadResult[T]>;
     /**
-     * Create a new File, this uses the File API and will not actually create
-     * a file in the user's file system, however using it with other features,
-     * that may be possible
+     * Create a File object.
+     * This is a synchronous operation.
      *
-     * @param name - Name of the file (Including extension)
-     * @param content - Content to save in the file
-     * @param type - Mime Type for the file
-     * @returns Promise resolving to the created File
+     * @param name - Filename
+     * @param content - Data (String, Blob, ArrayBuffer)
+     * @param mimeType - MIME type (e.g. 'application/json')
      */
-    static create(name: string, content: BlobPart, type?: string): Promise<File>;
+    static create(name: string, content: BlobPart, mimeType?: string): File;
     /**
-     * Returns the extension of a file given its file name.
+     * Trigger a browser download for a specific File or Blob.
+     * This will creates a temporary anchor tag to force the download.
      *
-     * @param name - Name or full path of the file
-     * @returns File extension without the leading dot (.)
+     * @param file - The file to download
+     * @param name - Optional rename for the downloaded file
      */
-    static extension(name: string): string;
+    static download(file: File | Blob, name?: string): void;
     /**
-     * Check if a file is an image by its extension.
+     * Get the file extension safely
      *
-     * @param name - Name or full path of the file
-     * @returns Whether the file is an image
+     * @param name - Filename or path
+     * @returns Lowercase extension without the dot, or empty string
+     */
+    static extension(name: string, allowHiddenFiles?: boolean): string;
+    /**
+     * Check if a file is an image based on extension.
+     *
+     * @param name - Filename to check
      */
     static isImage(name: string): boolean;
+    /**
+     * Check if a file is a video based on extension.
+     *
+     * @param name - Filename to check
+     */
+    static isVideo(name: string): boolean;
+    /**
+     * Check if a file is audio based on extension.
+     *
+     * @param name - Filename to check
+     */
+    static isAudio(name: string): boolean;
+    /**
+     * Convert bytes to human-readable size.
+     *
+     * @param bytes - Size in bytes
+     * @param decimals - Number of decimal places
+     */
+    static humanSize(bytes: number, decimals?: number): string;
 }
 //# sourceMappingURL=FileSystem.d.ts.map

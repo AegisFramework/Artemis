@@ -4,20 +4,32 @@
  * ==============================
  */
 
-import type { LocalStorageConfiguration, StorageValue, KeyValueResult, UpgradeCallback } from './types';
+import type { LocalStorageConfiguration, StorageValue, KeyValueResult, UpgradeCallback, SpaceAdapterInterface } from './types';
+import { versionToNumber } from './types';
+
+/**
+ * Error thrown when a key is not found in storage
+ */
+export class KeyNotFoundError extends Error {
+	constructor(key: string) {
+		super(`Key "${key}" not found in storage`);
+		this.name = 'KeyNotFoundError';
+	}
+}
 
 /**
  * The Local Storage Adapter provides the Space Class the ability to interact
  * with the localStorage API found in most modern browsers.
  */
-export class LocalStorage {
+export class LocalStorage implements SpaceAdapterInterface {
 	public name: string;
 	public version: string;
 	public store: string;
 	public id: string;
 	public numericVersion: number;
 	public upgrades: Record<string, UpgradeCallback<LocalStorage>>;
-	public storage: Storage | Promise<LocalStorage> | undefined;
+	public storage: Storage | undefined;
+	private _openPromise: Promise<this> | undefined;
 
 	/**
 	 * Create a new LocalStorage. If no configuration is provided, the LocalStorage
@@ -32,20 +44,24 @@ export class LocalStorage {
 		this.store = store;
 		this.upgrades = {};
 
-		if (this.version === '') {
-			this.numericVersion = 0;
-		} else {
-			this.numericVersion = parseInt(version.replace(/\./g, ''));
-		}
+		this.numericVersion = versionToNumber(version);
+		this.id = this.computeId();
+	}
 
-		if (name !== '' && version !== '' && store !== '') {
-			this.id = `${this.name}::${this.store}::${this.version}_`;
-		} else if (name !== '' && version !== '') {
-			this.id = `${this.name}::${this.version}_`;
-		} else if (name !== '') {
-			this.id = `${this.name}::_`;
+	/**
+	 * Compute the storage ID based on current name, version, and store
+	 *
+	 * @returns The computed ID string
+	 */
+	private computeId(): string {
+		if (this.name !== '' && this.version !== '' && this.store !== '') {
+			return `${this.name}::${this.store}::${this.version}_`;
+		} else if (this.name !== '' && this.version !== '') {
+			return `${this.name}::${this.version}_`;
+		} else if (this.name !== '') {
+			return `${this.name}::_`;
 		} else {
-			this.id = '';
+			return '';
 		}
 	}
 
@@ -55,9 +71,15 @@ export class LocalStorage {
 	 * @param config - Configuration object to set up
 	 */
 	configuration(config: LocalStorageConfiguration): void {
-		if (config.name) this.name = config.name;
-		if (config.version) this.version = config.version;
-		if (config.store) this.store = config.store;
+		if (config.name !== undefined) this.name = config.name;
+		if (config.version !== undefined) {
+			this.version = config.version;
+			this.numericVersion = versionToNumber(config.version);
+		}
+		if (config.store !== undefined) this.store = config.store;
+
+		// Recalculate the ID after configuration changes
+		this.id = this.computeId();
 	}
 
 	/**
@@ -65,90 +87,108 @@ export class LocalStorage {
 	 *
 	 * @returns Promise resolving to this adapter
 	 */
-	open(): Promise<this> {
+	async open(): Promise<this> {
+		// Already opened
 		if (this.storage instanceof Storage) {
-			return Promise.resolve(this);
-		} else if (this.storage instanceof Promise) {
-			return this.storage as Promise<this>;
-		} else {
-			const openPromise: Promise<this> = new Promise<{ upgrades: string[] }>((resolve) => {
-				let upgradesToApply: string[] = [];
+			return this;
+		}
 
-				// Check if this space is versioned
-				if (this.version !== '') {
-					// Get the versionless part of the ID
-					let versionless = '';
-					if (this.name !== '' && this.version !== '' && this.store !== '') {
-						versionless = `${this.name}::${this.store}::`;
-					} else if (this.name !== '' && this.version !== '') {
-						versionless = `${this.name}::`;
-					}
+		// Currently opening - wait for it
+		if (this._openPromise) {
+			return this._openPromise;
+		}
 
-					// Get all the currently stored keys that contain the versionless ID
-					const storedVersions = Object.keys(window.localStorage).filter((key) => {
-						return key.indexOf(versionless) === 0;
-					}).map((key) => {
-						return key.replace(versionless, '').split('_')[0];
-					}).filter((key) => {
-						return key.indexOf('::') === -1;
-					}).sort();
+		// Start opening
+		this._openPromise = (async () => {
+			let upgradesToApply: string[] = [];
 
-					if (storedVersions.length > 0) {
-						const oldVersion = storedVersions[0];
-						const oldVersionNumeric = parseInt(oldVersion.replace(/\./g, ''));
+			// Check if this space is versioned
+			if (this.version !== '') {
+				// Get the versionless part of the ID
+				let versionless = '';
+				if (this.name !== '' && this.version !== '' && this.store !== '') {
+					versionless = `${this.name}::${this.store}::`;
+				} else if (this.name !== '' && this.version !== '') {
+					versionless = `${this.name}::`;
+				}
 
-						if (oldVersionNumeric < this.numericVersion) {
-							const availableUpgrades = Object.keys(this.upgrades).sort();
+				// Get all the currently stored keys that contain the versionless ID
+				const storedVersions = Object.keys(window.localStorage).filter((key) => {
+					return key.indexOf(versionless) === 0;
+				}).map((key) => {
+					return key.replace(versionless, '').split('_')[0];
+				}).filter((key) => {
+					return key.indexOf('::') === -1;
+				}).sort();
 
-							const startFrom = availableUpgrades.findIndex((u) => {
-								const [old] = u.split('::');
-								return parseInt(old) === oldVersionNumeric;
+				if (storedVersions.length > 0) {
+					const oldVersion = storedVersions[0];
+					const oldVersionNumeric = versionToNumber(oldVersion);
+
+					if (oldVersionNumeric < this.numericVersion) {
+						const availableUpgrades = Object.keys(this.upgrades).sort((a, b) => {
+							const [aOld] = a.split('::').map(Number);
+							const [bOld] = b.split('::').map(Number);
+							return aOld - bOld;
+						});
+
+						const startFrom = availableUpgrades.findIndex((u) => {
+							const [old] = u.split('::');
+							return parseInt(old) === oldVersionNumeric;
+						});
+
+						if (startFrom > -1) {
+							upgradesToApply = availableUpgrades.slice(startFrom).filter((u) => {
+								const [old, next] = u.split('::');
+								return parseInt(old) < this.numericVersion && parseInt(next) <= this.numericVersion;
 							});
+						}
 
-							if (startFrom > -1) {
-								upgradesToApply = availableUpgrades.slice(startFrom).filter((u) => {
-									const [old, next] = u.split('::');
-									return parseInt(old) < this.numericVersion && parseInt(next) <= this.numericVersion;
-								});
+						// Get the previous ID using the old version
+						let previousId = `${this.name}::${oldVersion}_`;
+
+						if (this.name !== '' && this.version !== '' && this.store !== '') {
+							previousId = `${this.name}::${this.store}::${oldVersion}_`;
+						} else if (this.name !== '' && this.version !== '') {
+							previousId = `${this.name}::${oldVersion}_`;
+						}
+
+						// Get all keys from the previous version
+						const keys = Object.keys(window.localStorage).filter((key) => {
+							return key.indexOf(previousId) === 0;
+						}).map((key) => {
+							return key.replace(previousId, '');
+						});
+
+						for (const key of keys) {
+							const previous = window.localStorage.getItem(`${previousId}${key}`);
+							if (previous !== null) {
+								window.localStorage.setItem(this.id + key, previous);
 							}
-
-							// Get the previous ID using the old version
-							let previousId = `${this.name}::${oldVersion}_`;
-
-							if (this.name !== '' && this.version !== '' && this.store !== '') {
-								previousId = `${this.name}::${this.store}::${oldVersion}_`;
-							} else if (this.name !== '' && this.version !== '') {
-								previousId = `${this.name}::${oldVersion}_`;
-							}
-
-							// Get all keys from the previous version
-							const keys = Object.keys(window.localStorage).filter((key) => {
-								return key.indexOf(previousId) === 0;
-							}).map((key) => {
-								return key.replace(previousId, '');
-							});
-
-							for (const key of keys) {
-								const previous = window.localStorage.getItem(`${previousId}${key}`);
-								if (previous !== null) {
-									window.localStorage.setItem(this.id + key, previous);
-								}
-								window.localStorage.removeItem(`${previousId}${key}`);
-							}
+							window.localStorage.removeItem(`${previousId}${key}`);
 						}
 					}
 				}
-				resolve({ upgrades: upgradesToApply });
-			}).then(({ upgrades }) => {
-				this.storage = window.localStorage;
-				return new Promise<this>((resolve) => {
-					const res = () => resolve(this);
-					this._upgrade(upgrades, res);
-				});
-			});
+			}
 
-			this.storage = openPromise as unknown as Promise<LocalStorage>;
-			return openPromise;
+			this.storage = window.localStorage;
+
+			// Apply upgrades
+			for (const upgradeKey of upgradesToApply) {
+				try {
+					await this.upgrades[upgradeKey].call(this, this);
+				} catch (e) {
+					console.error(e);
+				}
+			}
+
+			return this;
+		})();
+
+		try {
+			return await this._openPromise;
+		} finally {
+			this._openPromise = undefined;
 		}
 	}
 
@@ -159,15 +199,14 @@ export class LocalStorage {
 	 * @param value - Value to save
 	 * @returns Promise with key and value
 	 */
-	set(key: string, value: StorageValue): Promise<KeyValueResult> {
-		return this.open().then(() => {
-			if (typeof value === 'object') {
-				(this.storage as Storage).setItem(this.id + key, JSON.stringify(value));
-			} else {
-				(this.storage as Storage).setItem(this.id + key, String(value));
-			}
-			return Promise.resolve({ key, value });
-		});
+	async set(key: string, value: StorageValue): Promise<KeyValueResult> {
+		await this.open();
+		if (typeof value === 'object') {
+			(this.storage as Storage).setItem(this.id + key, JSON.stringify(value));
+		} else {
+			(this.storage as Storage).setItem(this.id + key, String(value));
+		}
+		return { key, value };
 	}
 
 	/**
@@ -178,20 +217,21 @@ export class LocalStorage {
 	 * @param value - Value to save
 	 * @returns Promise with key and value
 	 */
-	update(key: string, value: StorageValue): Promise<KeyValueResult> {
-		return this.get(key).then((currentValue) => {
+	async update(key: string, value: StorageValue): Promise<KeyValueResult> {
+		try {
+			const currentValue = await this.get(key);
 			if (typeof currentValue === 'object' && currentValue !== null) {
 				if (typeof value === 'object' && value !== null) {
-					value = Object.assign({}, currentValue as object, value as object);
+					value = { ...(currentValue as object), ...(value as object) };
 				}
 				(this.storage as Storage).setItem(this.id + key, JSON.stringify(value));
 			} else {
 				(this.storage as Storage).setItem(this.id + key, String(value));
 			}
-			return Promise.resolve({ key, value });
-		}).catch(() => {
+			return { key, value };
+		} catch {
 			return this.set(key, value);
-		});
+		}
 	}
 
 	/**
@@ -200,26 +240,24 @@ export class LocalStorage {
 	 * @param key - Key with which the value was saved
 	 * @returns Promise resolving to the retrieved value
 	 */
-	get(key: string): Promise<StorageValue> {
-		return this.open().then(() => {
-			return new Promise((resolve, reject) => {
-				let value: StorageValue = (this.storage as Storage).getItem(this.id + key);
-				try {
-					const o = JSON.parse(value as string);
-					if (o && typeof o === 'object') {
-						value = o;
-					}
-				} catch {
-					// Unable to parse to JSON
-				}
+	async get(key: string): Promise<StorageValue> {
+		await this.open();
+		const rawValue = (this.storage as Storage).getItem(this.id + key);
 
-				if (typeof value !== 'undefined' && value !== null) {
-					resolve(value);
-				} else {
-					reject();
-				}
-			});
-		});
+		if (rawValue === null) {
+			throw new KeyNotFoundError(key);
+		}
+
+		try {
+			const parsed = JSON.parse(rawValue);
+			if (parsed && typeof parsed === 'object') {
+				return parsed;
+			}
+			return rawValue;
+		} catch {
+			// Unable to parse to JSON, return raw value
+			return rawValue;
+		}
 	}
 
 	/**
@@ -227,17 +265,19 @@ export class LocalStorage {
 	 *
 	 * @returns Promise resolving to all values
 	 */
-	getAll(): Promise<Record<string, StorageValue>> {
-		return this.keys().then((keys) => {
-			const values: Record<string, StorageValue> = {};
-			const promises: Promise<void>[] = [];
-			for (const key of keys) {
-				promises.push(this.get(key).then((value) => {
-					values[key] = value;
-				}));
+	async getAll(): Promise<Record<string, StorageValue>> {
+		const keys = await this.keys();
+		const values: Record<string, StorageValue> = {};
+
+		for (const key of keys) {
+			try {
+				values[key] = await this.get(key);
+			} catch {
+				// Skip keys that fail to retrieve
 			}
-			return Promise.all(promises).then(() => values);
-		});
+		}
+
+		return values;
 	}
 
 	/**
@@ -246,14 +286,13 @@ export class LocalStorage {
 	 * @param key - Key to look for
 	 * @returns Promise that resolves if key exists
 	 */
-	contains(key: string): Promise<void> {
-		return this.keys().then((keys) => {
-			if (keys.includes(key)) {
-				return Promise.resolve();
-			} else {
-				return Promise.reject();
-			}
-		});
+	async contains(key: string): Promise<void> {
+		const keys = await this.keys();
+		if (keys.includes(key)) {
+			return;
+		} else {
+			throw new KeyNotFoundError(key);
+		}
 	}
 
 	/**
@@ -264,23 +303,10 @@ export class LocalStorage {
 	 * @param callback - Function to transform the old stored values
 	 * @returns Promise
 	 */
-	upgrade(oldVersion: string, newVersion: string, callback: UpgradeCallback<LocalStorage>): Promise<void> {
-		const key = `${parseInt(oldVersion.replace(/\./g, ''))}::${parseInt(newVersion.replace(/\./g, ''))}`;
+	async upgrade(oldVersion: string, newVersion: string, callback: UpgradeCallback<LocalStorage>): Promise<void> {
+		const key = `${versionToNumber(oldVersion)}::${versionToNumber(newVersion)}`;
 		this.upgrades[key] = callback;
 		return Promise.resolve();
-	}
-
-	/**
-	 * Helper for the upgrade progress by executing callbacks in order
-	 */
-	private _upgrade(upgradesToApply: string[], resolve: () => void): void {
-		if (upgradesToApply.length > 0) {
-			this.upgrades[upgradesToApply[0]].call(this, this).then(() => {
-				this._upgrade(upgradesToApply.slice(1), resolve);
-			}).catch((e) => console.error(e));
-		} else {
-			resolve();
-		}
 	}
 
 	/**
@@ -289,54 +315,42 @@ export class LocalStorage {
 	 * @param name - New name to be used
 	 * @returns Promise for the rename operation
 	 */
-	rename(name: string): Promise<void> {
-		if (this.name !== name) {
-			return this.keys().then((keys) => {
-				const oldId = this.id;
-				this.name = name;
+	async rename(name: string): Promise<void> {
+		if (this.name === name) {
+			throw new Error('Cannot rename: new name is identical to current name');
+		}
 
-				if (this.name !== '' && this.version !== '' && this.store !== '') {
-					this.id = `${this.name}::${this.store}::${this.version}_`;
-				} else if (this.name !== '' && this.version !== '') {
-					this.id = `${this.name}::${this.version}_`;
-				} else if (this.name !== '') {
-					this.id = `${this.name}::_`;
-				} else {
-					this.id = '';
-				}
+		const keys = await this.keys();
+		const oldId = this.id;
+		this.name = name;
+		this.id = this.computeId();
 
-				const promises: Promise<void>[] = [];
-				for (const key of keys) {
-					const value = (this.storage as Storage).getItem(`${oldId}${key}`);
-					if (value !== null) {
-						promises.push(this.set(key, value).then(() => {
-							(this.storage as Storage).removeItem(`${oldId}${key}`);
-						}));
-					}
-				}
-				return Promise.all(promises).then(() => {});
-			});
-		} else {
-			return Promise.reject();
+		for (const key of keys) {
+			const rawValue = (this.storage as Storage).getItem(`${oldId}${key}`);
+			if (rawValue !== null) {
+				// Directly copy the raw value to avoid double-encoding
+				(this.storage as Storage).setItem(this.id + key, rawValue);
+				(this.storage as Storage).removeItem(`${oldId}${key}`);
+			}
 		}
 	}
 
 	/**
-	 * Get the key that corresponds to a given index in the storage
+	 * Get the key that corresponds to a given index in the storage.
+	 * Only considers keys belonging to this space.
 	 *
 	 * @param index - Index to get the key from
 	 * @param full - Whether to return the full key name including space id
 	 * @returns Promise resolving to the key's name
 	 */
-	key(index: number, full: boolean = false): Promise<string> {
-		return this.open().then(() => {
-			const keyValue = (this.storage as Storage).key(index);
-			if (full === true) {
-				return Promise.resolve(keyValue ?? '');
-			} else {
-				return Promise.resolve((keyValue ?? '').replace(this.id, ''));
-			}
-		});
+	async key(index: number, full: boolean = false): Promise<string> {
+		const spaceKeys = await this.keys(full);
+
+		if (index < 0 || index >= spaceKeys.length) {
+			throw new Error(`Index ${index} out of bounds. Space has ${spaceKeys.length} keys.`);
+		}
+
+		return spaceKeys[index];
 	}
 
 	/**
@@ -345,17 +359,16 @@ export class LocalStorage {
 	 * @param full - Whether to return the full key name including space id
 	 * @returns Promise resolving to array of keys
 	 */
-	keys(full: boolean = false): Promise<string[]> {
-		return this.open().then(() => {
-			return Promise.resolve(Object.keys(this.storage as Storage).filter((key) => {
-				return key.indexOf(this.id) === 0;
-			}).map((key) => {
-				if (full === true) {
-					return key;
-				} else {
-					return key.replace(this.id, '');
-				}
-			}));
+	async keys(full: boolean = false): Promise<string[]> {
+		await this.open();
+		return Object.keys(this.storage as Storage).filter((key) => {
+			return key.indexOf(this.id) === 0;
+		}).map((key) => {
+			if (full === true) {
+				return key;
+			} else {
+				return key.replace(this.id, '');
+			}
 		});
 	}
 
@@ -365,11 +378,10 @@ export class LocalStorage {
 	 * @param key - Key of the item to delete
 	 * @returns Promise resolving to the value of the deleted object
 	 */
-	remove(key: string): Promise<StorageValue> {
-		return this.get(key).then((value) => {
-			(this.storage as Storage).removeItem(this.id + key);
-			return Promise.resolve(value);
-		});
+	async remove(key: string): Promise<StorageValue> {
+		const value = await this.get(key);
+		(this.storage as Storage).removeItem(this.id + key);
+		return value;
 	}
 
 	/**
@@ -377,13 +389,11 @@ export class LocalStorage {
 	 *
 	 * @returns Promise for the clear operation
 	 */
-	clear(): Promise<void> {
-		return this.keys().then((keys) => {
-			for (const key of keys) {
-				this.remove(key);
-			}
-			return Promise.resolve();
-		});
+	async clear(): Promise<void> {
+		const keys = await this.keys();
+
+		for (const key of keys) {
+			(this.storage as Storage).removeItem(this.id + key);
+		}
 	}
 }
-

@@ -21,12 +21,28 @@ export declare enum DebugLevel {
 export declare class Debug {
     private static _level;
     /**
+     * Get the current debug level
+     */
+    static get currentLevel(): DebugLevel;
+    /**
      * Set or get the log level
      *
      * @param level - The debug level to use
      * @returns The current debug level
      */
     static level(level?: DebugLevel): DebugLevel;
+    /**
+     * Set the debug level
+     *
+     * @param level - The debug level to set
+     */
+    static setLevel(level: DebugLevel): void;
+    /**
+     * Check if a specific level is enabled
+     *
+     * @param level - The level to check
+     */
+    static isEnabled(level: DebugLevel): boolean;
     /**
      * Log the given elements.
      * Logs will only be made if the level is set to DEBUG or above
@@ -63,12 +79,19 @@ export declare class Debug {
      */
     static warning(...args: unknown[]): void;
     /**
+     * Alias for warning()
+     *
+     * @param args - Arguments to log
+     */
+    static warn(...args: unknown[]): void;
+    /**
      * Show data as a table
      * Table will only be made if the level is set to DEBUG or above
      *
-     * @param args - Arguments to display as table
+     * @param data - Data to display as table
+     * @param columns - Optional column names to include
      */
-    static table(...args: unknown[]): void;
+    static table(data: unknown, columns?: string[]): void;
     /**
      * Start an indented group
      *
@@ -114,5 +137,53 @@ export declare class Debug {
      * @param args - Arguments to log with trace
      */
     static trace(...args: unknown[]): void;
+    /**
+     * Log a message if a condition is false
+     * Only logs if the level is set to ERROR or above
+     *
+     * @param condition - Condition to check
+     * @param args - Arguments to log if condition is false
+     */
+    static assert(condition: boolean, ...args: unknown[]): void;
+    /**
+     * Clear the console
+     * Only clears if the level is set to DEBUG or above
+     */
+    static clear(): void;
+    /**
+     * Increment a counter with the given label
+     * Only counts if the level is set to DEBUG or above
+     *
+     * @param label - Counter label
+     */
+    static count(label?: string): void;
+    /**
+     * Reset a counter with the given label
+     * Only resets if the level is set to DEBUG or above
+     *
+     * @param label - Counter label
+     */
+    static countReset(label?: string): void;
+    /**
+     * Display an interactive listing of the properties of an object
+     * Only displays if the level is set to DEBUG or above
+     *
+     * @param data - Object to display
+     */
+    static dir(data: unknown): void;
+    /**
+     * Display XML/HTML element representation
+     * Only displays if the level is set to DEBUG or above
+     *
+     * @param data - Element to display
+     */
+    static dirxml(data: unknown): void;
+    /**
+     * Create a formatted string with substitution values
+     *
+     * @param format - Format string
+     * @param args - Substitution values
+     */
+    static format(format: string, ...args: unknown[]): string;
 }
 //# sourceMappingURL=Debug.d.ts.map

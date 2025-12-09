@@ -6,107 +6,199 @@
 
 import { Request, RequestOptions } from './Request';
 
-/**
- * File read type options
- */
-export type FileReadType = 'text' | 'base64' | 'buffer';
+export type FileReadType = 'text' | 'base64' | 'buffer' | 'binary';
 
 /**
- * File read result type based on read type
+ * Return type mapping for file read operations
  */
 export interface FileReadResult {
-	event: ProgressEvent<FileReader>;
-	content: string | ArrayBuffer | null;
+  text: string;
+  base64: string;
+  buffer: ArrayBuffer;
+  binary: string;
 }
 
 /**
- * A simple class wrapper for the File and FileReader web API, while this class
- * doesn't actually provide access to the host file system, it does provide useful
- * utilities for form file inputs and remote content loading.
+ * A utility wrapper for File/Blob operations
  */
 export class FileSystem {
-	/**
-	 * Read a file from a remote location given a URL. This function will fetch
-	 * the file blob using the Request class and then use the read() function
-	 * to read the blob in the format required.
-	 *
-	 * @param url - URL to fetch the file from
-	 * @param type - Type of data to be read, values can be 'text', 'base64' and 'buffer'
-	 * @param props - Props to send to the Request object
-	 * @returns Content of the file. The format depends on the type parameter used.
-	 */
-	static readRemote(url: string, type: FileReadType = 'base64', props: RequestOptions = {}): Promise<FileReadResult> {
-		return Request.blob(url, {}, props).then((file) => {
-			return FileSystem.read(file, type);
-		});
-	}
 
-	/**
-	 * Read a given File or Blob object.
-	 *
-	 * @param file - File to read
-	 * @param type - Type of data to be read, values can be 'text', 'base64' and 'buffer'
-	 * @returns Promise that resolves to the load event and content of the file
-	 */
-	static read(file: File | Blob, type: FileReadType = 'text'): Promise<FileReadResult> {
-		return new Promise((resolve, reject) => {
-			const reader = new FileReader();
+  /**
+   * Read a file from a remote URL.
+   *
+   * @param url - The URL to fetch
+   * @param type - The format to return ('text', 'base64', 'buffer', 'binary')
+   * @param options - Request options
+   */
+  static async readRemote<T extends FileReadType>(
+    url: string,
+    type: T = 'base64' as T,
+    options: RequestOptions = {}
+  ): Promise<FileReadResult[T]> {
+    const blob = await Request.blob(url, {}, options);
+    return FileSystem.read(blob, type);
+  }
 
-			reader.onload = (event: ProgressEvent<FileReader>) => {
-				// Pass down the event object and the content
-				resolve({
-					event,
-					content: event.target?.result ?? null
-				});
-			};
+  /**
+   * Read a local File or Blob.
+   *
+   * @param file - The File or Blob to read
+   * @param type - The format to return
+   */
+  static async read<T extends FileReadType>(file: File | Blob, type: T = 'text' as T): Promise<FileReadResult[T]> {
+    switch (type) {
+      case 'text':
+        return file.text() as Promise<FileReadResult[T]>;
 
-			reader.onerror = (error) => {
-				reject(error);
-			};
+      case 'buffer':
+        return file.arrayBuffer() as Promise<FileReadResult[T]>;
 
-			if (type === 'base64') {
-				reader.readAsDataURL(file);
-			} else if (type === 'buffer') {
-				reader.readAsArrayBuffer(file);
-			} else {
-				reader.readAsText(file, 'UTF-8');
-			}
-		});
-	}
+      case 'base64':
+        return new Promise<FileReadResult[T]>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as FileReadResult[T]);
+          reader.onerror = () => reject(reader.error);
+          reader.readAsDataURL(file);
+        });
 
-	/**
-	 * Create a new File, this uses the File API and will not actually create
-	 * a file in the user's file system, however using it with other features,
-	 * that may be possible
-	 *
-	 * @param name - Name of the file (Including extension)
-	 * @param content - Content to save in the file
-	 * @param type - Mime Type for the file
-	 * @returns Promise resolving to the created File
-	 */
-	static create(name: string, content: BlobPart, type: string = 'text/plain'): Promise<File> {
-		return Promise.resolve(new File([content], name, { type }));
-	}
+      case 'binary':
+        return new Promise<FileReadResult[T]>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            const buffer = reader.result as ArrayBuffer;
+            let binary = '';
+            const bytes = new Uint8Array(buffer);
+            const length = bytes.byteLength;
+            for (let i = 0; i < length; i++) {
+              binary += String.fromCharCode(bytes[i]);
+            }
+            resolve(binary as FileReadResult[T]);
+          };
+          reader.onerror = () => reject(reader.error);
+          reader.readAsArrayBuffer(file);
+        });
 
-	/**
-	 * Returns the extension of a file given its file name.
-	 *
-	 * @param name - Name or full path of the file
-	 * @returns File extension without the leading dot (.)
-	 */
-	static extension(name: string): string {
-		return name.split('.').pop() ?? '';
-	}
+      default: {
+        const exhaustiveCheck: never = type;
+        throw new Error(`FileSystem.read: Unknown type ${exhaustiveCheck}`);
+      }
+    }
+  }
 
-	/**
-	 * Check if a file is an image by its extension.
-	 *
-	 * @param name - Name or full path of the file
-	 * @returns Whether the file is an image
-	 */
-	static isImage(name: string): boolean {
-		const extensions = ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp', 'bmp'];
-		return extensions.indexOf(FileSystem.extension(name).toLowerCase()) > -1;
-	}
+  /**
+   * Create a File object.
+   * This is a synchronous operation.
+   *
+   * @param name - Filename
+   * @param content - Data (String, Blob, ArrayBuffer)
+   * @param mimeType - MIME type (e.g. 'application/json')
+   */
+  static create(name: string, content: BlobPart, mimeType: string = 'text/plain'): File {
+    return new File([content], name, { type: mimeType });
+  }
+
+  /**
+   * Trigger a browser download for a specific File or Blob.
+   * This will creates a temporary anchor tag to force the download.
+   *
+   * @param file - The file to download
+   * @param name - Optional rename for the downloaded file
+   */
+  static download(file: File | Blob, name?: string): void {
+    const url = URL.createObjectURL(file);
+    const a = document.createElement('a');
+
+    a.href = url;
+
+    // Determine filename: use provided name, or File.name if available, or fallback
+    let filename: string;
+    if (name !== undefined && name !== '') {
+      filename = name;
+    } else if (file instanceof File && file.name !== '') {
+      filename = file.name;
+    } else {
+      filename = 'download';
+    }
+
+    a.download = filename;
+
+    document.body.appendChild(a);
+    a.click();
+
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  /**
+   * Get the file extension safely
+   *
+   * @param name - Filename or path
+   * @returns Lowercase extension without the dot, or empty string
+   */
+  static extension(name: string, allowHiddenFiles: boolean = false): string {
+    const parts = name.split('.');
+
+    // No extension: "file" or hidden file ".gitignore"
+    if (parts.length === 1 || (parts[0] === '' && parts.length === 2 && !allowHiddenFiles)) {
+      return '';
+    }
+
+    return parts.pop()?.toLowerCase() ?? '';
+  }
+
+  /**
+   * Check if a file is an image based on extension.
+   *
+   * @param name - Filename to check
+   */
+  static isImage(name: string): boolean {
+    const ext = FileSystem.extension(name);
+    const valid = new Set([
+      'jpg', 'jpeg', 'png', 'gif', 'svg',
+      'webp', 'avif', 'bmp', 'ico', 'tiff', 'heic'
+    ]);
+    return valid.has(ext);
+  }
+
+  /**
+   * Check if a file is a video based on extension.
+   *
+   * @param name - Filename to check
+   */
+  static isVideo(name: string): boolean {
+    const ext = FileSystem.extension(name);
+    const valid = new Set([
+      'mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv', 'm4v'
+    ]);
+    return valid.has(ext);
+  }
+
+  /**
+   * Check if a file is audio based on extension.
+   *
+   * @param name - Filename to check
+   */
+  static isAudio(name: string): boolean {
+    const ext = FileSystem.extension(name);
+    const valid = new Set([
+      'mp3', 'wav', 'ogg', 'flac', 'aac', 'm4a', 'wma'
+    ]);
+    return valid.has(ext);
+  }
+
+  /**
+   * Convert bytes to human-readable size.
+   *
+   * @param bytes - Size in bytes
+   * @param decimals - Number of decimal places
+   */
+  static humanSize(bytes: number, decimals: number = 2): string {
+    if (bytes === 0) return '0 Bytes';
+
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(decimals)) + ' ' + sizes[i];
+  }
 }
-

@@ -3,24 +3,83 @@
  * Preload
  * ==============================
  */
-/**
- * A simple class for asset preloading. This class assumes you have a service
- * worker set up that will be caching all requests.
- */
 export declare class Preload {
     /**
-     * Preload an image file
+     * Preload and decode an image. Decoding prevents the image from still having
+     * a delay when it is displayed.
      *
-     * @param route - Route to the image
-     * @returns Resolves to the image object or gets rejected with the rejection event
+     * @param route - URL of the image
+     * @returns Promise<HTMLImageElement>
      */
     static image(route: string): Promise<HTMLImageElement>;
     /**
-     * Preload any kind of file
+     * Preload multiple images in parallel.
      *
-     * @param route - Route to the file
-     * @returns Resolves or rejects depending on request success
+     * @param routes - Array of image URLs
+     * @returns Promise<HTMLImageElement[]>
      */
-    static file(route: string): Promise<Blob>;
+    static images(routes: string[]): Promise<HTMLImageElement[]>;
+    /**
+     * Preload a generic file by fetching it.
+     *
+     * @param route - URL of the file
+     * @param priority - Fetch priority hint (default: 'low')
+     * @returns Promise<Response>
+     */
+    static file(route: string, priority?: 'high' | 'low' | 'auto'): Promise<Response>;
+    /**
+     * Preload multiple files in parallel.
+     *
+     * @param routes - Array of file URLs
+     * @param priority - Fetch priority hint
+     * @returns Promise<Response[]>
+     */
+    static files(routes: string[], priority?: 'high' | 'low' | 'auto'): Promise<Response[]>;
+    /**
+     * Check if a URL is cached in a specific cache.
+     *
+     * @param cacheName - Name of the cache to check
+     * @param url - URL to look for
+     * @returns Whether the URL is cached
+     */
+    static isCached(cacheName: string, url: string): Promise<boolean>;
+    /**
+     * Add a URL to a cache.
+     *
+     * @param cacheName - Name of the cache
+     * @param url - URL to cache
+     * @returns Promise<void>
+     */
+    static addToCache(cacheName: string, url: string): Promise<void>;
+    /**
+     * Add multiple URLs to a cache.
+     *
+     * @param cacheName - Name of the cache
+     * @param urls - URLs to cache
+     * @returns Promise<void>
+     */
+    static addAllToCache(cacheName: string, urls: string[]): Promise<void>;
+    /**
+     * Preload a CSS stylesheet.
+     *
+     * @param url - URL of the stylesheet
+     * @returns Promise<void>
+     */
+    static stylesheet(url: string): Promise<void>;
+    /**
+     * Preload a JavaScript file.
+     *
+     * @param url - URL of the script
+     * @returns Promise<void>
+     */
+    static script(url: string): Promise<void>;
+    /**
+     * Preload a font file.
+     *
+     * @param url - URL of the font
+     * @param crossOrigin - Whether to use crossorigin attribute (default: true for fonts)
+     * @returns Promise<void>
+     */
+    static font(url: string, crossOrigin?: boolean): Promise<void>;
 }
 //# sourceMappingURL=Preload.d.ts.map

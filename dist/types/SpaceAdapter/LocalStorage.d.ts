@@ -3,19 +3,26 @@
  * Local Storage Adapter
  * ==============================
  */
-import type { LocalStorageConfiguration, StorageValue, KeyValueResult, UpgradeCallback } from './types';
+import type { LocalStorageConfiguration, StorageValue, KeyValueResult, UpgradeCallback, SpaceAdapterInterface } from './types';
+/**
+ * Error thrown when a key is not found in storage
+ */
+export declare class KeyNotFoundError extends Error {
+    constructor(key: string);
+}
 /**
  * The Local Storage Adapter provides the Space Class the ability to interact
  * with the localStorage API found in most modern browsers.
  */
-export declare class LocalStorage {
+export declare class LocalStorage implements SpaceAdapterInterface {
     name: string;
     version: string;
     store: string;
     id: string;
     numericVersion: number;
     upgrades: Record<string, UpgradeCallback<LocalStorage>>;
-    storage: Storage | Promise<LocalStorage> | undefined;
+    storage: Storage | undefined;
+    private _openPromise;
     /**
      * Create a new LocalStorage. If no configuration is provided, the LocalStorage
      * global object is used. The LocalStorage Adapter can provide independency
@@ -24,6 +31,12 @@ export declare class LocalStorage {
      * @param configuration - Configuration Object for the Adapter
      */
     constructor({ name, version, store }: LocalStorageConfiguration);
+    /**
+     * Compute the storage ID based on current name, version, and store
+     *
+     * @returns The computed ID string
+     */
+    private computeId;
     /**
      * Modify the configuration
      *
@@ -83,10 +96,6 @@ export declare class LocalStorage {
      */
     upgrade(oldVersion: string, newVersion: string, callback: UpgradeCallback<LocalStorage>): Promise<void>;
     /**
-     * Helper for the upgrade progress by executing callbacks in order
-     */
-    private _upgrade;
-    /**
      * Rename a Space
      *
      * @param name - New name to be used
@@ -94,7 +103,8 @@ export declare class LocalStorage {
      */
     rename(name: string): Promise<void>;
     /**
-     * Get the key that corresponds to a given index in the storage
+     * Get the key that corresponds to a given index in the storage.
+     * Only considers keys belonging to this space.
      *
      * @param index - Index to get the key from
      * @param full - Whether to return the full key name including space id

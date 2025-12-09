@@ -3,381 +3,363 @@
  * DOM
  * ==============================
  */
-/**
- * Type for elements that can be used as a selector
- */
 export type DOMSelector = string | Element | Element[] | NodeList | NodeListOf<Element> | HTMLElement[] | DOM | null;
-/**
- * Type for style properties object
- */
 export type StyleProperties = Record<string, string | number>;
-/**
- * Type for offset object
- */
 export interface DOMOffset {
     top: number;
     left: number;
 }
-/**
- * Event callback type
- */
 export type EventCallback = (event: Event) => void;
-/**
- * Element callback type
- */
-export type ElementCallback = (element: Element) => void;
+export type ElementCallback = (element: HTMLElement, index: number) => void;
 /**
  * Simple DOM manipulation functions
  */
 export declare class DOM {
-    collection: Element[] | NodeListOf<Element>;
+    collection: HTMLElement[];
     length: number;
-    _selector: DOMSelector;
-    /**
-     * Create a new DOM object
-     *
-     * @param selector - Selector or DOM element to use
-     */
     constructor(selector: DOMSelector);
     /**
-     * Hide elements by setting their `display` property to 'none'.
-     *
-     * @returns Current instance
+     * Hide elements by setting display to none
      */
     hide(): this;
     /**
-     * Show elements by setting their `display` property to the given value.
+     * Show elements by setting display property
      *
-     * @param display - Display property to set
-     * @returns Current instance
+     * @param display - Display value (default: 'block')
      */
     show(display?: string): this;
     /**
-     * Add a class to the classList object
+     * Add a class to all elements
      *
      * @param newClass - Class name to add
-     * @returns Current instance
      */
     addClass(newClass: string): this;
     /**
-     * Remove a given class from the classList object
+     * Remove a class from all elements
      *
-     * @param oldClass - Class to remove. If it's empty or null, all classes will be removed
-     * @returns Current instance
+     * @param oldClass - Class name to remove (if omitted, removes all classes)
      */
-    removeClass(oldClass?: string | null): this;
+    removeClass(oldClass?: string): this;
     /**
-     * Toggle between two classes
+     * Toggle one or more classes on all elements
      *
-     * @param classes - Space separated class names
-     * @returns Current instance
+     * @param classes - Space-separated class names to toggle
      */
     toggleClass(classes: string): this;
     /**
-     * Check if ALL elements in the collection have the given class
+     * Check if all elements have a given class
      *
-     * @param classToCheck - Class name to check for
-     * @returns Whether all elements have the class
+     * @param classToCheck - Class name to check
      */
     hasClass(classToCheck: string): boolean;
     /**
-     * Get or set the value from the elements
-     *
-     * @param value - Value to set to the elements
-     * @returns If a value is provided, returns current instance. Otherwise returns the value(s) - single value if one element, array if multiple.
+     * Get or set the value of form elements
      */
-    value(value?: string): this | string | string[] | undefined;
+    value(value: string | number): this;
+    value(): string | undefined;
     /**
-     * Focus on the first element matching the selector
-     *
-     * @returns Current instance
+     * Focus the first element in the collection
      */
     focus(): this;
     /**
-     * Add a callback for the 'click' event on every element matching the selector
-     *
-     * @param callback - Callback function to run when the event is triggered
-     * @returns Current instance
+     * Blur (unfocus) the first element in the collection
+     */
+    blur(): this;
+    /**
+     * Attach a click event handler
      */
     click(callback: EventCallback): this;
     /**
-     * Add a callback for the 'keyup' event on every element matching the selector
-     *
-     * @param callback - Callback function to run when the event is triggered
-     * @returns Current instance
+     * Attach a keyup event handler
      */
     keyup(callback: EventCallback): this;
     /**
-     * Add a callback for the 'keydown' event on every element matching the selector
-     *
-     * @param callback - Callback function to run when the event is triggered
-     * @returns Current instance
+     * Attach a keydown event handler
      */
     keydown(callback: EventCallback): this;
     /**
-     * Add a callback for the 'submit' event on every element matching the selector
-     *
-     * @param callback - Callback function to run when the event is triggered
-     * @returns Current instance
+     * Attach a submit event handler
      */
     submit(callback: EventCallback): this;
     /**
-     * Add a callback for the 'change' event on every element matching the selector
-     *
-     * @param callback - Callback function to run when the event is triggered
-     * @returns Current instance
+     * Attach a change event handler
      */
     change(callback: EventCallback): this;
     /**
-     * Add a callback for the 'scroll' event on every element matching the selector
-     *
-     * @param callback - Callback function to run when the event is triggered
-     * @returns Current instance
+     * Attach a scroll event handler
      */
     scroll(callback: EventCallback): this;
     /**
-     * Add a callback function to a given event
-     *
-     * @param event - Event to add the listener to
-     * @param target - Target element on which to detect the event or callback function
-     * @param callback - Callback function to run when the event is triggered
-     * @returns Current instance
+     * Attach an input event handler
      */
-    on(event: string, target: string | EventCallback, callback?: EventCallback): this;
+    input(callback: EventCallback): this;
     /**
-     * Filter from the current collection to only those matching the new selector
-     * Applies to ALL elements in the collection
+     * Attach event handlers to elements
      *
-     * @param selector - Selector to filter the collection with
-     * @returns New DOM instance with the filtered collection
+     * @param eventNames - Space-separated event names
+     * @param targetOrCallback - Either a selector for delegation or a callback
+     * @param callback - Callback function (required if using delegation)
+     */
+    on(eventNames: string, targetOrCallback: string | EventCallback, callback?: EventCallback): this;
+    /**
+     * Remove event handlers from elements
+     *
+     * @param eventNames - Space-separated event names
+     * @param callback - Callback function to remove
+     */
+    off(eventNames: string, callback: EventCallback): this;
+    /**
+     * Trigger events on elements
+     *
+     * @param eventNames - Space-separated event names
+     * @param detail - Custom event detail data
+     */
+    trigger(eventNames: string, detail?: unknown): this;
+    /**
+     * Filter elements by a selector
+     *
+     * @param selector - CSS selector to match
      */
     filter(selector: string): DOM;
     /**
-     * Check if there are any elements that match the selector.
-     *
-     * @returns Whether elements matching the selector existed or not
+     * Check if the collection contains any elements
      */
     exists(): boolean;
     /**
-     * Get or set a `data` property
+     * Get or set data attributes
      *
-     * @param name - Name of the data property
-     * @param value - Value of the property
-     * @returns If no value is provided, returns the value(s) - single value if one element, array if multiple.
+     * @param name - Data attribute name (without 'data-' prefix)
+     * @param value - Value to set (if omitted, returns current value)
      */
-    data(name: string, value?: string): this | string | string[] | undefined;
+    data(name: string): string | undefined;
+    data(name: string, value: string): this;
     /**
-     * Remove a data property from all the elements on the collection given its name.
+     * Remove a data attribute from all elements
      *
-     * @param name - Name of the data property to remove
-     * @returns Current instance
+     * @param name - Data attribute name to remove
      */
     removeData(name: string): this;
     /**
-     * Get or set the text of elements
-     *
-     * @param value - Value to set the text to
-     * @returns If no value is provided, returns the text(s) - single value if one element, array if multiple.
+     * Get or set text content
      */
-    text(value?: string): this | string | (string | null)[] | null | undefined;
+    text(value: string | number): this;
+    text(): string | undefined;
     /**
-     * Get or set the inner HTML of elements
-     *
-     * @param value - Value to set the HTML to
-     * @returns If no value is provided, returns the HTML(s) - single value if one element, array if multiple.
+     * Get or set HTML content
      */
-    html(value?: string): this | string | string[] | undefined;
+    html(value: string | number): this;
+    html(): string | undefined;
     /**
-     * Append an element to ALL elements in the collection
+     * Append content to the end of each element
      *
-     * @param element - String representation of the element to add or an Element
-     * @returns Current instance
+     * @param content - HTML string or Element to append
      */
-    append(element: string | Element): this;
+    append(content: string | Element): this;
     /**
-     * Prepend an element to ALL elements in the collection
+     * Prepend content to the beginning of each element
      *
-     * @param element - String representation of the element to add or an Element
-     * @returns Current instance
+     * @param content - HTML string or Element to prepend
      */
-    prepend(element: string | Element): this;
+    prepend(content: string | Element): this;
     /**
-     * Iterate over the collection of elements matching the selector
+     * Iterate over each element in the collection
      *
-     * @param callback - Callback to run for every element
-     * @returns Current instance
+     * @param callback - Function to call for each element
      */
     each(callback: ElementCallback): this;
     /**
-     * Get an element from the collection given its index
+     * Get an element by index
      *
-     * @param index - Index of the element to retrieve
-     * @returns HTML Element in the position indicated by the index
+     * @param index - Zero-based index
      */
-    get(index: number): Element | undefined;
+    get(index: number): HTMLElement | undefined;
     /**
-     * Get the first element in the collection
-     *
-     * @returns DOM instance with the first element
+     * Get the first element wrapped in a new DOM instance
      */
     first(): DOM;
     /**
-     * Get the last element in the collection
-     *
-     * @returns DOM instance with the last element
+     * Get the last element wrapped in a new DOM instance
      */
     last(): DOM;
     /**
-     * Check if any element in the collection is visible by checking their
-     * display, offsetWidth and offsetHeight properties
+     * Get element at index wrapped in a new DOM instance
      *
-     * @returns Whether any element is visible
+     * @param index - Zero-based index (negative counts from end)
+     */
+    eq(index: number): DOM;
+    /**
+     * Check if any element in the collection is visible
      */
     isVisible(): boolean;
     /**
-     * Get the parents of ALL elements in the collection
-     *
-     * @returns DOM instance of the parent elements
+     * Get the parent elements of all elements in the collection
      */
     parent(): DOM;
     /**
-     * Find elements that match the given selector in ALL elements of the collection
+     * Get all parent/ancestor elements up to the document
+     */
+    parents(): DOM;
+    /**
+     * Find descendant elements matching a selector
      *
-     * @param selector - Selector to find elements with
-     * @returns DOM instance with found elements
+     * @param selector - CSS selector
      */
     find(selector: string): DOM;
     /**
-     * Get the top and left offsets of elements in the collection
-     *
-     * @returns Single offset object if one element, array of offset objects if multiple
+     * Get the offset position of the first element
      */
-    offset(): DOMOffset | DOMOffset[] | undefined;
+    offset(): DOMOffset | undefined;
     /**
-     * Find the closest element matching the given selector for ALL elements.
-     * This bubbles up from the initial object and then follows to its parents.
+     * Get the width of the first element
+     */
+    width(): number;
+    /**
+     * Get the height of the first element
+     */
+    height(): number;
+    /**
+     * Get the closest ancestor matching a selector
      *
-     * @param selector - Selector to match the closest element with
-     * @returns DOM instance with the closest HTML elements matching the selector
+     * @param selector - CSS selector
      */
     closest(selector: string): DOM;
     /**
-     * Find the closest parent element matching the given selector. This bubbles up
-     * from the initial object and then follows to its parents.
+     * Get or set an attribute
      *
-     * @param selector - Selector to match the closest element with
-     * @param limit - Selector for limit element. If the limit is reached and no element matching the provided selector was found, it will cause an early return.
-     * @returns DOM instance with the closest HTML element matching the selector
+     * @param attr - Attribute name
+     * @param value - Value to set (if omitted, returns current value)
      */
-    closestParent(selector: string, limit?: string): DOM;
+    attribute(attr: string): string | null | undefined;
+    attribute(attr: string, value: string | number): this;
     /**
-     * Get or set the value of a given attribute
+     * Remove an attribute from all elements
      *
-     * @param attribute - Attribute's name
-     * @param value - Value to set the attribute to
-     * @returns If no value is provided, returns the attribute value(s) - single value if one element, array if multiple.
+     * @param attr - Attribute name to remove
      */
-    attribute(attribute: string, value?: string | number): this | string | (string | null)[] | null | undefined;
+    removeAttribute(attr: string): this;
     /**
-     * Check whether ALL elements have an attribute
+     * Check if all elements have a given attribute
      *
-     * @param attribute - The name of the attribute to check existence for
-     * @returns Whether all elements have the attribute
+     * @param attribute - Attribute name
      */
     hasAttribute(attribute: string): boolean;
     /**
-     * Insert content after all elements in the collection
+     * Insert HTML after each element
      *
-     * @param content - String representation of the content to add
-     * @returns Current instance
+     * @param content - HTML string to insert
      */
     after(content: string): this;
     /**
-     * Insert content before all elements in the collection
+     * Insert HTML before each element
      *
-     * @param content - String representation of the content to add
-     * @returns Current instance
+     * @param content - HTML string to insert
      */
     before(content: string): this;
     /**
-     * Get or modify the `style` properties of the elements matching the selector
-     *
-     * @param properties - Properties to change or get. Can be either an individual property or a JSON object with key-value pairs
-     * @param value - Value to set the property to when only changing one property
-     * @returns If a property is given but not a value for it, returns the style value(s) - single value if one element, array if multiple.
+     * Get or set CSS styles
      */
-    style(properties: string | StyleProperties, value?: string): this | string | string[] | undefined;
+    style(prop: string): string;
+    style(prop: StyleProperties): this;
+    style(prop: string, value: string): this;
     /**
-     * Animate the given `style` properties on all elements in the collection
-     * with a given time duration
+     * Animate elements using the Web Animations API
      *
-     * @param style - JSON object with the key-value pairs of properties to animate
-     * @param time - Time in milliseconds during which the properties will be animated
-     * @returns Current instance
+     * @param keyframes - Animation keyframes
+     * @param options - Animation options
      */
-    animate(style: Record<string, number>, time: number): this;
+    animate(keyframes: Keyframe[] | PropertyIndexedKeyframes, options: number | KeyframeAnimationOptions): this;
     /**
-     * Use a fade in animation on ALL elements in the collection
+     * Fade elements in
      *
-     * @param time - Time duration for the animation
-     * @param callback - Callback function to run once all animations are over
-     * @returns Current instance
+     * @param duration - Animation duration in ms
+     * @param callback - Function to call after animation completes
      */
-    fadeIn(time?: number, callback?: () => void): this;
+    fadeIn(duration?: number, callback?: () => void): this;
     /**
-     * Use a fade out animation on ALL elements in the collection
+     * Fade elements out
      *
-     * @param time - Time duration for the animation
-     * @param callback - Callback function to run once all animations are over
-     * @returns Current instance
+     * @param duration - Animation duration in ms
+     * @param callback - Function to call after animation completes
      */
-    fadeOut(time?: number, callback?: () => void): this;
+    fadeOut(duration?: number, callback?: () => void): this;
     /**
-     * Check if ALL elements in the collection match a given selector
+     * Check if all elements match a selector
      *
-     * @param selector - Selector to match
-     * @returns Whether all elements match the selector
+     * @param selector - CSS selector
      */
     matches(selector: string): boolean;
     /**
-     * Remove all elements in the collection
-     *
-     * @returns Current instance
+     * Remove all elements from the DOM
      */
     remove(): this;
     /**
-     * Replace ALL elements in the collection with a new element
-     *
-     * @param newElement - The replacement element or HTML string
-     * @returns Current instance
+     * Remove all child elements
      */
-    replaceWith(newElement: string | Element): this;
+    empty(): this;
     /**
-     * Reset every element in the collection (for form elements)
+     * Clone all elements in the collection
      *
-     * @returns Current instance
+     * @param deep - Whether to clone child nodes (default: true)
+     */
+    clone(deep?: boolean): DOM;
+    /**
+     * Replace elements with new content
+     *
+     * @param newContent - HTML string or Element to replace with
+     */
+    replaceWith(newContent: string | Element): this;
+    /**
+     * Reset form elements
      */
     reset(): this;
     /**
-     * Get or set a property for elements in the collection
+     * Get or set a DOM property
      *
-     * @param property - Property name to set or get
-     * @param value - Value to set the property to
-     * @returns If no value is provided, returns the property value(s) - single value if one element, array if multiple.
+     * @param name - Property name
+     * @param value - Value to set (if omitted, returns current value)
      */
-    property<T = unknown>(property: string, value?: T): this | T | T[] | undefined;
+    property<K extends keyof HTMLElement>(name: K, value: HTMLElement[K]): this;
+    property<K extends keyof HTMLElement>(name: K): HTMLElement[K] | undefined;
+    /**
+     * Get sibling elements
+     */
+    siblings(): DOM;
+    /**
+     * Get the next sibling element
+     */
+    next(): DOM;
+    /**
+     * Get the previous sibling element
+     */
+    prev(): DOM;
+    /**
+     * Get all child elements
+     */
+    children(): DOM;
+    /**
+     * Scroll element into view
+     *
+     * @param options - Scroll options
+     */
+    scrollIntoView(options?: ScrollIntoViewOptions): this;
 }
 /**
- * Simple wrapper function to use the DOM library
+ * Create a new DOM instance
  *
- * @param selector - Selector or DOM element to use
- * @returns DOM instance
+ * @param selector - CSS selector, Element, or collection
  */
 export declare function $_(selector: DOMSelector): DOM;
 /**
- * Utility function to attach the 'load' listener to the window
+ * Execute a callback when the DOM is ready
  *
- * @param callback - Callback function to run when the window is ready
+ * @param callback - Function to execute
  */
-export declare function $_ready(callback: EventListener): void;
+export declare function $_ready(callback: () => void): void;
+/**
+ * Create a new element
+ *
+ * @param tagName - HTML tag name
+ * @param attributes - Optional attributes to set
+ */
+export declare function $_create<K extends keyof HTMLElementTagNameMap>(tagName: K, attributes?: Record<string, string>): DOM;
 //# sourceMappingURL=DOM.d.ts.map

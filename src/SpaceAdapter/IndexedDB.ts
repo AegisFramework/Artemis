@@ -4,13 +4,24 @@
  * ==============================
  */
 
-import type { IndexedDBConfiguration, StorageValue, KeyValueResult, UpgradeCallback } from './types';
+import type { IndexedDBConfiguration, StorageValue, KeyValueResult, UpgradeCallback, SpaceAdapterInterface } from './types';
+import { versionToNumber } from './types';
+
+/**
+ * Error thrown when a key is not found in storage
+ */
+export class KeyNotFoundError extends Error {
+	constructor(key: string) {
+		super(`Key "${key}" not found in IndexedDB`);
+		this.name = 'KeyNotFoundError';
+	}
+}
 
 /**
  * The IndexedDB Adapter provides the Space Class the ability to interact
  * with the IndexedDB API found in most modern browsers.
  */
-export class IndexedDB {
+export class IndexedDB implements SpaceAdapterInterface {
 	public name: string;
 	public version: string;
 	public store: string;
@@ -37,11 +48,7 @@ export class IndexedDB {
 		this.keyPath = (props?.keyPath as string) || 'id';
 		this.upgrades = {};
 
-		if (this.version === '') {
-			this.numericVersion = 0;
-		} else {
-			this.numericVersion = parseInt(version.replace(/\./g, ''));
-		}
+		this.numericVersion = versionToNumber(version);
 	}
 
 	/**
@@ -50,9 +57,12 @@ export class IndexedDB {
 	 * @param config - Configuration object to set up
 	 */
 	configuration(config: IndexedDBConfiguration): void {
-		if (config.name) this.name = config.name;
-		if (config.version) this.version = config.version;
-		if (config.store) this.store = config.store;
+		if (config.name !== undefined) this.name = config.name;
+		if (config.version !== undefined) {
+			this.version = config.version;
+			this.numericVersion = versionToNumber(config.version);
+		}
+		if (config.store !== undefined) this.store = config.store;
 	}
 
 	/**
@@ -60,82 +70,93 @@ export class IndexedDB {
 	 *
 	 * @returns Promise resolving to this adapter
 	 */
-	open(): Promise<this> {
+	async open(): Promise<this> {
 		if (this.name === '') {
-			console.error('No name has been defined for IndexedDB space.');
-			return Promise.reject();
+			throw new Error('IndexedDB requires a name. No name has been defined for this space.');
 		}
 
 		if (this.store === '') {
-			console.error('No store has been defined for IndexedDB space.');
-			return Promise.reject();
+			throw new Error('IndexedDB requires a store name. No store has been defined for this space.');
 		}
 
 		if (this.storage instanceof IDBDatabase) {
-			return Promise.resolve(this);
+			return this;
 		} else if (this.storage instanceof Promise) {
-			return this.storage as unknown as Promise<this>;
+			return await (this.storage as unknown as Promise<this>);
 		} else {
-			let upgradeEvent: IDBVersionChangeEvent | undefined;
-
-			const openPromise = new Promise<{ storage: IDBDatabase; upgrades: string[] }>((resolve, reject) => {
+			const openTask = (async () => {
+				let upgradeEvent: IDBVersionChangeEvent | undefined;
 				let upgradesToApply: string[] = [];
-				const request = window.indexedDB.open(this.name, this.numericVersion);
 
-				request.onerror = (event) => {
-					reject(event);
-				};
+				const db = await new Promise<IDBDatabase>((resolve, reject) => {
+					const request = window.indexedDB.open(this.name, this.numericVersion);
 
-				request.onsuccess = (event) => {
-					resolve({ storage: (event.target as IDBOpenDBRequest).result, upgrades: upgradesToApply });
-				};
+					request.onerror = (event) => {
+						reject(new Error(`Failed to open IndexedDB "${this.name}": ${(event.target as IDBOpenDBRequest).error?.message}`));
+					};
 
-				request.onupgradeneeded = (event: IDBVersionChangeEvent) => {
-					upgradeEvent = event;
-					const db = (event.target as IDBOpenDBRequest).result;
+					request.onsuccess = (event) => {
+						resolve((event.target as IDBOpenDBRequest).result);
+					};
 
-					if (event.oldVersion < 1) {
-						// Create all the needed Stores
-						const store = db.createObjectStore(this.store, this.props);
-						for (const indexKey of Object.keys(this.index)) {
-							const idx = this.index[indexKey];
-							store.createIndex(idx.name, idx.field, idx.props);
+					request.onupgradeneeded = (event: IDBVersionChangeEvent) => {
+						upgradeEvent = event;
+						const db = (event.target as IDBOpenDBRequest).result;
+
+						if (event.oldVersion < 1) {
+							// Create all the needed Stores
+							const store = db.createObjectStore(this.store, this.props);
+							for (const indexKey of Object.keys(this.index)) {
+								const idx = this.index[indexKey];
+								store.createIndex(idx.name, idx.field, idx.props);
+							}
+						} else {
+							// Check what upgrade functions have been declared
+							const availableUpgrades = Object.keys(this.upgrades).sort((a, b) => {
+								const [aOld] = a.split('::').map(Number);
+								const [bOld] = b.split('::').map(Number);
+								return aOld - bOld;
+							});
+
+							const startFrom = availableUpgrades.findIndex((u) => {
+								const [old] = u.split('::');
+								return parseInt(old) === event.oldVersion;
+							});
+
+							if (startFrom > -1) {
+								upgradesToApply = availableUpgrades.slice(startFrom).filter((u) => {
+									const [old, next] = u.split('::');
+									return parseInt(old) < this.numericVersion && parseInt(next) <= this.numericVersion;
+								});
+							}
 						}
-					} else {
-						// Check what upgrade functions have been declared
-						const availableUpgrades = Object.keys(this.upgrades).sort();
 
-						const startFrom = availableUpgrades.findIndex((u) => {
-							const [old] = u.split('::');
-							return parseInt(old) === event.oldVersion;
-						});
-
-						if (startFrom > -1) {
-							upgradesToApply = availableUpgrades.slice(startFrom).filter((u) => {
-								const [old, next] = u.split('::');
-								return parseInt(old) < this.numericVersion && parseInt(next) <= this.numericVersion;
+						// Once the transaction is done, resolve the storage object
+						const transaction = (event.target as IDBOpenDBRequest).transaction;
+						if (transaction) {
+							transaction.addEventListener('complete', () => {
+								// Transaction completed
 							});
 						}
-					}
-
-					// Once the transaction is done, resolve the storage object
-					const transaction = (event.target as IDBOpenDBRequest).transaction;
-					if (transaction) {
-						transaction.addEventListener('complete', () => {
-							resolve({ storage: db, upgrades: upgradesToApply });
-						});
-					}
-				};
-			}).then(({ storage, upgrades }) => {
-				this.storage = storage;
-				return new Promise<this>((resolve) => {
-					const res = () => resolve(this);
-					this._upgrade(upgrades, res, upgradeEvent);
+					};
 				});
-			});
 
-			this.storage = openPromise as unknown as Promise<IDBDatabase>;
-			return openPromise;
+				this.storage = db;
+
+				// Apply upgrades
+				for (const upgradeKey of upgradesToApply) {
+					try {
+						await this.upgrades[upgradeKey].call(this, this, upgradeEvent);
+					} catch (e) {
+						console.error(e);
+					}
+				}
+
+				return this;
+			})();
+
+			this.storage = openTask as unknown as Promise<IDBDatabase>;
+			return await openTask;
 		}
 	}
 
@@ -147,28 +168,30 @@ export class IndexedDB {
 	 * @param value - Value to save
 	 * @returns Promise with key and value
 	 */
-	set(key: string | null = null, value: StorageValue): Promise<KeyValueResult> {
-		return this.open().then(() => {
-			return new Promise((resolve, reject) => {
-				const transaction = (this.storage as IDBDatabase)
-					.transaction(this.store, 'readwrite')
-					.objectStore(this.store);
-				let op: IDBRequest;
+	async set(key: string | null = null, value: StorageValue): Promise<KeyValueResult> {
+		await this.open();
+		return new Promise((resolve, reject) => {
+			const transaction = (this.storage as IDBDatabase)
+				.transaction(this.store, 'readwrite')
+				.objectStore(this.store);
 
-				if (key !== null) {
-					const temp: Record<string, unknown> = {};
-					temp[this.keyPath] = key;
-					op = transaction.put(Object.assign({}, temp, value as object));
-				} else {
-					op = transaction.add(value);
-				}
+			let op: IDBRequest;
 
-				op.addEventListener('success', (event) => {
-					resolve({ key: String((event.target as IDBRequest).result), value });
-				});
-				op.addEventListener('error', (event) => {
-					reject(event);
-				});
+			if (key !== null) {
+				const temp: Record<string, unknown> = {};
+
+				temp[this.keyPath] = key;
+				op = transaction.put({ ...temp, ...(value as object) });
+			} else {
+				op = transaction.add(value);
+			}
+
+			op.addEventListener('success', (event) => {
+				resolve({ key: String((event.target as IDBRequest).result), value });
+			});
+
+			op.addEventListener('error', (event) => {
+				reject(new Error(`Failed to set key "${key}": ${(event.target as IDBRequest).error?.message}`));
 			});
 		});
 	}
@@ -181,25 +204,32 @@ export class IndexedDB {
 	 * @param value - Value to save
 	 * @returns Promise with key and value
 	 */
-	update(key: string, value: StorageValue): Promise<KeyValueResult> {
-		return this.get(key).then((currentValue) => {
+	async update(key: string, value: StorageValue): Promise<KeyValueResult> {
+		try {
+			const currentValue = await this.get(key);
+
 			if (typeof currentValue === 'undefined') {
 				return this.set(key, value);
 			}
+
 			return new Promise((resolve, reject) => {
 				const transaction = (this.storage as IDBDatabase)
 					.transaction(this.store, 'readwrite')
 					.objectStore(this.store);
-				const op = transaction.put(Object.assign({}, currentValue as object, value as object));
+
+				const op = transaction.put({ ...(currentValue as object), ...(value as object) });
 
 				op.addEventListener('success', (event) => {
 					resolve({ key: String((event.target as IDBRequest).result), value });
 				});
+
 				op.addEventListener('error', (event) => {
-					reject(event);
+					reject(new Error(`Failed to update key "${key}": ${(event.target as IDBRequest).error?.message}`));
 				});
 			});
-		});
+		} catch {
+			return this.set(key, value);
+		}
 	}
 
 	/**
@@ -208,55 +238,62 @@ export class IndexedDB {
 	 * @param key - Key with which the value was saved
 	 * @returns Promise resolving to the retrieved value
 	 */
-	get(key: string): Promise<StorageValue> {
-		return this.open().then(() => {
-			return new Promise((resolve, reject) => {
-				const transaction = (this.storage as IDBDatabase)
-					.transaction(this.store)
-					.objectStore(this.store);
-				const op = transaction.get(key);
+	async get(key: string): Promise<StorageValue> {
+		await this.open();
+		return new Promise((resolve, reject) => {
+			const transaction = (this.storage as IDBDatabase)
+				.transaction(this.store, 'readonly')
+				.objectStore(this.store);
 
-				op.addEventListener('success', (event) => {
-					const value = (event.target as IDBRequest).result;
-					if (typeof value !== 'undefined' && value !== null) {
-						resolve(value);
-					} else {
-						reject();
-					}
-				});
-				op.addEventListener('error', (event) => {
-					reject(event);
-				});
+			const op = transaction.get(key);
+
+			op.addEventListener('success', (event) => {
+				const value = (event.target as IDBRequest).result;
+				if (typeof value !== 'undefined' && value !== null) {
+					resolve(value);
+				} else {
+					reject(new KeyNotFoundError(key));
+				}
+			});
+
+			op.addEventListener('error', (event) => {
+				reject(new Error(`Failed to get key "${key}": ${(event.target as IDBRequest).error?.message}`));
 			});
 		});
 	}
 
 	/**
-	 * Retrieves all the values in the space in a key-value JSON object
+	 * Retrieves all the values in the space in a key-value JSON object.
+	 * Note: The keyPath property is preserved in the returned items.
 	 *
 	 * @returns Promise resolving to all values
 	 */
-	getAll(): Promise<Record<string, StorageValue>> {
-		return this.open().then(() => {
-			return new Promise((resolve, reject) => {
-				const transaction = (this.storage as IDBDatabase)
-					.transaction(this.store)
-					.objectStore(this.store);
-				const op = transaction.getAll();
+	async getAll(): Promise<Record<string, StorageValue>> {
+		await this.open();
+		return new Promise((resolve, reject) => {
+			const transaction = (this.storage as IDBDatabase)
+				.transaction(this.store, 'readonly')
+				.objectStore(this.store);
 
-				op.addEventListener('success', (event) => {
-					const results: Record<string, StorageValue> = {};
-					const items = (event.target as IDBRequest).result as Record<string, unknown>[];
-					items.forEach((item) => {
-						const id = item[this.keyPath] as string;
-						delete item[this.keyPath];
-						results[id] = item;
-					});
-					resolve(results);
+			const op = transaction.getAll();
+
+			op.addEventListener('success', (event) => {
+				const results: Record<string, StorageValue> = {};
+				const items = (event.target as IDBRequest).result as Record<string, unknown>[];
+
+				items.forEach((item) => {
+					const id = item[this.keyPath] as string;
+					// Create a shallow copy to avoid mutating the original item
+					const itemCopy = { ...item };
+					delete itemCopy[this.keyPath];
+					results[id] = itemCopy;
 				});
-				op.addEventListener('error', (event) => {
-					reject(event);
-				});
+
+				resolve(results);
+			});
+
+			op.addEventListener('error', (event) => {
+				reject(new Error(`Failed to get all items: ${(event.target as IDBRequest).error?.message}`));
 			});
 		});
 	}
@@ -267,10 +304,8 @@ export class IndexedDB {
 	 * @param key - Key to look for
 	 * @returns Promise that resolves if key exists
 	 */
-	contains(key: string): Promise<void> {
-		return this.get(key).then(() => {
-			return Promise.resolve();
-		});
+	async contains(key: string): Promise<void> {
+		await this.get(key);
 	}
 
 	/**
@@ -282,23 +317,10 @@ export class IndexedDB {
 	 * @param callback - Function to transform the old stored values
 	 * @returns Promise
 	 */
-	upgrade(oldVersion: string, newVersion: string, callback: UpgradeCallback<IndexedDB>): Promise<void> {
-		const key = `${parseInt(oldVersion.replace(/\./g, ''))}::${parseInt(newVersion.replace(/\./g, ''))}`;
+	async upgrade(oldVersion: string, newVersion: string, callback: UpgradeCallback<IndexedDB>): Promise<void> {
+		const key = `${versionToNumber(oldVersion)}::${versionToNumber(newVersion)}`;
 		this.upgrades[key] = callback;
 		return Promise.resolve();
-	}
-
-	/**
-	 * Helper for the upgrade progress by executing callbacks in order
-	 */
-	private _upgrade(upgradesToApply: string[], resolve: () => void, event?: IDBVersionChangeEvent): void {
-		if (upgradesToApply.length > 0) {
-			this.upgrades[upgradesToApply[0]].call(this, this, event).then(() => {
-				this._upgrade(upgradesToApply.slice(1), resolve, event);
-			}).catch((e) => console.error(e));
-		} else {
-			resolve();
-		}
 	}
 
 	/**
@@ -308,7 +330,7 @@ export class IndexedDB {
 	 * @returns Promise rejection
 	 */
 	rename(): Promise<never> {
-		return Promise.reject();
+		return Promise.reject(new Error('IndexedDB does not support renaming databases. Create a new database and migrate data manually.'));
 	}
 
 	/**
@@ -318,7 +340,7 @@ export class IndexedDB {
 	 * @returns Promise rejection
 	 */
 	key(): Promise<never> {
-		return Promise.reject();
+		return Promise.reject(new Error('IndexedDB does not support getting keys by index. Use keys() to get all keys.'));
 	}
 
 	/**
@@ -326,21 +348,22 @@ export class IndexedDB {
 	 *
 	 * @returns Promise resolving to array of keys
 	 */
-	keys(): Promise<string[]> {
-		return this.open().then(() => {
-			return new Promise((resolve, reject) => {
-				const transaction = (this.storage as IDBDatabase)
-					.transaction(this.store, 'readwrite')
-					.objectStore(this.store);
-				const op = transaction.getAllKeys();
+	async keys(): Promise<string[]> {
+		await this.open();
+		return new Promise((resolve, reject) => {
+			const transaction = (this.storage as IDBDatabase)
+				.transaction(this.store, 'readonly')
+				.objectStore(this.store);
 
-				op.addEventListener('success', (event) => {
-					resolve((event.target as IDBRequest).result.map(String));
-				}, false);
-				op.addEventListener('error', (event) => {
-					reject(event);
-				}, false);
-			});
+			const op = transaction.getAllKeys();
+
+			op.addEventListener('success', (event) => {
+				resolve((event.target as IDBRequest).result.map(String));
+			}, false);
+
+			op.addEventListener('error', (event) => {
+				reject(new Error(`Failed to get keys: ${(event.target as IDBRequest).error?.message}`));
+			}, false);
 		});
 	}
 
@@ -350,21 +373,22 @@ export class IndexedDB {
 	 * @param key - Key of the item to delete
 	 * @returns Promise resolving to the value of the deleted object
 	 */
-	remove(key: string): Promise<StorageValue> {
-		return this.get(key).then((value) => {
-			return new Promise((resolve, reject) => {
-				const transaction = (this.storage as IDBDatabase)
-					.transaction(this.store, 'readwrite')
-					.objectStore(this.store);
-				const op = transaction.delete(key);
+	async remove(key: string): Promise<StorageValue> {
+		const value = await this.get(key);
+		return new Promise((resolve, reject) => {
+			const transaction = (this.storage as IDBDatabase)
+				.transaction(this.store, 'readwrite')
+				.objectStore(this.store);
 
-				op.addEventListener('success', () => {
-					resolve(value);
-				}, false);
-				op.addEventListener('error', (event) => {
-					reject(event);
-				}, false);
-			});
+			const op = transaction.delete(key);
+
+			op.addEventListener('success', () => {
+				resolve(value);
+			}, false);
+
+			op.addEventListener('error', (event) => {
+				reject(new Error(`Failed to delete key "${key}": ${(event.target as IDBRequest).error?.message}`));
+			}, false);
 		});
 	}
 
@@ -373,22 +397,22 @@ export class IndexedDB {
 	 *
 	 * @returns Promise for the clear operation
 	 */
-	clear(): Promise<void> {
-		return this.open().then(() => {
-			return new Promise((resolve, reject) => {
-				const transaction = (this.storage as IDBDatabase)
-					.transaction(this.store, 'readwrite')
-					.objectStore(this.store);
-				const op = transaction.clear();
+	async clear(): Promise<void> {
+		await this.open();
+		return new Promise((resolve, reject) => {
+			const transaction = (this.storage as IDBDatabase)
+				.transaction(this.store, 'readwrite')
+				.objectStore(this.store);
 
-				op.addEventListener('success', () => {
-					resolve();
-				}, false);
-				op.addEventListener('error', (event) => {
-					reject(event);
-				}, false);
-			});
+			const op = transaction.clear();
+
+			op.addEventListener('success', () => {
+				resolve();
+			}, false);
+
+			op.addEventListener('error', (event) => {
+				reject(new Error(`Failed to clear store: ${(event.target as IDBRequest).error?.message}`));
+			}, false);
 		});
 	}
 }
-

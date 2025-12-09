@@ -5,17 +5,24 @@
  */
 import { Request } from '../Request';
 import type { RequestOptions } from '../Request';
-import type { RemoteStorageConfiguration, StorageValue, KeyValueResult } from './types';
+import type { RemoteStorageConfiguration, StorageValue, KeyValueResult, SpaceAdapterInterface } from './types';
+/**
+ * Error thrown when a key is not found in storage
+ */
+export declare class KeyNotFoundError extends Error {
+    constructor(key: string);
+}
 /**
  * The Remote Storage Adapter provides the Space Class the ability to interact
  * with a server in order to handle data persistence. The server's implementation
  * is up to the developer but it will need to respond to this adapter's request
  * formatting. This adapter uses the Request class to perform its tasks.
  */
-export declare class RemoteStorage {
+export declare class RemoteStorage implements SpaceAdapterInterface {
     name: string;
     version: string;
     store: string;
+    baseEndpoint: string;
     endpoint: string;
     props: RequestOptions;
     storage: typeof Request | undefined;
@@ -26,6 +33,12 @@ export declare class RemoteStorage {
      * @param configuration - Configuration Object for the Adapter
      */
     constructor({ name, version, store, endpoint, props }: RemoteStorageConfiguration);
+    /**
+     * Compute the full endpoint URL
+     *
+     * @returns The computed endpoint URL
+     */
+    private computeEndpoint;
     /**
      * Modify the configuration
      *

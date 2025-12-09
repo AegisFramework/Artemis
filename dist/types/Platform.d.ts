@@ -3,91 +3,90 @@
  * Platform
  * ==============================
  */
-/**
- * Desktop platform types
- */
-export type DesktopPlatform = 'Windows' | 'macOS' | 'Linux' | 'FreeBSD' | 'webOS' | 'Any';
-/**
- * Mobile platform types
- */
-export type MobilePlatform = 'Android' | 'iOS' | 'Opera' | 'Windows' | 'BlackBerry' | 'Any';
-/**
- * Orientation types
- */
+export type DesktopPlatform = 'Windows' | 'macOS' | 'Linux' | 'FreeBSD' | 'Any' | 'ChromeOS';
+export type MobilePlatform = 'Android' | 'iOS' | 'iPadOS' | 'WindowsMobile' | 'BlackBerry' | 'Any';
 export type Orientation = 'portrait' | 'landscape';
-/**
- * Extended Navigator interface for userAgentData
- */
-interface NavigatorUAData {
-    platform?: string;
-    brands?: {
-        brand: string;
-        version: string;
-    }[];
-    mobile?: boolean;
-}
-declare global {
-    interface Navigator {
-        userAgentData?: NavigatorUAData;
-    }
-}
-/**
- * General checks for what kind of platform is being used to run the app.
- */
 export declare class Platform {
     /**
-     * Check if the screen has a retina pixel ratio
-     * @returns Whether the screen is retina
+     * Check if the screen has a high pixel density (Retina)
      */
-    static retina(): boolean;
+    static get retina(): boolean;
     /**
-     * Check if the device is on portrait orientation
-     * @returns Whether device is in portrait mode
+     * Check if the device is in portrait orientation.
+     * Uses matchMedia to align perfectly with CSS media queries.
      */
-    static portrait(): boolean;
+    static get portrait(): boolean;
     /**
-     * Check if the device is on landscape orientation
-     * @returns Whether device is in landscape mode
+     * Check if the device is in landscape orientation.
      */
-    static landscape(): boolean;
+    static get landscape(): boolean;
     /**
-     * Get device Orientation
-     * @returns 'portrait' or 'landscape'
+     * Get current device orientation as a string.
      */
-    static orientation(): Orientation;
+    static get orientation(): Orientation;
     /**
-     * Check if the app is running over Electron
-     * @returns Whether running in Electron
+     * Check if the user prefers Dark Mode
      */
-    static electron(): boolean;
+    static get darkMode(): boolean;
     /**
-     * Check if the app is running over Cordova
-     * @returns Whether running in Cordova
+     * Check if the user prefers reduced motion
      */
-    static cordova(): boolean;
+    static get reducedMotion(): boolean;
     /**
-     * Get the platform string using modern userAgentData API with fallback
-     * @returns Platform string
+     * Check if the device supports touch events.
+     * Useful for distinguishing hybrid laptops from tablets.
      */
-    private static getPlatformString;
+    static get touch(): boolean;
     /**
-     * Check if the app is running in a desktop platform
-     * @param platform - Check for a specific desktop platform
-     * @returns Whether running on specified desktop platform
+     * Check if the app is running in "Standalone" mode (Installed PWA).
      */
-    static desktop(platform?: DesktopPlatform): boolean;
+    static get standalone(): boolean;
     /**
-     * Check if the app is running in a mobile platform
-     * @param platform - Check for a specific mobile platform
-     * @returns Whether running on specified mobile platform
+     * Check if the app is running inside Electron.
+     * Checks both Renderer process and Main process contexts.
      */
-    static mobile(platform?: MobilePlatform): boolean;
+    static get electron(): boolean;
     /**
-     * Check if the platform allows the use of service workers
+     * Check if the app is running inside Cordova / PhoneGap.
+     */
+    static get cordova(): boolean;
+    /**
+     * Internal helper to normalize platform detection
+     */
+    private static get userAgent();
+    /**
+     * Check if the app is running on a Desktop platform.
      *
-     * @returns Whether service workers are supported
+     * @param os - Specific desktop OS to check for, or 'Any' for any desktop
      */
-    static serviceWorkers(): boolean;
+    static desktop(os?: DesktopPlatform): boolean;
+    /**
+     * Check if the app is running on a Mobile platform.
+     *
+     * @param os - Specific mobile OS to check for, or 'Any' for any mobile
+     */
+    static mobile(os?: MobilePlatform): boolean;
+    /**
+     * Detect iPadOS explicitly.
+     * Modern iPads send a "Macintosh" User Agent, but have Touch Points.
+     */
+    private static isIpadOS;
+    /**
+     * Check if the platform supports Service Workers.
+     * Uses `isSecureContext` to accurately allow localhost/HTTPS.
+     */
+    static get serviceWorkers(): boolean;
+    /**
+     * Check if the device has a coarse pointer (touch) as primary input.
+     */
+    static get coarsePointer(): boolean;
+    /**
+     * Check if the device has a fine pointer (mouse) as primary input.
+     */
+    static get finePointer(): boolean;
+    /**
+     * Check if the device supports hover interactions.
+     */
+    static get canHover(): boolean;
 }
-export {};
 //# sourceMappingURL=Platform.d.ts.map

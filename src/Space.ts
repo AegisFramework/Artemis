@@ -8,7 +8,8 @@ import { LocalStorage } from './SpaceAdapter/LocalStorage';
 import { SessionStorage } from './SpaceAdapter/SessionStorage';
 import { IndexedDB } from './SpaceAdapter/IndexedDB';
 import { RemoteStorage } from './SpaceAdapter/RemoteStorage';
-import type { SpaceConfiguration, StorageValue, KeyValueResult, UpgradeCallback } from './SpaceAdapter/types';
+import type { SpaceConfiguration, StorageValue, KeyValueResult, UpgradeCallback, SpaceAdapterInterface } from './SpaceAdapter/types';
+import { cloneValue } from './SpaceAdapter/types';
 
 /**
  * List of Adapters Available
@@ -23,7 +24,7 @@ export const SpaceAdapter = {
 /**
  * Space adapter type (any of the available adapters)
  */
-export type SpaceAdapterType = LocalStorage | SessionStorage | IndexedDB | RemoteStorage;
+export type SpaceAdapterType = SpaceAdapterInterface;
 
 /**
  * Space adapter constructor type
@@ -73,7 +74,7 @@ export class Space {
 	 */
 	constructor(adapter: SpaceAdapterConstructor = SpaceAdapter.LocalStorage, configuration: SpaceConfiguration = {}) {
 		// Assign the provided configuration to the default one
-		this._configuration = Object.assign({}, { name: '', version: '', store: '' }, configuration);
+		this._configuration = { name: '', version: '', store: '', ...configuration };
 
 		// Set up the adapter instance to use
 		this.adapter = new adapter(this._configuration);
@@ -96,12 +97,13 @@ export class Space {
 	 * @param object - Configuration object to set up
 	 * @returns Configuration object if no param was passed
 	 */
-	configuration(object: SpaceConfiguration | null = null): SpaceConfiguration | void {
+	configuration(object: SpaceConfiguration | null = null): SpaceConfiguration | undefined {
 		if (object !== null) {
-			this._configuration = Object.assign({}, this._configuration, object);
+			this._configuration = { ...this._configuration, ...object };
 			if (this.adapter.configuration) {
 				this.adapter.configuration(object);
 			}
+			return undefined;
 		} else {
 			return this._configuration;
 		}
@@ -112,10 +114,43 @@ export class Space {
 	 *
 	 * @returns Promise resolving to this Space
 	 */
-	open(): Promise<this> {
-		return this.adapter.open().then(() => {
-			return Promise.resolve(this);
-		});
+	async open(): Promise<this> {
+		await this.adapter.open();
+		return this;
+	}
+
+	/**
+	 * Apply set transformations to a value
+	 *
+	 * @param key - The key being set
+	 * @param value - The value to transform
+	 * @returns The transformed value
+	 */
+	private applySetTransformations(key: string, value: StorageValue): StorageValue {
+		let transformedValue = cloneValue(value);
+		for (const transformation of Object.values(this.transformations)) {
+			if (typeof transformation.set === 'function') {
+				transformedValue = transformation.set(key, transformedValue);
+			}
+		}
+		return transformedValue;
+	}
+
+	/**
+	 * Apply get transformations to a value
+	 *
+	 * @param key - The key being retrieved
+	 * @param value - The value to transform
+	 * @returns The transformed value
+	 */
+	private applyGetTransformations(key: string, value: StorageValue): StorageValue {
+		let transformedValue = value;
+		for (const transformation of Object.values(this.transformations)) {
+			if (typeof transformation.get === 'function') {
+				transformedValue = transformation.get(key, transformedValue);
+			}
+		}
+		return transformedValue;
 	}
 
 	/**
@@ -125,20 +160,13 @@ export class Space {
 	 * @param value - Value to save
 	 * @returns Promise with key and value
 	 */
-	set(key: string, value: StorageValue): Promise<KeyValueResult> {
-		// Apply all set transformations to the value
-		for (const id of Object.keys(this.transformations)) {
-			if (typeof this.transformations[id].set === 'function') {
-				value = this.transformations[id].set!(key, value);
-			}
+	async set(key: string, value: StorageValue): Promise<KeyValueResult> {
+		const transformedValue = this.applySetTransformations(key, value);
+		const result = await this.adapter.set(key, transformedValue);
+		for (const callback of this.callbacks.create) {
+			callback.call(null, result.key, result.value);
 		}
-
-		return this.adapter.set(key, value).then(({ key, value }) => {
-			for (const callback of this.callbacks.create) {
-				callback.call(null, key, value);
-			}
-			return Promise.resolve({ key, value });
-		});
+		return result;
 	}
 
 	/**
@@ -149,20 +177,13 @@ export class Space {
 	 * @param value - Value to save
 	 * @returns Promise with key and value
 	 */
-	update(key: string, value: StorageValue): Promise<KeyValueResult> {
-		// Apply all set transformations to the value
-		for (const id of Object.keys(this.transformations)) {
-			if (typeof this.transformations[id].set === 'function') {
-				value = this.transformations[id].set!(key, value);
-			}
+	async update(key: string, value: StorageValue): Promise<KeyValueResult> {
+		const transformedValue = this.applySetTransformations(key, value);
+		const result = await this.adapter.update(key, transformedValue);
+		for (const callback of this.callbacks.update) {
+			callback.call(null, result.key, result.value);
 		}
-
-		return this.adapter.update(key, value).then(({ key, value }) => {
-			for (const callback of this.callbacks.update) {
-				callback.call(null, key, value);
-			}
-			return Promise.resolve({ key, value });
-		});
+		return result;
 	}
 
 	/**
@@ -171,16 +192,9 @@ export class Space {
 	 * @param key - Key with which the value was saved
 	 * @returns Promise resolving to the retrieved value
 	 */
-	get(key: string): Promise<StorageValue> {
-		return this.adapter.get(key).then((value) => {
-			// Apply all get transformations to the value
-			for (const id of Object.keys(this.transformations)) {
-				if (typeof this.transformations[id].get === 'function') {
-					value = this.transformations[id].get!(key, value);
-				}
-			}
-			return value;
-		});
+	async get(key: string): Promise<StorageValue> {
+		const value = await this.adapter.get(key);
+		return this.applyGetTransformations(key, value);
 	}
 
 	/**
@@ -188,18 +202,15 @@ export class Space {
 	 *
 	 * @returns Promise resolving to all values
 	 */
-	getAll(): Promise<Record<string, StorageValue>> {
-		return this.adapter.getAll().then((values) => {
-			// Apply all get transformations to the values
-			for (const key of Object.keys(values)) {
-				for (const id of Object.keys(this.transformations)) {
-					if (typeof this.transformations[id].get === 'function') {
-						values[key] = this.transformations[id].get!(key, values[key]);
-					}
-				}
-			}
-			return values;
-		});
+	async getAll(): Promise<Record<string, StorageValue>> {
+		const values = await this.adapter.getAll();
+		const transformedValues: Record<string, StorageValue> = {};
+
+		for (const key of Object.keys(values)) {
+			transformedValues[key] = this.applyGetTransformations(key, values[key]);
+		}
+
+		return transformedValues;
 	}
 
 	/**
@@ -208,14 +219,13 @@ export class Space {
 	 * @param callback - A callback function receiving the key and value
 	 * @returns Promise resolving when all callbacks have been resolved
 	 */
-	each(callback: (key: string, value: StorageValue) => unknown): Promise<unknown[]> {
-		return this.getAll().then((values) => {
-			const promises: unknown[] = [];
-			for (const i of Object.keys(values)) {
-				promises.push(callback.call(this, i, values[i]));
-			}
-			return Promise.all(promises);
-		});
+	async each(callback: (key: string, value: StorageValue) => unknown): Promise<unknown[]> {
+		const values = await this.getAll();
+		const promises: unknown[] = [];
+		for (const [key, value] of Object.entries(values)) {
+			promises.push(callback.call(this, key, value));
+		}
+		return Promise.all(promises);
 	}
 
 	/**
@@ -236,10 +246,9 @@ export class Space {
 	 * @param callback - Function to transform the old stored values
 	 * @returns Promise for the upgrade operation
 	 */
-	upgrade(oldVersion: string, newVersion: string, callback: UpgradeCallback): Promise<this> {
-		return this.adapter.upgrade(oldVersion, newVersion, callback).then(() => {
-			return Promise.resolve(this);
-		});
+	async upgrade(oldVersion: string, newVersion: string, callback: UpgradeCallback): Promise<this> {
+		await this.adapter.upgrade(oldVersion, newVersion, callback);
+		return this;
 	}
 
 	/**
@@ -325,13 +334,12 @@ export class Space {
 	 * @param key - Key of the item to delete
 	 * @returns Promise that resolves after deletion
 	 */
-	remove(key: string): Promise<void> {
-		return this.adapter.remove(key).then((value) => {
-			// Run the callback for deletions
-			for (const callback of this.callbacks.delete) {
-				callback.call(null, key, value);
-			}
-		});
+	async remove(key: string): Promise<void> {
+		const value = await this.adapter.remove(key);
+		// Run the callback for deletions
+		for (const callback of this.callbacks.delete) {
+			callback.call(null, key, value);
+		}
 	}
 
 	/**
@@ -350,4 +358,3 @@ export { SessionStorage } from './SpaceAdapter/SessionStorage';
 export { IndexedDB } from './SpaceAdapter/IndexedDB';
 export { RemoteStorage } from './SpaceAdapter/RemoteStorage';
 export type { SpaceConfiguration, StorageValue, KeyValueResult, UpgradeCallback } from './SpaceAdapter/types';
-

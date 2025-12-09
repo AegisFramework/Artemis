@@ -4,218 +4,238 @@
  * ==============================
  */
 
-/**
- * Desktop platform types
- */
-export type DesktopPlatform = 'Windows' | 'macOS' | 'Linux' | 'FreeBSD' | 'webOS' | 'Any';
-
-/**
- * Mobile platform types
- */
-export type MobilePlatform = 'Android' | 'iOS' | 'Opera' | 'Windows' | 'BlackBerry' | 'Any';
-
-/**
- * Orientation types
- */
+export type DesktopPlatform = 'Windows' | 'macOS' | 'Linux' | 'FreeBSD' | 'Any' | 'ChromeOS';
+export type MobilePlatform = 'Android' | 'iOS' | 'iPadOS' | 'WindowsMobile' | 'BlackBerry' | 'Any';
 export type Orientation = 'portrait' | 'landscape';
 
-/**
- * Extended Navigator interface for userAgentData
- */
 interface NavigatorUAData {
-	platform?: string;
-	brands?: { brand: string; version: string }[];
-	mobile?: boolean;
+  platform: string;
+  mobile: boolean;
+  brands: { brand: string; version: string }[];
 }
 
-declare global {
-	interface Navigator {
-		userAgentData?: NavigatorUAData;
-	}
+interface NavigatorWithStandalone extends Navigator {
+  standalone?: boolean;
+  userAgentData?: NavigatorUAData;
 }
 
-/**
- * Extended window interface for process (Electron)
- */
-interface ElectronWindow extends Window {
-	process?: {
-		type?: string;
-		versions?: {
-			electron?: string;
-		};
-	};
-	cordova?: unknown;
+interface ExtendedWindow extends Window {
+  process?: {
+    type?: string;
+    versions?: { electron?: string };
+  };
+  cordova?: unknown;
 }
 
-/**
- * General checks for what kind of platform is being used to run the app.
- */
 export class Platform {
-	/**
-	 * Check if the screen has a retina pixel ratio
-	 * @returns Whether the screen is retina
-	 */
-	static retina(): boolean {
-		return window.devicePixelRatio >= 2;
-	}
+  /**
+   * Check if the screen has a high pixel density (Retina)
+   */
+  static get retina(): boolean {
+    return window.devicePixelRatio >= 2;
+  }
 
-	/**
-	 * Check if the device is on portrait orientation
-	 * @returns Whether device is in portrait mode
-	 */
-	static portrait(): boolean {
-		return window.screen.orientation.type === 'portrait-primary' || window.screen.orientation.type === 'portrait-secondary';
-	}
+  /**
+   * Check if the device is in portrait orientation.
+   * Uses matchMedia to align perfectly with CSS media queries.
+   */
+  static get portrait(): boolean {
+    return window.matchMedia('(orientation: portrait)').matches;
+  }
 
-	/**
-	 * Check if the device is on landscape orientation
-	 * @returns Whether device is in landscape mode
-	 */
-	static landscape(): boolean {
-		return window.screen.orientation.type === 'landscape-primary' || window.screen.orientation.type === 'landscape-secondary';
-	}
+  /**
+   * Check if the device is in landscape orientation.
+   */
+  static get landscape(): boolean {
+    return window.matchMedia('(orientation: landscape)').matches;
+  }
 
-	/**
-	 * Get device Orientation
-	 * @returns 'portrait' or 'landscape'
-	 */
-	static orientation(): Orientation {
-		return Platform.portrait() ? 'portrait' : 'landscape';
-	}
+  /**
+   * Get current device orientation as a string.
+   */
+  static get orientation(): Orientation {
+    return Platform.portrait ? 'portrait' : 'landscape';
+  }
 
-	/**
-	 * Check if the app is running over Electron
-	 * @returns Whether running in Electron
-	 */
-	static electron(): boolean {
-		const win = window as ElectronWindow;
+  /**
+   * Check if the user prefers Dark Mode
+   */
+  static get darkMode(): boolean {
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
 
-		// Renderer process
-		if (typeof win !== 'undefined' && typeof win.process === 'object' && win.process?.type === 'renderer') {
-			return true;
-		}
+  /**
+   * Check if the user prefers reduced motion
+   */
+  static get reducedMotion(): boolean {
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }
 
-		// Main process (Node.js/Electron environment)
-		const nodeProcess = typeof globalThis !== 'undefined' ? (globalThis as { process?: { versions?: { electron?: string } } }).process : undefined;
-		if (nodeProcess && typeof nodeProcess.versions === 'object' && !!nodeProcess.versions?.electron) {
-			return true;
-		}
+  /**
+   * Check if the device supports touch events.
+   * Useful for distinguishing hybrid laptops from tablets.
+   */
+  static get touch(): boolean {
+    return (
+      'ontouchstart' in window ||
+      navigator.maxTouchPoints > 0
+    );
+  }
 
-		// Detect the user agent when the `nodeIntegration` option is set to true
-		if (typeof navigator === 'object' && typeof navigator.userAgent === 'string' && navigator.userAgent.indexOf('Electron') >= 0) {
-			return true;
-		}
+  /**
+   * Check if the app is running in "Standalone" mode (Installed PWA).
+   */
+  static get standalone(): boolean {
+    const nav = navigator as NavigatorWithStandalone;
+    return (
+      window.matchMedia('(display-mode: standalone)').matches ||
+      nav.standalone === true // iOS fallback
+    );
+  }
 
-		return false;
-	}
+  /**
+   * Check if the app is running inside Electron.
+   * Checks both Renderer process and Main process contexts.
+   */
+  static get electron(): boolean {
+    const win = window as ExtendedWindow;
 
-	/**
-	 * Check if the app is running over Cordova
-	 * @returns Whether running in Cordova
-	 */
-	static cordova(): boolean {
-		return !!(window as ElectronWindow).cordova;
-	}
+    if (navigator.userAgent.toLowerCase().includes(' electron/')) {
+      return true;
+    }
 
-	/**
-	 * Get the platform string using modern userAgentData API with fallback
-	 * @returns Platform string
-	 */
-	private static getPlatformString(): string {
-		// Try modern userAgentData first
-		if (navigator.userAgentData?.platform) {
-			return navigator.userAgentData.platform;
-		}
-		// Fallback to userAgent parsing
-		const ua = navigator.userAgent;
-		if (ua.includes('Win')) return 'Windows';
-		if (ua.includes('Mac')) return 'macOS';
-		if (ua.includes('Linux')) return 'Linux';
-		if (ua.includes('FreeBSD')) return 'FreeBSD';
-		if (ua.includes('WebTV')) return 'webOS';
-		return '';
-	}
+    if (win.process?.type === 'renderer') {
+      return true;
+    }
 
-	/**
-	 * Check if the app is running in a desktop platform
-	 * @param platform - Check for a specific desktop platform
-	 * @returns Whether running on specified desktop platform
-	 */
-	static desktop(platform: DesktopPlatform = 'Any'): boolean {
-		const platformString = Platform.getPlatformString();
+    if (win.process?.versions?.electron) {
+      return true;
+    }
 
-		switch (platform) {
-			case 'Windows':
-				return platformString === 'Windows' || platformString.includes('Win');
+    return false;
+  }
 
-			case 'macOS':
-				return platformString === 'macOS' || platformString.includes('Mac');
+  /**
+   * Check if the app is running inside Cordova / PhoneGap.
+   */
+  static get cordova(): boolean {
+    return !!(window as ExtendedWindow).cordova;
+  }
 
-			case 'Linux':
-				return platformString === 'Linux' || platformString.includes('Linux');
+  /**
+   * Internal helper to normalize platform detection
+   */
+  private static get userAgent(): string {
+    return navigator.userAgent.toLowerCase();
+  }
 
-			case 'FreeBSD':
-				return platformString === 'FreeBSD' || platformString.includes('FreeBSD');
+  /**
+   * Check if the app is running on a Desktop platform.
+   *
+   * @param os - Specific desktop OS to check for, or 'Any' for any desktop
+   */
+  static desktop(os: DesktopPlatform = 'Any'): boolean {
+    const nav = navigator as NavigatorWithStandalone;
 
-			case 'webOS':
-				return platformString === 'webOS' || platformString.includes('WebTV');
+    if (nav.userAgentData?.mobile === true) {
+      return false;
+    }
 
-			case 'Any':
-			default:
-				return ['Windows', 'macOS', 'Linux', 'FreeBSD', 'webOS'].some(p =>
-					platformString === p || platformString.includes(p.replace('macOS', 'Mac').replace('webOS', 'WebTV'))
-				);
-		}
-	}
+    if (Platform.isIpadOS()) {
+      return false;
+    }
 
-	/**
-	 * Check if the app is running in a mobile platform
-	 * @param platform - Check for a specific mobile platform
-	 * @returns Whether running on specified mobile platform
-	 */
-	static mobile(platform: MobilePlatform = 'Any'): boolean {
-		// Try modern userAgentData first for general mobile detection
-		if (navigator.userAgentData?.mobile !== undefined && platform === 'Any') {
-			return navigator.userAgentData.mobile;
-		}
+    const ua = Platform.userAgent;
+    const dataPlatform = nav.userAgentData?.platform?.toLowerCase() || '';
 
-		// Fallback to userAgent for specific platform detection
-		const ua = navigator.userAgent;
+    const checks: Record<Exclude<DesktopPlatform, 'Any'>, boolean> = {
+      'ChromeOS': dataPlatform.includes('cros') || ua.includes('cros'),
+      'Windows': dataPlatform.includes('windows') || ua.includes('windows'),
+      'macOS': dataPlatform.includes('macos') || ua.includes('macintosh'),
+      'Linux': !ua.includes('android') && (dataPlatform.includes('linux') || ua.includes('linux')),
+      'FreeBSD': dataPlatform.includes('freebsd') || ua.includes('freebsd'),
+    };
 
-		switch (platform) {
-			case 'Android':
-				return /Android/i.test(ua);
+    if (os === 'Any') {
+      return Object.values(checks).some(val => val);
+    }
 
-			case 'iOS':
-				return /iPhone|iPad|iPod/i.test(ua);
+    return checks[os] || false;
+  }
 
-			case 'Opera':
-				return /Opera Mini/i.test(ua);
+  /**
+   * Check if the app is running on a Mobile platform.
+   *
+   * @param os - Specific mobile OS to check for, or 'Any' for any mobile
+   */
+  static mobile(os: MobilePlatform = 'Any'): boolean {
+    const nav = navigator as NavigatorWithStandalone;
 
-			case 'Windows':
-				return /Windows Phone|IEMobile|WPDesktop/i.test(ua);
+    if (nav.userAgentData?.mobile === true && os === 'Any') {
+      return true;
+    }
 
-			case 'BlackBerry':
-				return /BlackBerry|BB10/i.test(ua);
+    const ua = Platform.userAgent;
 
-			case 'Any':
-			default:
-				return /Android|iPhone|iPad|iPod|Windows Phone|IEMobile|WPDesktop|BlackBerry|BB10/i.test(ua);
-		}
-	}
+    const checks: Record<Exclude<MobilePlatform, 'Any'>, boolean> = {
+      'Android': ua.includes('android'),
+      'iOS': /iphone|ipod/.test(ua),
+      'iPadOS': Platform.isIpadOS(),
+      'WindowsMobile': /windows phone|iemobile|wpdesktop/.test(ua),
+      'BlackBerry': /blackberry|bb10/.test(ua),
+    };
 
-	/**
-	 * Check if the platform allows the use of service workers
-	 *
-	 * @returns Whether service workers are supported
-	 */
-	static serviceWorkers(): boolean {
-		if (typeof navigator !== 'undefined') {
-			if ('serviceWorker' in navigator && location.protocol.indexOf('http') > -1) {
-				return true;
-			}
-		}
-		return false;
-	}
+    if (os === 'Any') {
+      return Object.values(checks).some(val => val);
+    }
+
+    return checks[os] || false;
+  }
+
+  /**
+   * Detect iPadOS explicitly.
+   * Modern iPads send a "Macintosh" User Agent, but have Touch Points.
+   */
+  private static isIpadOS(): boolean {
+    const ua = Platform.userAgent;
+
+    if (ua.includes('ipad')) {
+      return true;
+    }
+
+    if (ua.includes('macintosh') && navigator.maxTouchPoints > 0) {
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * Check if the platform supports Service Workers.
+   * Uses `isSecureContext` to accurately allow localhost/HTTPS.
+   */
+  static get serviceWorkers(): boolean {
+    return 'serviceWorker' in navigator && window.isSecureContext;
+  }
+
+  /**
+   * Check if the device has a coarse pointer (touch) as primary input.
+   */
+  static get coarsePointer(): boolean {
+    return window.matchMedia('(pointer: coarse)').matches;
+  }
+
+  /**
+   * Check if the device has a fine pointer (mouse) as primary input.
+   */
+  static get finePointer(): boolean {
+    return window.matchMedia('(pointer: fine)').matches;
+  }
+
+  /**
+   * Check if the device supports hover interactions.
+   */
+  static get canHover(): boolean {
+    return window.matchMedia('(hover: hover)').matches;
+  }
 }
-

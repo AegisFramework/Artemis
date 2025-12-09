@@ -4,155 +4,350 @@
  * ==============================
  */
 
-/**
- * Type for request data object
- */
-export type RequestData = Record<string, string | number | boolean>;
+export type RequestData = Record<string, unknown> | FormData;
 
-/**
- * Type for request options
- */
-export interface RequestOptions extends Omit<RequestInit, 'headers'> {
+export interface RequestOptions extends Omit<RequestInit, 'body' | 'method'> {
 	headers?: Record<string, string>;
+	timeout?: number; // Timeout in milliseconds
 }
 
 /**
- * Simple Wrapper for the fetch API, providing simple functions to handle requests
+ * Error thrown when a request fails
  */
+export class RequestError extends Error {
+	public status: number;
+	public statusText: string;
+	public response: Response;
+
+	constructor(response: Response, message?: string) {
+		super(message || `Request failed: ${response.status} ${response.statusText}`);
+		this.name = 'RequestError';
+		this.status = response.status;
+		this.statusText = response.statusText;
+		this.response = response;
+	}
+}
+
+/**
+ * Error thrown when a request times out
+ */
+export class RequestTimeoutError extends Error {
+	constructor(url: string, timeout: number) {
+		super(`Request to "${url}" timed out after ${timeout}ms`);
+		this.name = 'RequestTimeoutError';
+	}
+}
+
 export class Request {
 	/**
-	 * Serialize an object of data into a URI encoded format
+	 * Serialize data to URL query string
+	 * Handles nested objects and arrays
 	 *
-	 * @param data - Key-value object of data to serialize
-	 * @returns Serialized Data
+	 * @param data - Data to serialize
+	 * @param prefix - Key prefix for nested objects
 	 */
-	static serialize(data: RequestData): string {
-		return Object.keys(data).map((key) => {
-			return encodeURIComponent(key) + '=' + encodeURIComponent(String(data[key]));
-		}).join('&');
-	}
-
-	/**
-	 * Make a GET request to a given URL with the provided data parameters
-	 * and an optional configuration object for the request.
-	 *
-	 * @param url - URL to make the request to
-	 * @param data - Parameters to send in the URL, represented as a JSON object
-	 * @param options - Options object for configurations you want to use in the fetch request
-	 * @returns Resolves to the response of the request
-	 */
-	static get(url: string, data: RequestData = {}, options: RequestOptions = {}): Promise<Response> {
-		const query = Request.serialize(data);
-
-		// Check if there is actually any data parameters and join them to the
-		// url as query parameters
-		if (query !== '') {
-			url = `${url}?${query}`;
+	static serialize(data: RequestData, prefix?: string): string {
+		if (data instanceof FormData) {
+			const params = new URLSearchParams();
+			data.forEach((value, key) => {
+				if (typeof value === 'string') {
+					params.append(key, value);
+				}
+			});
+			return params.toString();
 		}
 
-		return fetch(url, options as RequestInit);
+		const params: string[] = [];
+
+		for (const [key, value] of Object.entries(data)) {
+			if (value === undefined || value === null) continue;
+
+			const paramKey = prefix ? `${prefix}[${key}]` : key;
+
+			if (Array.isArray(value)) {
+				value.forEach((item, index) => {
+					if (typeof item === 'object' && item !== null) {
+						params.push(Request.serialize(item as Record<string, unknown>, `${paramKey}[${index}]`));
+					} else {
+						params.push(`${encodeURIComponent(paramKey)}[]=${encodeURIComponent(String(item))}`);
+					}
+				});
+			} else if (typeof value === 'object') {
+				params.push(Request.serialize(value as Record<string, unknown>, paramKey));
+			} else {
+				params.push(`${encodeURIComponent(paramKey)}=${encodeURIComponent(String(value))}`);
+			}
+		}
+
+		return params.filter(Boolean).join('&');
 	}
 
 	/**
-	 * Make a POST request to a given URL with the provided data and an optional
-	 * configuration object for the request.
+	 * Parse a URL safely
 	 *
-	 * @param url - URL to make the request
-	 * @param data - Set of data to send in the URL, represented as a JSON object
-	 * @param options - Options object for configurations you want to use in the fetch request
-	 * @returns Resolves to the response of the request
+	 * @param url - URL to parse
 	 */
-	static post(url: string, data: RequestData, options: RequestOptions = {}): Promise<Response> {
-		let formData: FormData | string;
+	private static parseUrl(url: string): URL {
+		try {
+			return new URL(url);
+		} catch {
+			try {
+				return new URL(url, window.location.origin);
+			} catch (e) {
+				throw new Error(`Invalid URL: "${url}"`);
+			}
+		}
+	}
 
-		const contentType = options.headers?.['Content-Type'];
-		if (contentType !== undefined) {
-			if (contentType === 'multipart/form-data') {
-				formData = new FormData();
-				for (const value in data) {
-					formData.append(value, String(data[value]));
-				}
-			} else if (contentType === 'application/json') {
-				formData = JSON.stringify(data);
-			} else {
-				formData = Request.serialize(data);
+	/**
+	 * Create an AbortController with timeout
+	 *
+	 * @param timeout - Timeout in milliseconds
+	 * @param url - URL for error message
+	 */
+	private static createTimeoutController(timeout: number | undefined, url: string): { controller: AbortController; timeoutId?: ReturnType<typeof setTimeout> } {
+		const controller = new AbortController();
+
+		if (!timeout) {
+			return { controller };
+		}
+
+		const timeoutId = setTimeout(() => {
+			controller.abort(new RequestTimeoutError(url, timeout));
+		}, timeout);
+
+		return { controller, timeoutId };
+	}
+
+	private static async send(
+		method: string,
+		url: string,
+		data: RequestData = {},
+		options: RequestOptions = {}
+	): Promise<Response> {
+		const { timeout, ...fetchOptions } = options;
+		const urlObj = Request.parseUrl(url);
+		let body: BodyInit | undefined = undefined;
+		const headers = { ...fetchOptions.headers };
+
+		if (['GET', 'DELETE', 'HEAD'].includes(method.toUpperCase())) {
+			if (data && typeof data === 'object' && !(data instanceof FormData)) {
+				Object.entries(data).forEach(([key, val]) => {
+					if (val !== undefined && val !== null) {
+						urlObj.searchParams.append(key, String(val));
+					}
+				});
 			}
 		} else {
-			formData = Request.serialize(data);
+			const contentType = headers['Content-Type'] || headers['content-type'];
+
+			if (data instanceof FormData) {
+				// Browser automatically sets Content-Type to multipart/form-data with boundary
+        // Removing both cases to let the browser do its job
+				delete headers['Content-Type'];
+				delete headers['content-type'];
+				body = data;
+			} else if (contentType === 'application/json') {
+				body = JSON.stringify(data);
+			} else {
+				if (!contentType) {
+					headers['Content-Type'] = 'application/x-www-form-urlencoded';
+				}
+
+				const params = new URLSearchParams();
+				Object.entries(data).forEach(([k, v]) => params.append(k, String(v)));
+				body = params;
+			}
 		}
 
-		const headers: Record<string, string> = {
-			'Content-Type': 'application/x-www-form-urlencoded',
-			...options.headers
-		};
+		const { controller, timeoutId } = Request.createTimeoutController(timeout, url);
 
-		// Delete the explicit multipart/form-data header to allow boundary automatic filling
-		if (headers['Content-Type'] === 'multipart/form-data') {
-			delete headers['Content-Type'];
+		try {
+			const response = await fetch(urlObj.toString(), {
+				...fetchOptions,
+				method,
+				headers,
+				body,
+				signal: controller.signal
+			});
+
+			return response;
+		} finally {
+			if (timeoutId) {
+				clearTimeout(timeoutId);
+			}
 		}
-
-		const props: RequestInit = {
-			...options,
-			method: 'POST',
-			headers,
-			body: formData
-		};
-
-		return fetch(url, props);
 	}
 
 	/**
-	 * Make a PUT request to a given URL with the provided data and an optional
-	 * configuration object for the request.
+	 * Make a GET request
 	 *
-	 * @param url - URL to make the request
-	 * @param data - Set of data to send in the URL, represented as a JSON object
-	 * @param options - Options object for configurations you want to use in the fetch request
-	 * @returns Resolves to the response of the request
+	 * @param url - Request URL
+	 * @param data - Query parameters
+	 * @param options - Request options
+	 */
+	static get(url: string, data: RequestData = {}, options: RequestOptions = {}): Promise<Response> {
+		return Request.send('GET', url, data, options);
+	}
+
+	/**
+	 * Make a POST request
+	 *
+	 * @param url - Request URL
+	 * @param data - Request body
+	 * @param options - Request options
+	 */
+	static post(url: string, data: RequestData, options: RequestOptions = {}): Promise<Response> {
+		return Request.send('POST', url, data, options);
+	}
+
+	/**
+	 * Make a PUT request
+	 *
+	 * @param url - Request URL
+	 * @param data - Request body
+	 * @param options - Request options
 	 */
 	static put(url: string, data: RequestData, options: RequestOptions = {}): Promise<Response> {
-		return Request.post(url, data, Object.assign({}, { method: 'PUT' }, options));
+		return Request.send('PUT', url, data, options);
 	}
 
 	/**
-	 * Make a DELETE request to a given URL with the provided data and an optional
-	 * configuration object for the request.
+	 * Make a PATCH request
 	 *
-	 * @param url - URL to make the request
-	 * @param data - Parameters to send in the URL, represented as a JSON object
-	 * @param options - Options object for configurations you want to use in the fetch request
-	 * @returns Resolves to the response of the request
+	 * @param url - Request URL
+	 * @param data - Request body
+	 * @param options - Request options
 	 */
-	static delete(url: string, data: RequestData, options: RequestOptions = {}): Promise<Response> {
-		return Request.get(url, data, Object.assign({}, { method: 'DELETE' }, options));
+	static patch(url: string, data: RequestData, options: RequestOptions = {}): Promise<Response> {
+		return Request.send('PATCH', url, data, options);
 	}
 
 	/**
-	 * Request a JSON object from a given URL through a GET request
+	 * Make a DELETE request
 	 *
-	 * @param url - URL to make the request to
-	 * @param data - Parameters to send in the URL, represented as a JSON object
-	 * @param options - Options object for configurations you want to use in the fetch request
-	 * @returns Resolves to the json object obtained from the request response
+	 * @param url - Request URL
+	 * @param data - Query parameters
+	 * @param options - Request options
 	 */
-	static json<T = unknown>(url: string, data: RequestData = {}, options: RequestOptions = {}): Promise<T> {
-		return Request.get(url, data, options).then((response) => {
-			return response.json() as Promise<T>;
-		});
+	static delete(url: string, data: RequestData = {}, options: RequestOptions = {}): Promise<Response> {
+		return Request.send('DELETE', url, data, options);
 	}
 
 	/**
-	 * Request a Blob from a given URL through a GET request
+	 * Make a HEAD request
 	 *
-	 * @param url - URL to make the request to
-	 * @param data - Parameters to send in the URL, represented as a JSON object
-	 * @param options - Options object for configurations you want to use in the fetch request
-	 * @returns Resolves to the blob obtained from the request response
+	 * @param url - Request URL
+	 * @param data - Query parameters
+	 * @param options - Request options
 	 */
-	static blob(url: string, data: RequestData = {}, options: RequestOptions = {}): Promise<Blob> {
-		return Request.get(url, data, options).then((response) => {
-			return response.blob();
-		});
+	static head(url: string, data: RequestData = {}, options: RequestOptions = {}): Promise<Response> {
+		return Request.send('HEAD', url, data, options);
+	}
+
+	/**
+	 * Make a GET request and parse JSON response
+	 *
+	 * @param url - Request URL
+	 * @param data - Query parameters
+	 * @param options - Request options
+	 * @throws {RequestError} If the response is not ok
+	 */
+	static async json<T = unknown>(url: string, data: RequestData = {}, options: RequestOptions = {}): Promise<T> {
+		const response = await Request.get(url, data, options);
+
+		if (!response.ok) {
+			throw new RequestError(response);
+		}
+
+		return response.json();
+	}
+
+	/**
+	 * Make a POST request with JSON body and parse JSON response
+	 *
+	 * @param url - Request URL
+	 * @param data - Request body
+	 * @param options - Request options
+	 * @throws {RequestError} If the response is not ok
+	 */
+	static async postJson<T = unknown>(url: string, data: RequestData, options: RequestOptions = {}): Promise<T> {
+		const headers = { ...options.headers, 'Content-Type': 'application/json' };
+		const response = await Request.post(url, data, { ...options, headers });
+
+		if (!response.ok) {
+			throw new RequestError(response);
+		}
+
+		return response.json();
+	}
+
+	/**
+	 * Make a GET request and return as Blob
+	 *
+	 * @param url - Request URL
+	 * @param data - Query parameters
+	 * @param options - Request options
+	 * @throws {RequestError} If the response is not ok
+	 */
+	static async blob(url: string, data: RequestData = {}, options: RequestOptions = {}): Promise<Blob> {
+		const response = await Request.get(url, data, options);
+
+		if (!response.ok) {
+			throw new RequestError(response);
+		}
+
+		return response.blob();
+	}
+
+	/**
+	 * Make a GET request and return as text
+	 *
+	 * @param url - Request URL
+	 * @param data - Query parameters
+	 * @param options - Request options
+	 * @throws {RequestError} If the response is not ok
+	 */
+	static async text(url: string, data: RequestData = {}, options: RequestOptions = {}): Promise<string> {
+		const response = await Request.get(url, data, options);
+
+		if (!response.ok) {
+			throw new RequestError(response);
+		}
+
+		return response.text();
+	}
+
+	/**
+	 * Make a GET request and return as ArrayBuffer
+	 *
+	 * @param url - Request URL
+	 * @param data - Query parameters
+	 * @param options - Request options
+	 * @throws {RequestError} If the response is not ok
+	 */
+	static async arrayBuffer(url: string, data: RequestData = {}, options: RequestOptions = {}): Promise<ArrayBuffer> {
+		const response = await Request.get(url, data, options);
+
+		if (!response.ok) {
+			throw new RequestError(response);
+		}
+
+		return response.arrayBuffer();
+	}
+
+	/**
+	 * Check if a URL exists (returns 2xx status)
+	 *
+	 * @param url - URL to check
+	 * @param options - Request options
+	 */
+	static async exists(url: string, options: RequestOptions = {}): Promise<boolean> {
+		try {
+			const response = await Request.head(url, {}, options);
+			return response.ok;
+		} catch {
+			return false;
+		}
 	}
 }
-

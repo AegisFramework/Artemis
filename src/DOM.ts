@@ -4,1027 +4,948 @@
  * ==============================
  */
 
-/**
- * Type for elements that can be used as a selector
- */
 export type DOMSelector = string | Element | Element[] | NodeList | NodeListOf<Element> | HTMLElement[] | DOM | null;
 
-/**
- * Type for style properties object
- */
 export type StyleProperties = Record<string, string | number>;
 
-/**
- * Type for offset object
- */
 export interface DOMOffset {
 	top: number;
 	left: number;
 }
 
-/**
- * Event callback type
- */
 export type EventCallback = (event: Event) => void;
-
-/**
- * Element callback type
- */
-export type ElementCallback = (element: Element) => void;
+export type ElementCallback = (element: HTMLElement, index: number) => void;
 
 /**
  * Simple DOM manipulation functions
  */
 export class DOM {
-	public collection: Element[] | NodeListOf<Element>;
+	public collection: HTMLElement[];
 	public length: number;
-	public _selector: DOMSelector;
 
-	/**
-	 * Create a new DOM object
-	 *
-	 * @param selector - Selector or DOM element to use
-	 */
 	constructor(selector: DOMSelector) {
-		if (selector === null) {
+		if (!selector) {
 			this.collection = [];
-			this.length = 0;
-			this._selector = null;
-			return;
-		}
-
-		if (typeof selector === 'string') {
-			this.collection = document.querySelectorAll(selector);
-			this.length = this.collection.length;
-			this._selector = selector;
+		} else if (typeof selector === 'string') {
+			this.collection = Array.from(document.querySelectorAll(selector)) as HTMLElement[];
 		} else if (selector instanceof NodeList) {
-			this.collection = selector as NodeListOf<Element>;
-			this.length = selector.length;
-			this._selector = selector;
+			this.collection = Array.from(selector) as HTMLElement[];
 		} else if (selector instanceof DOM) {
 			this.collection = selector.collection;
-			this.length = this.collection.length;
-			this._selector = selector._selector;
-		} else if (selector instanceof HTMLElement) {
-			this.collection = [selector];
-			this.length = this.collection.length;
-			this._selector = selector;
+		} else if (selector instanceof Element) {
+			this.collection = [selector as HTMLElement];
 		} else if (Array.isArray(selector)) {
-			this.collection = selector;
-			this.length = selector.length;
-			this._selector = selector;
+			this.collection = selector as HTMLElement[];
 		} else {
 			this.collection = [];
-			this.length = 0;
-			this._selector = null;
 		}
+
+		this.length = this.collection.length;
 	}
 
 	/**
-	 * Hide elements by setting their `display` property to 'none'.
-	 *
-	 * @returns Current instance
+	 * Hide elements by setting display to none
 	 */
 	hide(): this {
-		for (const element of this.collection) {
-			(element as HTMLElement).style.display = 'none';
-		}
-		return this;
+		return this.style('display', 'none');
 	}
 
 	/**
-	 * Show elements by setting their `display` property to the given value.
+	 * Show elements by setting display property
 	 *
-	 * @param display - Display property to set
-	 * @returns Current instance
+	 * @param display - Display value (default: 'block')
 	 */
 	show(display: string = 'block'): this {
-		for (const element of this.collection) {
-			(element as HTMLElement).style.display = display;
-		}
-		return this;
+		return this.style('display', display);
 	}
 
 	/**
-	 * Add a class to the classList object
+	 * Add a class to all elements
 	 *
 	 * @param newClass - Class name to add
-	 * @returns Current instance
 	 */
 	addClass(newClass: string): this {
-		for (const element of this.collection) {
-			element.classList.add(newClass);
-		}
+		this.collection.forEach(element => element.classList.add(newClass));
 		return this;
 	}
 
 	/**
-	 * Remove a given class from the classList object
+	 * Remove a class from all elements
 	 *
-	 * @param oldClass - Class to remove. If it's empty or null, all classes will be removed
-	 * @returns Current instance
+	 * @param oldClass - Class name to remove (if omitted, removes all classes)
 	 */
-	removeClass(oldClass: string | null = null): this {
-		if (oldClass !== null) {
-			for (const element of this.collection) {
+	removeClass(oldClass?: string): this {
+		this.collection.forEach(element => {
+			if (!oldClass) {
+				element.className = '';
+			} else {
 				element.classList.remove(oldClass);
 			}
-		} else {
-			for (const element of this.collection) {
-				while (element.classList.length > 0) {
-					const className = element.classList.item(0);
-					if (className) {
-						element.classList.remove(className);
-					}
-				}
-			}
-		}
+		});
+
 		return this;
 	}
 
 	/**
-	 * Toggle between two classes
+	 * Toggle one or more classes on all elements
 	 *
-	 * @param classes - Space separated class names
-	 * @returns Current instance
+	 * @param classes - Space-separated class names to toggle
 	 */
 	toggleClass(classes: string): this {
 		const classList = classes.split(' ');
-		for (const element of this.collection) {
-			for (const className of classList) {
-				element.classList.toggle(className);
-			}
-		}
+
+		this.collection.forEach(element => {
+			classList.forEach(c => element.classList.toggle(c));
+		});
+
 		return this;
 	}
 
 	/**
-	 * Check if ALL elements in the collection have the given class
+	 * Check if all elements have a given class
 	 *
-	 * @param classToCheck - Class name to check for
-	 * @returns Whether all elements have the class
+	 * @param classToCheck - Class name to check
 	 */
 	hasClass(classToCheck: string): boolean {
-		for (const element of this.collection) {
-			if (!element.classList.contains(classToCheck)) {
-				return false;
-			}
-		}
-		return true;
+		return this.collection.every(element => element.classList.contains(classToCheck));
 	}
 
 	/**
-	 * Get or set the value from the elements
-	 *
-	 * @param value - Value to set to the elements
-	 * @returns If a value is provided, returns current instance. Otherwise returns the value(s) - single value if one element, array if multiple.
+	 * Get or set the value of form elements
 	 */
-	value(value?: string): this | string | string[] | undefined {
-		if (typeof value !== 'undefined') {
+	value(value: string | number): this;
+	value(): string | undefined;
+	value(value?: string | number): this | string | undefined {
+		if (value !== undefined) {
+			const valueString = String(value);
 			for (const element of this.collection) {
-				(element as HTMLInputElement).value = value;
+				if (
+					element instanceof HTMLInputElement ||
+					element instanceof HTMLTextAreaElement ||
+					element instanceof HTMLSelectElement ||
+					element instanceof HTMLButtonElement ||
+					element instanceof HTMLOptionElement
+				) {
+					element.value = valueString;
+				}
 			}
+
 			return this;
-		} else {
-			if (this.length === 0) {
-				return undefined;
-			}
-			if (this.length === 1) {
-				return (this.collection[0] as HTMLInputElement).value;
-			}
-			const values: string[] = [];
-			for (const element of this.collection) {
-				values.push((element as HTMLInputElement).value);
-			}
-			return values;
 		}
+
+		if (this.length === 0) {
+			return undefined;
+		}
+
+		const first = this.collection[0];
+
+		if (
+			first instanceof HTMLInputElement ||
+			first instanceof HTMLTextAreaElement ||
+			first instanceof HTMLSelectElement ||
+			first instanceof HTMLButtonElement ||
+			first instanceof HTMLOptionElement
+		) {
+			return first.value;
+		}
+
+		return undefined;
 	}
 
 	/**
-	 * Focus on the first element matching the selector
-	 *
-	 * @returns Current instance
+	 * Focus the first element in the collection
 	 */
 	focus(): this {
 		if (this.length > 0) {
-			(this.collection[0] as HTMLElement).focus();
+			this.collection[0].focus();
 		}
+
 		return this;
 	}
 
 	/**
-	 * Add a callback for the 'click' event on every element matching the selector
-	 *
-	 * @param callback - Callback function to run when the event is triggered
-	 * @returns Current instance
+	 * Blur (unfocus) the first element in the collection
+	 */
+	blur(): this {
+		if (this.length > 0) {
+			this.collection[0].blur();
+		}
+
+		return this;
+	}
+
+	/**
+	 * Attach a click event handler
 	 */
 	click(callback: EventCallback): this {
-		for (const element of this.collection) {
-			element.addEventListener('click', callback, false);
-		}
-		return this;
+		return this.on('click', callback);
 	}
 
 	/**
-	 * Add a callback for the 'keyup' event on every element matching the selector
-	 *
-	 * @param callback - Callback function to run when the event is triggered
-	 * @returns Current instance
+	 * Attach a keyup event handler
 	 */
 	keyup(callback: EventCallback): this {
-		for (const element of this.collection) {
-			element.addEventListener('keyup', callback, false);
-		}
-		return this;
+		return this.on('keyup', callback);
 	}
 
 	/**
-	 * Add a callback for the 'keydown' event on every element matching the selector
-	 *
-	 * @param callback - Callback function to run when the event is triggered
-	 * @returns Current instance
+	 * Attach a keydown event handler
 	 */
 	keydown(callback: EventCallback): this {
-		for (const element of this.collection) {
-			element.addEventListener('keydown', callback, false);
-		}
-		return this;
+		return this.on('keydown', callback);
 	}
 
 	/**
-	 * Add a callback for the 'submit' event on every element matching the selector
-	 *
-	 * @param callback - Callback function to run when the event is triggered
-	 * @returns Current instance
+	 * Attach a submit event handler
 	 */
 	submit(callback: EventCallback): this {
-		for (const element of this.collection) {
-			element.addEventListener('submit', callback, false);
-		}
-		return this;
+		return this.on('submit', callback);
 	}
 
 	/**
-	 * Add a callback for the 'change' event on every element matching the selector
-	 *
-	 * @param callback - Callback function to run when the event is triggered
-	 * @returns Current instance
+	 * Attach a change event handler
 	 */
 	change(callback: EventCallback): this {
-		for (const element of this.collection) {
-			element.addEventListener('change', callback, false);
-		}
-		return this;
+		return this.on('change', callback);
 	}
 
 	/**
-	 * Add a callback for the 'scroll' event on every element matching the selector
-	 *
-	 * @param callback - Callback function to run when the event is triggered
-	 * @returns Current instance
+	 * Attach a scroll event handler
 	 */
 	scroll(callback: EventCallback): this {
-		for (const element of this.collection) {
-			element.addEventListener('scroll', callback, false);
-		}
-		return this;
+		return this.on('scroll', callback);
 	}
 
 	/**
-	 * Add a callback function to a given event
-	 *
-	 * @param event - Event to add the listener to
-	 * @param target - Target element on which to detect the event or callback function
-	 * @param callback - Callback function to run when the event is triggered
-	 * @returns Current instance
+	 * Attach an input event handler
 	 */
-	on(event: string, target: string | EventCallback, callback?: EventCallback): this {
-		const events = event.split(' ');
-		for (const element of this.collection) {
-			for (const evt of events) {
-				// Check if no target was defined and just a function was provided
-				if (typeof target === 'function') {
-					element.addEventListener(evt, target, false);
-				} else if (typeof target === 'string' && typeof callback === 'function') {
-					element.addEventListener(evt, (e: Event) => {
-						if (!e.target) {
-							return;
-						}
+	input(callback: EventCallback): this {
+		return this.on('input', callback);
+	}
 
-						const domInstance = new DOM(e.target as Element);
-						const targetElement = domInstance.closestParent(target, this._selector as string);
+	/**
+	 * Attach event handlers to elements
+	 *
+	 * @param eventNames - Space-separated event names
+	 * @param targetOrCallback - Either a selector for delegation or a callback
+	 * @param callback - Callback function (required if using delegation)
+	 */
+	on(eventNames: string, targetOrCallback: string | EventCallback, callback?: EventCallback): this {
+		const events = eventNames.split(' ');
+		const isDelegation = typeof targetOrCallback === 'string';
+		const callbackFunction = isDelegation ? callback : (targetOrCallback as EventCallback);
+		const selector = isDelegation ? (targetOrCallback as string) : null;
 
-						if (targetElement.exists()) {
-							callback.call(targetElement.get(0), e);
-						}
-					}, false);
-				}
-			}
+		if (!callbackFunction) {
+			return this;
 		}
+
+		this.collection.forEach(element => {
+			events.forEach(eventName => {
+				element.addEventListener(eventName, (e) => {
+					if (isDelegation && selector) {
+						const target = e.target;
+						if (target instanceof Element) {
+							const match = target.closest(selector);
+
+							if (match && element.contains(match)) {
+								callbackFunction.call(match, e);
+							}
+						}
+					} else {
+						callbackFunction.call(element, e);
+					}
+				}, false);
+			});
+		});
+
 		return this;
 	}
 
 	/**
-	 * Filter from the current collection to only those matching the new selector
-	 * Applies to ALL elements in the collection
+	 * Remove event handlers from elements
 	 *
-	 * @param selector - Selector to filter the collection with
-	 * @returns New DOM instance with the filtered collection
+	 * @param eventNames - Space-separated event names
+	 * @param callback - Callback function to remove
+	 */
+	off(eventNames: string, callback: EventCallback): this {
+		const events = eventNames.split(' ');
+
+		this.collection.forEach(element => {
+			events.forEach(eventName => {
+				element.removeEventListener(eventName, callback);
+			});
+		});
+
+		return this;
+	}
+
+	/**
+	 * Trigger events on elements
+	 *
+	 * @param eventNames - Space-separated event names
+	 * @param detail - Custom event detail data
+	 */
+	trigger(eventNames: string, detail?: unknown): this {
+		const events = eventNames.split(' ');
+
+		this.collection.forEach(element => {
+			events.forEach(eventName => {
+				const customEvent = detail !== undefined
+					? new CustomEvent(eventName, { detail, bubbles: true, cancelable: true })
+					: new Event(eventName, { bubbles: true, cancelable: true });
+
+				element.dispatchEvent(customEvent);
+			});
+		});
+
+		return this;
+	}
+
+	/**
+	 * Filter elements by a selector
+	 *
+	 * @param selector - CSS selector to match
 	 */
 	filter(selector: string): DOM {
-		const filtered: HTMLElement[] = [];
-		for (const element of this.collection) {
-			if (element.matches(selector)) {
-				filtered.push(element as HTMLElement);
-			}
-		}
-		return new DOM(filtered.length > 0 ? filtered : null);
+		return new DOM(this.collection.filter(element => element.matches(selector)));
 	}
 
 	/**
-	 * Check if there are any elements that match the selector.
-	 *
-	 * @returns Whether elements matching the selector existed or not
+	 * Check if the collection contains any elements
 	 */
 	exists(): boolean {
 		return this.length > 0;
 	}
 
 	/**
-	 * Get or set a `data` property
+	 * Get or set data attributes
 	 *
-	 * @param name - Name of the data property
-	 * @param value - Value of the property
-	 * @returns If no value is provided, returns the value(s) - single value if one element, array if multiple.
+	 * @param name - Data attribute name (without 'data-' prefix)
+	 * @param value - Value to set (if omitted, returns current value)
 	 */
-	data(name: string, value?: string): this | string | string[] | undefined {
-		if (typeof value !== 'undefined') {
-			for (const element of this.collection) {
-				(element as HTMLElement).dataset[name] = value;
-			}
+	data(name: string): string | undefined;
+	data(name: string, value: string): this;
+	data(name: string, value?: string): this | string | undefined {
+		if (value !== undefined) {
+			this.collection.forEach(element => element.dataset[name] = value);
 			return this;
-		} else {
-			if (this.length === 0) {
-				return undefined;
-			}
-			if (this.length === 1) {
-				return (this.collection[0] as HTMLElement).dataset[name];
-			}
-			const values: (string | undefined)[] = [];
-			for (const element of this.collection) {
-				values.push((element as HTMLElement).dataset[name]);
-			}
-			return values as string[];
 		}
+
+		return this.length > 0 ? this.collection[0].dataset[name] : undefined;
 	}
 
 	/**
-	 * Remove a data property from all the elements on the collection given its name.
+	 * Remove a data attribute from all elements
 	 *
-	 * @param name - Name of the data property to remove
-	 * @returns Current instance
+	 * @param name - Data attribute name to remove
 	 */
 	removeData(name: string): this {
-		for (const element of this.collection) {
-			delete (element as HTMLElement).dataset[name];
-		}
+		this.collection.forEach(element => delete element.dataset[name]);
 		return this;
 	}
 
 	/**
-	 * Get or set the text of elements
-	 *
-	 * @param value - Value to set the text to
-	 * @returns If no value is provided, returns the text(s) - single value if one element, array if multiple.
+	 * Get or set text content
 	 */
-	text(value?: string): this | string | (string | null)[] | null | undefined {
-		if (typeof value !== 'undefined') {
+	text(value: string | number): this;
+	text(): string | undefined;
+	text(value?: string | number): this | string | undefined {
+		if (value !== undefined) {
+			const valueString = String(value);
+
 			for (const element of this.collection) {
-				element.textContent = value;
+				element.textContent = valueString;
+			}
+
+			return this;
+		}
+
+		if (this.length === 0) {
+			return undefined;
+		}
+
+		return this.collection[0].textContent || '';
+	}
+
+	/**
+	 * Get or set HTML content
+	 */
+	html(value: string | number): this;
+	html(): string | undefined;
+	html(value?: string | number): this | string | undefined {
+		if (value !== undefined) {
+			const valueString = String(value);
+
+			for (const element of this.collection) {
+				element.innerHTML = valueString;
 			}
 			return this;
-		} else {
-			if (this.length === 0) {
-				return undefined;
-			}
-			if (this.length === 1) {
-				return this.collection[0].textContent;
-			}
-			const values: (string | null)[] = [];
-			for (const element of this.collection) {
-				values.push(element.textContent);
-			}
-			return values;
 		}
+
+		if (this.length === 0) {
+			return undefined;
+		}
+
+		return this.collection[0].innerHTML;
 	}
 
 	/**
-	 * Get or set the inner HTML of elements
+	 * Append content to the end of each element
 	 *
-	 * @param value - Value to set the HTML to
-	 * @returns If no value is provided, returns the HTML(s) - single value if one element, array if multiple.
+	 * @param content - HTML string or Element to append
 	 */
-	html(value?: string): this | string | string[] | undefined {
-		if (typeof value !== 'undefined') {
-			for (const element of this.collection) {
-				element.innerHTML = value;
-			}
-			return this;
-		} else {
-			if (this.length === 0) {
-				return undefined;
-			}
-			if (this.length === 1) {
-				return this.collection[0].innerHTML;
-			}
-			const values: string[] = [];
-			for (const element of this.collection) {
-				values.push(element.innerHTML);
-			}
-			return values;
-		}
-	}
-
-	/**
-	 * Append an element to ALL elements in the collection
-	 *
-	 * @param element - String representation of the element to add or an Element
-	 * @returns Current instance
-	 */
-	append(element: string | Element): this {
-		let isFirstElement = true;
-		for (const el of this.collection) {
-			if (typeof element === 'string') {
-				const div = document.createElement('div');
-				div.innerHTML = element.trim();
-				if (div.firstChild) {
-					el.appendChild(div.firstChild.cloneNode(true));
-				}
+	append(content: string | Element): this {
+		this.collection.forEach((element, index) => {
+			if (typeof content === 'string') {
+				element.insertAdjacentHTML('beforeend', content);
 			} else {
-				// For the first target, append the original element to preserve
-				// custom element state/props. For subsequent targets, clone.
-				// Note: Cloned custom elements will have their constructor re-run,
-				// which may reset state/props to defaults.
-				if (isFirstElement) {
-					el.appendChild(element);
-					isFirstElement = false;
-				} else {
-					el.appendChild(element.cloneNode(true));
-				}
+				// Clone if not the first iteration to allow appending one element to multiple parents
+				const node = (index === 0) ? content : content.cloneNode(true);
+				element.appendChild(node as Node);
 			}
-		}
+		});
+
 		return this;
 	}
 
 	/**
-	 * Prepend an element to ALL elements in the collection
+	 * Prepend content to the beginning of each element
 	 *
-	 * @param element - String representation of the element to add or an Element
-	 * @returns Current instance
+	 * @param content - HTML string or Element to prepend
 	 */
-	prepend(element: string | Element): this {
-		let isFirstElement = true;
-
-		for (const el of this.collection) {
-			if (typeof element === 'string') {
-				const div = document.createElement('div');
-				div.innerHTML = element.trim();
-				if (div.firstChild) {
-					if (el.childNodes.length > 0) {
-						el.insertBefore(div.firstChild.cloneNode(true), el.childNodes[0]);
-					} else {
-						el.appendChild(div.firstChild.cloneNode(true));
-					}
-				}
+	prepend(content: string | Element): this {
+		this.collection.forEach((element, index) => {
+			if (typeof content === 'string') {
+				element.insertAdjacentHTML('afterbegin', content);
 			} else {
-				// For the first target, use the original element to preserve
-				// custom element state/props. For subsequent targets, clone.
-				// Note: Cloned custom elements will have their constructor re-run,
-				// which may reset state/props to defaults.
-				const nodeToInsert = isFirstElement ? element : element.cloneNode(true);
-				if (isFirstElement) {
-					isFirstElement = false;
-				}
-
-				if (el.childNodes.length > 0) {
-					el.insertBefore(nodeToInsert, el.childNodes[0]);
-				} else {
-					el.appendChild(nodeToInsert);
-				}
+				const node = (index === 0) ? content : content.cloneNode(true);
+				element.prepend(node as Node);
 			}
-		}
+		});
+
 		return this;
 	}
 
 	/**
-	 * Iterate over the collection of elements matching the selector
+	 * Iterate over each element in the collection
 	 *
-	 * @param callback - Callback to run for every element
-	 * @returns Current instance
+	 * @param callback - Function to call for each element
 	 */
 	each(callback: ElementCallback): this {
-		for (const element of this.collection) {
-			callback(element);
-		}
+		this.collection.forEach((element, i) => callback(element, i));
 		return this;
 	}
 
 	/**
-	 * Get an element from the collection given its index
+	 * Get an element by index
 	 *
-	 * @param index - Index of the element to retrieve
-	 * @returns HTML Element in the position indicated by the index
+	 * @param index - Zero-based index
 	 */
-	get(index: number): Element | undefined {
+	get(index: number): HTMLElement | undefined {
 		return this.collection[index];
 	}
 
 	/**
-	 * Get the first element in the collection
-	 *
-	 * @returns DOM instance with the first element
+	 * Get the first element wrapped in a new DOM instance
 	 */
 	first(): DOM {
-		if (this.length > 0) {
-			return new DOM(this.collection[0] as HTMLElement);
-		}
-		return new DOM(null);
+		return new DOM(this.collection[0] ?? null);
 	}
 
 	/**
-	 * Get the last element in the collection
-	 *
-	 * @returns DOM instance with the last element
+	 * Get the last element wrapped in a new DOM instance
 	 */
 	last(): DOM {
-		if (this.length > 0) {
-			return new DOM(this.collection[this.collection.length - 1] as HTMLElement);
-		}
-		return new DOM(null);
+		return new DOM(this.collection[this.collection.length - 1] ?? null);
 	}
 
 	/**
-	 * Check if any element in the collection is visible by checking their
-	 * display, offsetWidth and offsetHeight properties
+	 * Get element at index wrapped in a new DOM instance
 	 *
-	 * @returns Whether any element is visible
+	 * @param index - Zero-based index (negative counts from end)
+	 */
+	eq(index: number): DOM {
+		const actualIndex = index < 0 ? this.collection.length + index : index;
+		return new DOM(this.collection[actualIndex] ?? null);
+	}
+
+	/**
+	 * Check if any element in the collection is visible
 	 */
 	isVisible(): boolean {
-		for (const element of this.collection) {
-			const el = element as HTMLElement;
-			if (el.style.display !== 'none' && el.offsetWidth > 0 && el.offsetHeight > 0) {
-				return true;
-			}
-		}
-		return false;
+		return this.collection.some(element =>
+			element.style.display !== 'none' && element.offsetWidth > 0 && element.offsetHeight > 0
+		);
 	}
 
 	/**
-	 * Get the parents of ALL elements in the collection
-	 *
-	 * @returns DOM instance of the parent elements
+	 * Get the parent elements of all elements in the collection
 	 */
 	parent(): DOM {
-		const parents: HTMLElement[] = [];
-		for (const element of this.collection) {
-			if (element.parentElement && !parents.includes(element.parentElement)) {
-				parents.push(element.parentElement);
+		const parents = new Set<HTMLElement>();
+
+		this.collection.forEach(element => {
+			if (element.parentElement) {
+				parents.add(element.parentElement);
 			}
-		}
-		return new DOM(parents.length > 0 ? parents : null);
+		});
+
+		return new DOM(Array.from(parents));
 	}
 
 	/**
-	 * Find elements that match the given selector in ALL elements of the collection
+	 * Get all parent/ancestor elements up to the document
+	 */
+	parents(): DOM {
+		const ancestors = new Set<HTMLElement>();
+
+		this.collection.forEach(element => {
+			let parent = element.parentElement;
+			while (parent) {
+				ancestors.add(parent);
+				parent = parent.parentElement;
+			}
+		});
+
+		return new DOM(Array.from(ancestors));
+	}
+
+	/**
+	 * Find descendant elements matching a selector
 	 *
-	 * @param selector - Selector to find elements with
-	 * @returns DOM instance with found elements
+	 * @param selector - CSS selector
 	 */
 	find(selector: string): DOM {
-		const found: HTMLElement[] = [];
+		const found = new Set<HTMLElement>();
+
 		for (const element of this.collection) {
 			const results = element.querySelectorAll(selector);
+
 			for (const result of results) {
-				if (!found.includes(result as HTMLElement)) {
-					found.push(result as HTMLElement);
-				}
+				found.add(result as HTMLElement);
 			}
 		}
-		return new DOM(found.length > 0 ? found : null);
+
+		return new DOM(Array.from(found));
 	}
 
 	/**
-	 * Get the top and left offsets of elements in the collection
-	 *
-	 * @returns Single offset object if one element, array of offset objects if multiple
+	 * Get the offset position of the first element
 	 */
-	offset(): DOMOffset | DOMOffset[] | undefined {
+	offset(): DOMOffset | undefined {
 		if (this.length === 0) {
 			return undefined;
 		}
-		if (this.length === 1) {
-			const rect = this.collection[0].getBoundingClientRect();
-			return {
-				top: rect.top + document.body.scrollTop,
-				left: rect.left + document.body.scrollLeft
-			};
-		}
-		const offsets: DOMOffset[] = [];
-		for (const element of this.collection) {
-			const rect = element.getBoundingClientRect();
-			offsets.push({
-				top: rect.top + document.body.scrollTop,
-				left: rect.left + document.body.scrollLeft
-			});
-		}
-		return offsets;
+
+		const rect = this.collection[0].getBoundingClientRect();
+
+		return {
+			top: rect.top + window.scrollY,
+			left: rect.left + window.scrollX
+		};
 	}
 
 	/**
-	 * Find the closest element matching the given selector for ALL elements.
-	 * This bubbles up from the initial object and then follows to its parents.
+	 * Get the width of the first element
+	 */
+	width(): number {
+		if (this.length === 0) {
+			return 0;
+		}
+
+		return this.collection[0].getBoundingClientRect().width;
+	}
+
+	/**
+	 * Get the height of the first element
+	 */
+	height(): number {
+		if (this.length === 0) {
+			return 0;
+		}
+
+		return this.collection[0].getBoundingClientRect().height;
+	}
+
+	/**
+	 * Get the closest ancestor matching a selector
 	 *
-	 * @param selector - Selector to match the closest element with
-	 * @returns DOM instance with the closest HTML elements matching the selector
+	 * @param selector - CSS selector
 	 */
 	closest(selector: string): DOM {
-		const found: HTMLElement[] = [];
-		for (const element of this.collection) {
-			const closest = element.closest(selector) as HTMLElement | null;
-			if (closest && !found.includes(closest)) {
-				found.push(closest);
+		const found = new Set<HTMLElement>();
+
+		this.collection.forEach(element => {
+			const match = element.closest(selector);
+
+			if (match) {
+				found.add(match as HTMLElement);
 			}
-		}
-		return new DOM(found.length > 0 ? found : null);
+		});
+
+		return new DOM(Array.from(found));
 	}
 
 	/**
-	 * Find the closest parent element matching the given selector. This bubbles up
-	 * from the initial object and then follows to its parents.
+	 * Get or set an attribute
 	 *
-	 * @param selector - Selector to match the closest element with
-	 * @param limit - Selector for limit element. If the limit is reached and no element matching the provided selector was found, it will cause an early return.
-	 * @returns DOM instance with the closest HTML element matching the selector
+	 * @param attr - Attribute name
+	 * @param value - Value to set (if omitted, returns current value)
 	 */
-	closestParent(selector: string, limit?: string): DOM {
-		if (this.length === 0) {
-			return new DOM(null);
-		}
-
-		let current: Element | null = this.collection[0];
-		while (current) {
-			// Check if the current element matches the selector
-			if (current.matches(selector)) {
-				return new DOM(current as HTMLElement);
-			}
-
-			// Check if we hit the limit
-			if (typeof limit === 'string' && current.matches(limit)) {
-				break;
-			}
-
-			current = current.parentElement;
-		}
-		return new DOM(null);
-	}
-
-	/**
-	 * Get or set the value of a given attribute
-	 *
-	 * @param attribute - Attribute's name
-	 * @param value - Value to set the attribute to
-	 * @returns If no value is provided, returns the attribute value(s) - single value if one element, array if multiple.
-	 */
-	attribute(attribute: string, value?: string | number): this | string | (string | null)[] | null | undefined {
-		if (typeof value !== 'undefined') {
-			for (const element of this.collection) {
-				element.setAttribute(attribute, String(value));
-			}
+	attribute(attr: string): string | null | undefined;
+	attribute(attr: string, value: string | number): this;
+	attribute(attr: string, value?: string | number): this | string | null | undefined {
+		if (value !== undefined) {
+			this.collection.forEach(element => element.setAttribute(attr, String(value)));
 			return this;
-		} else {
-			if (this.length === 0) {
-				return undefined;
-			}
-			if (this.length === 1) {
-				return this.collection[0].getAttribute(attribute);
-			}
-			const values: (string | null)[] = [];
-			for (const element of this.collection) {
-				values.push(element.getAttribute(attribute));
-			}
-			return values;
 		}
+
+		return this.length > 0 ? this.collection[0].getAttribute(attr) : undefined;
 	}
 
 	/**
-	 * Check whether ALL elements have an attribute
+	 * Remove an attribute from all elements
 	 *
-	 * @param attribute - The name of the attribute to check existence for
-	 * @returns Whether all elements have the attribute
+	 * @param attr - Attribute name to remove
+	 */
+	removeAttribute(attr: string): this {
+		this.collection.forEach(element => element.removeAttribute(attr));
+		return this;
+	}
+
+	/**
+	 * Check if all elements have a given attribute
+	 *
+	 * @param attribute - Attribute name
 	 */
 	hasAttribute(attribute: string): boolean {
-		for (const element of this.collection) {
-			if (!element.hasAttribute(attribute)) {
-				return false;
-			}
-		}
-		return true;
+		return this.collection.every(element => element.hasAttribute(attribute));
 	}
 
 	/**
-	 * Insert content after all elements in the collection
+	 * Insert HTML after each element
 	 *
-	 * @param content - String representation of the content to add
-	 * @returns Current instance
+	 * @param content - HTML string to insert
 	 */
 	after(content: string): this {
-		for (const element of this.collection) {
-			element.insertAdjacentHTML('afterend', content);
-		}
+		this.collection.forEach(element => element.insertAdjacentHTML('afterend', content));
 		return this;
 	}
 
 	/**
-	 * Insert content before all elements in the collection
+	 * Insert HTML before each element
 	 *
-	 * @param content - String representation of the content to add
-	 * @returns Current instance
+	 * @param content - HTML string to insert
 	 */
 	before(content: string): this {
-		for (const element of this.collection) {
-			element.insertAdjacentHTML('beforebegin', content);
-		}
+		this.collection.forEach(element => element.insertAdjacentHTML('beforebegin', content));
 		return this;
 	}
 
 	/**
-	 * Get or modify the `style` properties of the elements matching the selector
-	 *
-	 * @param properties - Properties to change or get. Can be either an individual property or a JSON object with key-value pairs
-	 * @param value - Value to set the property to when only changing one property
-	 * @returns If a property is given but not a value for it, returns the style value(s) - single value if one element, array if multiple.
+	 * Get or set CSS styles
 	 */
-	style(properties: string | StyleProperties, value?: string): this | string | string[] | undefined {
-		// Getting a style property
-		if (typeof properties === 'string' && typeof value === 'undefined') {
-			if (this.length === 0) {
-				return undefined;
-			}
-			if (this.length === 1) {
-				return (this.collection[0] as HTMLElement).style.getPropertyValue(properties);
-			}
-			const values: string[] = [];
-			for (const element of this.collection) {
-				values.push((element as HTMLElement).style.getPropertyValue(properties));
-			}
-			return values;
+	style(prop: string): string;
+	style(prop: StyleProperties): this;
+	style(prop: string, value: string): this;
+	style(properties: string | StyleProperties, value?: string): this | string {
+		if (typeof properties === 'string' && value === undefined) {
+			return this.length > 0 ? this.collection[0].style.getPropertyValue(properties) : '';
 		}
 
-		// Setting style properties
-		for (const element of this.collection) {
-			const el = element as HTMLElement;
-			if (typeof properties === 'string' && typeof value !== 'undefined') {
-				el.style.setProperty(properties, value);
+		this.collection.forEach(element => {
+			if (typeof properties === 'string' && value !== undefined) {
+				element.style.setProperty(properties, value);
 			} else if (typeof properties === 'object') {
-				for (const property in properties) {
-					el.style.setProperty(property, String(properties[property]));
-				}
+				Object.entries(properties).forEach(([k, v]) => {
+					element.style.setProperty(k, String(v));
+				});
 			}
-		}
+		});
+
 		return this;
 	}
 
 	/**
-	 * Animate the given `style` properties on all elements in the collection
-	 * with a given time duration
+	 * Animate elements using the Web Animations API
 	 *
-	 * @param style - JSON object with the key-value pairs of properties to animate
-	 * @param time - Time in milliseconds during which the properties will be animated
-	 * @returns Current instance
+	 * @param keyframes - Animation keyframes
+	 * @param options - Animation options
 	 */
-	animate(style: Record<string, number>, time: number): this {
-		for (let i = 0; i < this.collection.length; i++) {
-			const element = this.collection[i] as HTMLElement;
-			for (const property in style) {
-				const start = Date.now();
-				let initialValue: number;
-
-				if (typeof element.style.getPropertyValue(property) !== 'undefined' && element.style.getPropertyValue(property) !== '') {
-					initialValue = parseFloat(element.style.getPropertyValue(property));
-
-					const timer = setInterval(() => {
-						const step = Math.min(1, (Date.now() - start) / time);
-						element.style.setProperty(property, String(initialValue + step * (style[property] - initialValue)));
-
-						if (step === 1) {
-							clearInterval(timer);
-						}
-					}, 25);
-					element.style.setProperty(property, String(initialValue));
-				} else if (typeof (element as unknown as Record<string, number>)[property] !== 'undefined') {
-					initialValue = (element as unknown as Record<string, number>)[property];
-
-					const timer = setInterval(() => {
-						const step = Math.min(1, (Date.now() - start) / time);
-						(element as unknown as Record<string, number>)[property] = initialValue + step * (style[property] - initialValue);
-
-						if (step === 1) {
-							clearInterval(timer);
-						}
-					}, 25);
-					(element as unknown as Record<string, number>)[property] = initialValue;
-				}
-			}
-		}
+	animate(keyframes: Keyframe[] | PropertyIndexedKeyframes, options: number | KeyframeAnimationOptions): this {
+		this.collection.forEach(element => element.animate(keyframes, options));
 		return this;
 	}
 
 	/**
-	 * Use a fade in animation on ALL elements in the collection
+	 * Fade elements in
 	 *
-	 * @param time - Time duration for the animation
-	 * @param callback - Callback function to run once all animations are over
-	 * @returns Current instance
+	 * @param duration - Animation duration in ms
+	 * @param callback - Function to call after animation completes
 	 */
-	fadeIn(time: number = 400, callback?: () => void): this {
-		let completed = 0;
-		const total = this.collection.length;
+	fadeIn(duration: number = 400, callback?: () => void): this {
+		this.collection.forEach((element, index) => {
+			if (getComputedStyle(element).display === 'none') {
+				element.style.display = 'block';
+			}
 
-		for (const el of this.collection) {
-			const element = el as HTMLElement;
-			element.style.opacity = '0';
+			const animation = element.animate([{ opacity: 0 }, { opacity: 1 }], {
+				duration: duration,
+				fill: 'forwards',
+			});
 
-			let last = Date.now();
+			// Trigger callback only once after the last element finishes
+			if (callback && index === this.collection.length - 1) {
+				animation.onfinish = () => callback();
+			}
+		});
 
-			const tick = (): void => {
-				element.style.opacity = String(parseFloat(element.style.opacity) + (Date.now() - last) / time);
-				last = Date.now();
+		return this;
+	}
 
-				if (parseFloat(element.style.opacity) < 1) {
-					requestAnimationFrame(tick);
-				} else {
-					completed++;
-					if (completed === total && typeof callback === 'function') {
-						callback();
-					}
+	/**
+	 * Fade elements out
+	 *
+	 * @param duration - Animation duration in ms
+	 * @param callback - Function to call after animation completes
+	 */
+	fadeOut(duration: number = 400, callback?: () => void): this {
+		this.collection.forEach((element, index) => {
+			const animation = element.animate([{ opacity: 1 }, { opacity: 0 }], {
+				duration: duration,
+				fill: 'forwards',
+			});
+
+			animation.onfinish = () => {
+				element.style.display = 'none';
+				if (callback && index === this.collection.length - 1) {
+					callback();
 				}
 			};
-
-			tick();
-		}
+		});
 
 		return this;
 	}
 
 	/**
-	 * Use a fade out animation on ALL elements in the collection
+	 * Check if all elements match a selector
 	 *
-	 * @param time - Time duration for the animation
-	 * @param callback - Callback function to run once all animations are over
-	 * @returns Current instance
-	 */
-	fadeOut(time: number = 400, callback?: () => void): this {
-		let completed = 0;
-		const total = this.collection.length;
-
-		for (const el of this.collection) {
-			const element = el as HTMLElement;
-			let last = Date.now();
-
-			const tick = (): void => {
-				element.style.opacity = String(parseFloat(element.style.opacity) - (Date.now() - last) / time);
-				last = Date.now();
-
-				if (parseFloat(element.style.opacity) > 0) {
-					requestAnimationFrame(tick);
-				} else {
-					completed++;
-					if (completed === total && typeof callback === 'function') {
-						callback();
-					}
-				}
-			};
-
-			tick();
-		}
-
-		return this;
-	}
-
-	/**
-	 * Check if ALL elements in the collection match a given selector
-	 *
-	 * @param selector - Selector to match
-	 * @returns Whether all elements match the selector
+	 * @param selector - CSS selector
 	 */
 	matches(selector: string): boolean {
 		if (this.length === 0) {
 			return false;
 		}
 
-		for (const element of this.collection) {
-			if (!element.matches(selector)) {
-				return false;
-			}
-		}
-
-		return true;
+		return this.collection.every(element => element.matches(selector));
 	}
 
 	/**
-	 * Remove all elements in the collection
-	 *
-	 * @returns Current instance
+	 * Remove all elements from the DOM
 	 */
 	remove(): this {
-		for (const element of this.collection) {
-			element.parentNode?.removeChild(element);
-		}
+		this.collection.forEach(element => element.remove());
 		return this;
 	}
 
 	/**
-	 * Replace ALL elements in the collection with a new element
-	 *
-	 * @param newElement - The replacement element or HTML string
-	 * @returns Current instance
+	 * Remove all child elements
 	 */
-	replaceWith(newElement: string | Element): this {
-		for (const element of this.collection) {
-			let replaceElement: Element;
+	empty(): this {
+		this.collection.forEach(element => {
+			element.innerHTML = '';
+		});
 
-			if (typeof newElement === 'string') {
-				const div = document.createElement('div');
-				div.innerHTML = newElement;
-				replaceElement = div.firstChild as Element;
-			} else {
-				replaceElement = newElement.cloneNode(true) as Element;
-			}
-
-			element.parentElement?.replaceChild(replaceElement, element);
-		}
 		return this;
 	}
 
 	/**
-	 * Reset every element in the collection (for form elements)
+	 * Clone all elements in the collection
 	 *
-	 * @returns Current instance
+	 * @param deep - Whether to clone child nodes (default: true)
+	 */
+	clone(deep: boolean = true): DOM {
+		const clones = this.collection.map(element => element.cloneNode(deep) as HTMLElement);
+		return new DOM(clones);
+	}
+
+	/**
+	 * Replace elements with new content
+	 *
+	 * @param newContent - HTML string or Element to replace with
+	 */
+	replaceWith(newContent: string | Element): this {
+		for (let i = this.collection.length - 1; i >= 0; i--) {
+			const element = this.collection[i];
+
+			if (typeof newContent === 'string') {
+				element.outerHTML = newContent;
+			} else {
+				const nodeToInsert = (i === 0) ? newContent : newContent.cloneNode(true);
+				element.replaceWith(nodeToInsert);
+			}
+		}
+
+		return this;
+	}
+
+	/**
+	 * Reset form elements
 	 */
 	reset(): this {
-		for (const element of this.collection) {
-			if ((element as HTMLFormElement).reset) {
-				(element as HTMLFormElement).reset();
+		this.collection.forEach(element => {
+			if (element instanceof HTMLFormElement) {
+				element.reset();
 			}
-		}
+		});
+
 		return this;
 	}
 
 	/**
-	 * Get or set a property for elements in the collection
+	 * Get or set a DOM property
 	 *
-	 * @param property - Property name to set or get
-	 * @param value - Value to set the property to
-	 * @returns If no value is provided, returns the property value(s) - single value if one element, array if multiple.
+	 * @param name - Property name
+	 * @param value - Value to set (if omitted, returns current value)
 	 */
-	property<T = unknown>(property: string, value?: T): this | T | T[] | undefined {
-		if (typeof value !== 'undefined') {
-			for (const element of this.collection) {
-				(element as unknown as Record<string, T>)[property] = value;
-			}
+	property<K extends keyof HTMLElement>(name: K, value: HTMLElement[K]): this;
+	property<K extends keyof HTMLElement>(name: K): HTMLElement[K] | undefined;
+	property<K extends keyof HTMLElement>(name: K, value?: HTMLElement[K]): this | HTMLElement[K] | undefined {
+		if (value !== undefined) {
+			this.collection.forEach(element => {
+				(element as HTMLElement)[name] = value;
+			});
 			return this;
-		} else {
-			if (this.length === 0) {
-				return undefined;
-			}
-			if (this.length === 1) {
-				return (this.collection[0] as unknown as Record<string, T>)[property];
-			}
-			const values: T[] = [];
-			for (const element of this.collection) {
-				values.push((element as unknown as Record<string, T>)[property]);
-			}
-			return values;
 		}
+
+		if (this.length === 0) {
+			return undefined;
+		}
+
+		return this.collection[0][name];
+	}
+
+	/**
+	 * Get sibling elements
+	 */
+	siblings(): DOM {
+		const siblings = new Set<HTMLElement>();
+
+		this.collection.forEach(element => {
+			if (element.parentElement) {
+				Array.from(element.parentElement.children).forEach(sibling => {
+					if (sibling !== element && sibling instanceof HTMLElement) {
+						siblings.add(sibling);
+					}
+				});
+			}
+		});
+
+		return new DOM(Array.from(siblings));
+	}
+
+	/**
+	 * Get the next sibling element
+	 */
+	next(): DOM {
+		const nexts = new Set<HTMLElement>();
+
+		this.collection.forEach(element => {
+			const next = element.nextElementSibling;
+			if (next instanceof HTMLElement) {
+				nexts.add(next);
+			}
+		});
+
+		return new DOM(Array.from(nexts));
+	}
+
+	/**
+	 * Get the previous sibling element
+	 */
+	prev(): DOM {
+		const prevs = new Set<HTMLElement>();
+
+		this.collection.forEach(element => {
+			const prev = element.previousElementSibling;
+			if (prev instanceof HTMLElement) {
+				prevs.add(prev);
+			}
+		});
+
+		return new DOM(Array.from(prevs));
+	}
+
+	/**
+	 * Get all child elements
+	 */
+	children(): DOM {
+		const allChildren = new Set<HTMLElement>();
+
+		this.collection.forEach(element => {
+			Array.from(element.children).forEach(child => {
+				if (child instanceof HTMLElement) {
+					allChildren.add(child);
+				}
+			});
+		});
+
+		return new DOM(Array.from(allChildren));
+	}
+
+	/**
+	 * Scroll element into view
+	 *
+	 * @param options - Scroll options
+	 */
+	scrollIntoView(options?: ScrollIntoViewOptions): this {
+		if (this.length > 0) {
+			this.collection[0].scrollIntoView(options);
+		}
+		return this;
 	}
 }
 
 /**
- * Simple wrapper function to use the DOM library
+ * Create a new DOM instance
  *
- * @param selector - Selector or DOM element to use
- * @returns DOM instance
+ * @param selector - CSS selector, Element, or collection
  */
 export function $_(selector: DOMSelector): DOM {
 	return new DOM(selector);
 }
 
 /**
- * Utility function to attach the 'load' listener to the window
+ * Execute a callback when the DOM is ready
  *
- * @param callback - Callback function to run when the window is ready
+ * @param callback - Function to execute
  */
-export function $_ready(callback: EventListener): void {
-	window.addEventListener('load', callback);
+export function $_ready(callback: () => void): void {
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', callback);
+	} else {
+		callback();
+	}
 }
 
+/**
+ * Create a new element
+ *
+ * @param tagName - HTML tag name
+ * @param attributes - Optional attributes to set
+ */
+export function $_create<K extends keyof HTMLElementTagNameMap>(
+	tagName: K,
+	attributes?: Record<string, string>
+): DOM {
+	const element = document.createElement(tagName);
+
+	if (attributes) {
+		Object.entries(attributes).forEach(([key, value]) => {
+			element.setAttribute(key, value);
+		});
+	}
+
+	return new DOM(element);
+}

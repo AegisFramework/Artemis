@@ -3,84 +3,148 @@
  * Request
  * ==============================
  */
-/**
- * Type for request data object
- */
-export type RequestData = Record<string, string | number | boolean>;
-/**
- * Type for request options
- */
-export interface RequestOptions extends Omit<RequestInit, 'headers'> {
+export type RequestData = Record<string, unknown> | FormData;
+export interface RequestOptions extends Omit<RequestInit, 'body' | 'method'> {
     headers?: Record<string, string>;
+    timeout?: number;
 }
 /**
- * Simple Wrapper for the fetch API, providing simple functions to handle requests
+ * Error thrown when a request fails
  */
+export declare class RequestError extends Error {
+    status: number;
+    statusText: string;
+    response: Response;
+    constructor(response: Response, message?: string);
+}
+/**
+ * Error thrown when a request times out
+ */
+export declare class RequestTimeoutError extends Error {
+    constructor(url: string, timeout: number);
+}
 export declare class Request {
     /**
-     * Serialize an object of data into a URI encoded format
+     * Serialize data to URL query string
+     * Handles nested objects and arrays
      *
-     * @param data - Key-value object of data to serialize
-     * @returns Serialized Data
+     * @param data - Data to serialize
+     * @param prefix - Key prefix for nested objects
      */
-    static serialize(data: RequestData): string;
+    static serialize(data: RequestData, prefix?: string): string;
     /**
-     * Make a GET request to a given URL with the provided data parameters
-     * and an optional configuration object for the request.
+     * Parse a URL safely
      *
-     * @param url - URL to make the request to
-     * @param data - Parameters to send in the URL, represented as a JSON object
-     * @param options - Options object for configurations you want to use in the fetch request
-     * @returns Resolves to the response of the request
+     * @param url - URL to parse
+     */
+    private static parseUrl;
+    /**
+     * Create an AbortController with timeout
+     *
+     * @param timeout - Timeout in milliseconds
+     * @param url - URL for error message
+     */
+    private static createTimeoutController;
+    private static send;
+    /**
+     * Make a GET request
+     *
+     * @param url - Request URL
+     * @param data - Query parameters
+     * @param options - Request options
      */
     static get(url: string, data?: RequestData, options?: RequestOptions): Promise<Response>;
     /**
-     * Make a POST request to a given URL with the provided data and an optional
-     * configuration object for the request.
+     * Make a POST request
      *
-     * @param url - URL to make the request
-     * @param data - Set of data to send in the URL, represented as a JSON object
-     * @param options - Options object for configurations you want to use in the fetch request
-     * @returns Resolves to the response of the request
+     * @param url - Request URL
+     * @param data - Request body
+     * @param options - Request options
      */
     static post(url: string, data: RequestData, options?: RequestOptions): Promise<Response>;
     /**
-     * Make a PUT request to a given URL with the provided data and an optional
-     * configuration object for the request.
+     * Make a PUT request
      *
-     * @param url - URL to make the request
-     * @param data - Set of data to send in the URL, represented as a JSON object
-     * @param options - Options object for configurations you want to use in the fetch request
-     * @returns Resolves to the response of the request
+     * @param url - Request URL
+     * @param data - Request body
+     * @param options - Request options
      */
     static put(url: string, data: RequestData, options?: RequestOptions): Promise<Response>;
     /**
-     * Make a DELETE request to a given URL with the provided data and an optional
-     * configuration object for the request.
+     * Make a PATCH request
      *
-     * @param url - URL to make the request
-     * @param data - Parameters to send in the URL, represented as a JSON object
-     * @param options - Options object for configurations you want to use in the fetch request
-     * @returns Resolves to the response of the request
+     * @param url - Request URL
+     * @param data - Request body
+     * @param options - Request options
      */
-    static delete(url: string, data: RequestData, options?: RequestOptions): Promise<Response>;
+    static patch(url: string, data: RequestData, options?: RequestOptions): Promise<Response>;
     /**
-     * Request a JSON object from a given URL through a GET request
+     * Make a DELETE request
      *
-     * @param url - URL to make the request to
-     * @param data - Parameters to send in the URL, represented as a JSON object
-     * @param options - Options object for configurations you want to use in the fetch request
-     * @returns Resolves to the json object obtained from the request response
+     * @param url - Request URL
+     * @param data - Query parameters
+     * @param options - Request options
+     */
+    static delete(url: string, data?: RequestData, options?: RequestOptions): Promise<Response>;
+    /**
+     * Make a HEAD request
+     *
+     * @param url - Request URL
+     * @param data - Query parameters
+     * @param options - Request options
+     */
+    static head(url: string, data?: RequestData, options?: RequestOptions): Promise<Response>;
+    /**
+     * Make a GET request and parse JSON response
+     *
+     * @param url - Request URL
+     * @param data - Query parameters
+     * @param options - Request options
+     * @throws {RequestError} If the response is not ok
      */
     static json<T = unknown>(url: string, data?: RequestData, options?: RequestOptions): Promise<T>;
     /**
-     * Request a Blob from a given URL through a GET request
+     * Make a POST request with JSON body and parse JSON response
      *
-     * @param url - URL to make the request to
-     * @param data - Parameters to send in the URL, represented as a JSON object
-     * @param options - Options object for configurations you want to use in the fetch request
-     * @returns Resolves to the blob obtained from the request response
+     * @param url - Request URL
+     * @param data - Request body
+     * @param options - Request options
+     * @throws {RequestError} If the response is not ok
+     */
+    static postJson<T = unknown>(url: string, data: RequestData, options?: RequestOptions): Promise<T>;
+    /**
+     * Make a GET request and return as Blob
+     *
+     * @param url - Request URL
+     * @param data - Query parameters
+     * @param options - Request options
+     * @throws {RequestError} If the response is not ok
      */
     static blob(url: string, data?: RequestData, options?: RequestOptions): Promise<Blob>;
+    /**
+     * Make a GET request and return as text
+     *
+     * @param url - Request URL
+     * @param data - Query parameters
+     * @param options - Request options
+     * @throws {RequestError} If the response is not ok
+     */
+    static text(url: string, data?: RequestData, options?: RequestOptions): Promise<string>;
+    /**
+     * Make a GET request and return as ArrayBuffer
+     *
+     * @param url - Request URL
+     * @param data - Query parameters
+     * @param options - Request options
+     * @throws {RequestError} If the response is not ok
+     */
+    static arrayBuffer(url: string, data?: RequestData, options?: RequestOptions): Promise<ArrayBuffer>;
+    /**
+     * Check if a URL exists (returns 2xx status)
+     *
+     * @param url - URL to check
+     * @param options - Request options
+     */
+    static exists(url: string, options?: RequestOptions): Promise<boolean>;
 }
 //# sourceMappingURL=Request.d.ts.map

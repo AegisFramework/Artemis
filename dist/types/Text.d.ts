@@ -3,45 +3,56 @@
  * Text
  * ==============================
  */
-/**
- * Provides utility functions for texts
- */
+export interface CapitalizeOptions {
+    preserveCase?: boolean;
+}
 export declare class Text {
     /**
-     * Capitalizes every word in a string
+     * Capitalize the first letter of each word.
      *
-     * @param text - Text string to capitalize
-     * @returns Capitalized string
+     * @param text - Text to capitalize
+     * @param options - Capitalization options
+     * @returns Capitalized text
      */
-    static capitalize(text: string): string;
+    static capitalize(text: string, options?: CapitalizeOptions): string;
     /**
-     * Gets the suffix of a string given a key
-     *
-     * @param key - Key part of the string
-     * @param text - Full string to extract the suffix from
-     * @returns Suffix
-     */
-    static suffix(key: string, text: string): string;
-    /**
-     * Get the currently selected text
-     *
-     * @returns Text selection
+     * Get the currently selected text in the document.
      */
     static selection(): string;
     /**
-     * Gets the prefix of a string given a key
+     * Get the text after a given key/substring.
      *
-     * @param key - Key part of the string
-     * @param text - Full string to extract the prefix from
-     * @returns Prefix
+     * @param key - The substring to search for
+     * @param text - The text to search in
+     * @returns Text after the key, or empty string if not found
+     */
+    static suffix(key: string, text: string): string;
+    /**
+     * Get the text before a given key/substring.
+     *
+     * @param key - The substring to search for
+     * @param text - The text to search in
+     * @returns Text before the key, or empty string if not found
      */
     static prefix(key: string, text: string): string;
     /**
-     * Transforms a given text into a friendly URL string replacing all special characters
+     * Convert text to a URL-friendly slug.
      *
-     * @param text - The text to build the url from
-     * @returns Friendly URL
+     * @param text - Text to convert
+     * @returns URL-friendly slug
      */
     static friendly(text: string): string;
+    /**
+     * Truncate text to a maximum length with ellipsis.
+     *
+     * @param text - Text to truncate
+     * @param maxLength - Maximum length (including ellipsis)
+     * @param ellipsis - Ellipsis string to append (default: '...')
+     */
+    static truncate(text: string, maxLength: number, ellipsis?: string): string;
+    /**
+     * Check if a string is empty or contains only whitespace.
+     */
+    static isBlank(text: string | null | undefined): boolean;
 }
 //# sourceMappingURL=Text.d.ts.map

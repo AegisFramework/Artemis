@@ -3,12 +3,18 @@
  * IndexedDB Adapter
  * ==============================
  */
-import type { IndexedDBConfiguration, StorageValue, KeyValueResult, UpgradeCallback } from './types';
+import type { IndexedDBConfiguration, StorageValue, KeyValueResult, UpgradeCallback, SpaceAdapterInterface } from './types';
+/**
+ * Error thrown when a key is not found in storage
+ */
+export declare class KeyNotFoundError extends Error {
+    constructor(key: string);
+}
 /**
  * The IndexedDB Adapter provides the Space Class the ability to interact
  * with the IndexedDB API found in most modern browsers.
  */
-export declare class IndexedDB {
+export declare class IndexedDB implements SpaceAdapterInterface {
     name: string;
     version: string;
     store: string;
@@ -67,7 +73,8 @@ export declare class IndexedDB {
      */
     get(key: string): Promise<StorageValue>;
     /**
-     * Retrieves all the values in the space in a key-value JSON object
+     * Retrieves all the values in the space in a key-value JSON object.
+     * Note: The keyPath property is preserved in the returned items.
      *
      * @returns Promise resolving to all values
      */
@@ -89,10 +96,6 @@ export declare class IndexedDB {
      * @returns Promise
      */
     upgrade(oldVersion: string, newVersion: string, callback: UpgradeCallback<IndexedDB>): Promise<void>;
-    /**
-     * Helper for the upgrade progress by executing callbacks in order
-     */
-    private _upgrade;
     /**
      * Renaming the space is not possible with the IndexedDB adapter therefore
      * this function always gets rejected.

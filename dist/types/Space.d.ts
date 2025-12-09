@@ -7,7 +7,7 @@ import { LocalStorage } from './SpaceAdapter/LocalStorage';
 import { SessionStorage } from './SpaceAdapter/SessionStorage';
 import { IndexedDB } from './SpaceAdapter/IndexedDB';
 import { RemoteStorage } from './SpaceAdapter/RemoteStorage';
-import type { SpaceConfiguration, StorageValue, KeyValueResult, UpgradeCallback } from './SpaceAdapter/types';
+import type { SpaceConfiguration, StorageValue, KeyValueResult, UpgradeCallback, SpaceAdapterInterface } from './SpaceAdapter/types';
 /**
  * List of Adapters Available
  */
@@ -20,7 +20,7 @@ export declare const SpaceAdapter: {
 /**
  * Space adapter type (any of the available adapters)
  */
-export type SpaceAdapterType = LocalStorage | SessionStorage | IndexedDB | RemoteStorage;
+export type SpaceAdapterType = SpaceAdapterInterface;
 /**
  * Space adapter constructor type
  */
@@ -70,13 +70,29 @@ export declare class Space {
      * @param object - Configuration object to set up
      * @returns Configuration object if no param was passed
      */
-    configuration(object?: SpaceConfiguration | null): SpaceConfiguration | void;
+    configuration(object?: SpaceConfiguration | null): SpaceConfiguration | undefined;
     /**
      * Open the Storage Object to be used depending on the SpaceAdapter
      *
      * @returns Promise resolving to this Space
      */
     open(): Promise<this>;
+    /**
+     * Apply set transformations to a value
+     *
+     * @param key - The key being set
+     * @param value - The value to transform
+     * @returns The transformed value
+     */
+    private applySetTransformations;
+    /**
+     * Apply get transformations to a value
+     *
+     * @param key - The key being retrieved
+     * @param value - The value to transform
+     * @returns The transformed value
+     */
+    private applyGetTransformations;
     /**
      * Store a key-value pair
      *

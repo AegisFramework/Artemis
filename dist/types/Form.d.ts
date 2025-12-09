@@ -3,30 +3,55 @@
  * Form
  * ==============================
  */
+export type FormValue = string | number | boolean | File | null;
+export type FormValues = Record<string, FormValue | FormValue[]>;
 /**
- * Form data object type
+ * Options for parsing form values
  */
-export type FormData = Record<string, string | File | FileList | undefined>;
-/**
- * Utility class that provides simple functions for filling and retrieving values
- * from forms. This class requires the use of the `data-form` attribute.
- */
+export interface FormParseOptions {
+    parseNumbers?: boolean;
+    parseBooleans?: boolean;
+}
 export declare class Form {
     /**
-     * Fill a form's inputs with the given values. Each key in the provided object
-     * must match the `name` attribute of the input to fill.
+     * Fill a form with data.
      *
-     * @param name - Form name. Must match the `data-form` attribute of the Form.
-     * @param data - JSON object with key-value pairs to fill the inputs.
+     * @param formName - The data-form attribute value
+     * @param data - Key-value pairs to fill
      */
-    static fill(name: string, data: Record<string, string>): void;
+    static fill(formName: string, data: Record<string, unknown>): void;
     /**
-     * Get all the values from a form's inputs. The keys are mapped using the
-     * `name` attribute of each input.
+     * Get all values from a form.
      *
-     * @param name - Form name. Must match the `data-form` attribute of the Form.
-     * @returns Key-value JSON object
+     * @param formName - The data-form attribute value
+     * @param options - Parsing options
+     * @returns Form values as a record
      */
-    static values(name: string): FormData;
+    static values(formName: string, options?: FormParseOptions): FormValues;
+    /**
+     * Parse a string value, optionally converting to number.
+     *
+     * @param value - String value to parse
+     * @param parseNumbers - Whether to parse numeric strings
+     */
+    private static parseValue;
+    /**
+     * Reset a form to its initial state.
+     *
+     * @param formName - The data-form attribute value
+     */
+    static reset(formName: string): void;
+    /**
+     * Check if a form is valid according to HTML5 validation.
+     *
+     * @param formName - The data-form attribute value
+     */
+    static isValid(formName: string): boolean;
+    /**
+     * Report validity and show browser validation messages.
+     *
+     * @param formName - The data-form attribute value
+     */
+    static reportValidity(formName: string): boolean;
 }
 //# sourceMappingURL=Form.d.ts.map
