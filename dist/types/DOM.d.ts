@@ -104,10 +104,11 @@ export declare class DOM {
     /**
      * Remove event handlers from elements
      *
-     * @param eventNames - Space-separated event names
-     * @param callback - Callback function to remove
+     * @param eventNames - Space-separated event names (optional - omit to remove all)
+     * @param targetOrCallback - Either a selector for delegation or a callback (optional)
+     * @param callback - Callback function (required if using delegation removal)
      */
-    off(eventNames: string, callback: EventCallback): this;
+    off(eventNames?: string, targetOrCallback?: string | EventCallback, callback?: EventCallback): this;
     /**
      * Trigger events on elements
      *

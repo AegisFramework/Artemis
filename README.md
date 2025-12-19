@@ -61,6 +61,13 @@ $_ready(() => {
     console.log('List item clicked:', e.target);
   });
 
+  // Removing event handlers
+  const handler = (e) => console.log('Clicked!');
+  $_('button').on('click', handler);
+  $_('button').off('click', handler);       // Remove specific handler
+  $_('button').off('click');                // Remove all click handlers
+  $_('button').off();                       // Remove all handlers
+
   // Create new elements
   const div = $_create('div', { class: 'container', id: 'main' });
 
@@ -94,7 +101,8 @@ $_ready(() => {
 | `data(name, value?)` | Get/set data attributes |
 | `style(prop, value?)` | Get/set inline styles |
 | `on(event, callback)` | Add event listener |
-| `off(event, callback)` | Remove event listener |
+| `on(event, selector, callback)` | Add delegated event listener |
+| `off(event?, selectorOrCallback?, callback?)` | Remove event listener(s) |
 | `trigger(event, detail?)` | Dispatch custom event |
 | `find(selector)` | Find descendants |
 | `closest(selector)` | Find closest ancestor |

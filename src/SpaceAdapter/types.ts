@@ -8,9 +8,9 @@
  * Base configuration for all space adapters
  */
 export interface SpaceConfiguration {
-	name?: string;
-	version?: string;
-	store?: string;
+  name?: string;
+  version?: string;
+  store?: string;
 }
 
 /**
@@ -22,20 +22,20 @@ export type LocalStorageConfiguration = SpaceConfiguration;
  * IndexedDB configuration with additional options
  */
 export interface IndexedDBConfiguration extends SpaceConfiguration {
-	props?: IDBObjectStoreParameters;
-	index?: Record<string, {
-		name: string;
-		field: string;
-		props?: IDBIndexParameters;
-	}>;
+  props?: IDBObjectStoreParameters;
+  index?: Record<string, {
+    name: string;
+    field: string;
+    props?: IDBIndexParameters;
+  }>;
 }
 
 /**
  * RemoteStorage configuration
  */
 export interface RemoteStorageConfiguration extends SpaceConfiguration {
-	endpoint?: string;
-	props?: Record<string, unknown>;
+  endpoint?: string;
+  props?: Record<string, unknown>;
 }
 
 /**
@@ -47,8 +47,8 @@ export type StorageValue = unknown;
  * Key-value result type
  */
 export interface KeyValueResult {
-	key: string;
-	value: StorageValue;
+  key: string;
+  value: StorageValue;
 }
 
 /**
@@ -60,23 +60,23 @@ export type UpgradeCallback<T = unknown> = (adapter: T, event?: IDBVersionChange
  * Base interface for all space adapters
  */
 export interface SpaceAdapterInterface {
-	name: string;
-	version: string;
-	store: string;
+  name: string;
+  version: string;
+  store: string;
 
-	open(): Promise<this>;
-	set(key: string | null, value: StorageValue): Promise<KeyValueResult>;
-	update(key: string, value: StorageValue): Promise<KeyValueResult>;
-	get(key: string): Promise<StorageValue>;
-	getAll(): Promise<Record<string, StorageValue>>;
-	contains(key: string): Promise<void>;
-	upgrade(oldVersion: string, newVersion: string, callback: UpgradeCallback): Promise<void>;
-	rename(name: string): Promise<void>;
-	key(index: number, full?: boolean): Promise<string>;
-	keys(full?: boolean): Promise<string[]>;
-	remove(key: string): Promise<StorageValue>;
-	clear(): Promise<void>;
-	configuration?(config: SpaceConfiguration): void;
+  open(): Promise<this>;
+  set(key: string | null, value: StorageValue): Promise<KeyValueResult>;
+  update(key: string, value: StorageValue): Promise<KeyValueResult>;
+  get(key: string): Promise<StorageValue>;
+  getAll(): Promise<Record<string, StorageValue>>;
+  contains(key: string): Promise<void>;
+  upgrade(oldVersion: string, newVersion: string, callback: UpgradeCallback): Promise<void>;
+  rename(name: string): Promise<void>;
+  key(index: number, full?: boolean): Promise<string>;
+  keys(full?: boolean): Promise<string[]>;
+  remove(key: string): Promise<StorageValue>;
+  clear(): Promise<void>;
+  configuration?(config: SpaceConfiguration): void;
 }
 
 /**
@@ -92,20 +92,20 @@ export type SpaceAdapterConstructor = new (config: SpaceConfiguration) => SpaceA
  * @returns Numeric version for comparison
  */
 export function versionToNumber(version: string): number {
-	if (version === '') {
-		return 0;
-	}
+  if (version === '') {
+    return 0;
+  }
 
-	const segments = version.split('.');
-	let result = 0;
-	const multipliers = [1000000000000, 100000000, 10000]; // Support up to 4 segments
+  const segments = version.split('.');
+  let result = 0;
+  const multipliers = [1000000000000, 100000000, 10000]; // Support up to 4 segments
 
-	for (let i = 0; i < Math.min(segments.length, multipliers.length); i++) {
-		const segment = parseInt(segments[i], 10) || 0;
-		result += segment * multipliers[i];
-	}
+  for (let i = 0; i < Math.min(segments.length, multipliers.length); i++) {
+    const segment = parseInt(segments[i], 10) || 0;
+    result += segment * multipliers[i];
+  }
 
-	return result;
+  return result;
 }
 
 /**
@@ -116,12 +116,12 @@ export function versionToNumber(version: string): number {
  * @returns -1 if v1 < v2, 0 if v1 === v2, 1 if v1 > v2
  */
 export function compareVersions(v1: string, v2: string): number {
-	const n1 = versionToNumber(v1);
-	const n2 = versionToNumber(v2);
+  const n1 = versionToNumber(v1);
+  const n2 = versionToNumber(v2);
 
-	if (n1 < n2) return -1;
-	if (n1 > n2) return 1;
-	return 0;
+  if (n1 < n2) return -1;
+  if (n1 > n2) return 1;
+  return 0;
 }
 
 /**
@@ -131,19 +131,19 @@ export function compareVersions(v1: string, v2: string): number {
  * @returns Cloned value
  */
 export function cloneValue<T>(value: T): T {
-	if (value === null || typeof value !== 'object') {
-		return value;
-	}
+  if (value === null || typeof value !== 'object') {
+    return value;
+  }
 
-	if (Array.isArray(value)) {
-		return value.map(item => cloneValue(item)) as T;
-	}
+  if (Array.isArray(value)) {
+    return value.map(item => cloneValue(item)) as T;
+  }
 
-	const cloned: Record<string, unknown> = {};
-	for (const key of Object.keys(value as object)) {
-		cloned[key] = cloneValue((value as Record<string, unknown>)[key]);
-	}
-	return cloned as T;
+  const cloned: Record<string, unknown> = {};
+  for (const key of Object.keys(value as object)) {
+    cloned[key] = cloneValue((value as Record<string, unknown>)[key]);
+  }
+  return cloned as T;
 }
 
 /**
@@ -154,7 +154,7 @@ export function cloneValue<T>(value: T): T {
  * @returns Normalized URL
  */
 export function normalizeUrl(base: string, path: string): string {
-	const normalizedBase = base.endsWith('/') ? base.slice(0, -1) : base;
-	const normalizedPath = path.startsWith('/') ? path : `/${path}`;
-	return `${normalizedBase}${normalizedPath}`;
+  const normalizedBase = base.endsWith('/') ? base.slice(0, -1) : base;
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+  return `${normalizedBase}${normalizedPath}`;
 }

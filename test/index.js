@@ -21,11 +21,11 @@ Debug.log('uuid:', Util.uuid());
 
 // Test callAsync
 Util.callAsync(() => 'sync result', null).then(result => {
-	Debug.log('callAsync (sync):', result);
+  Debug.log('callAsync (sync):', result);
 });
 
 Util.callAsync(async () => 'async result', null).then(result => {
-	Debug.log('callAsync (async):', result);
+  Debug.log('callAsync (async):', result);
 });
 
 // Test debounce exists
@@ -40,7 +40,7 @@ Debug.warning('This is a warning message');
 
 Debug.time('Timer test');
 setTimeout(() => {
-	Debug.timeEnd('Timer test');
+  Debug.timeEnd('Timer test');
 }, 50);
 
 Debug.count('counter');
@@ -49,8 +49,8 @@ Debug.count('counter');
 Debug.log('Count should be 3');
 
 Debug.table([
-	{ name: 'Alice', age: 25 },
-	{ name: 'Bob', age: 30 }
+  { name: 'Alice', age: 25 },
+  { name: 'Bob', age: 30 }
 ]);
 Debug.groupEnd();
 

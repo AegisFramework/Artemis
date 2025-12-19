@@ -297,18 +297,39 @@
 		</div>
 
 		<h2>DOM Manipulation</h2>
-		<div class="card">
-			<h3>Animation & Classes</h3>
-			<div class="demo-box">
-				<div id="animation-target">Box</div>
+		<div class="grid">
+			<div class="card">
+				<h3>Animation & Classes</h3>
+				<div class="demo-box">
+					<div id="animation-target">Box</div>
+				</div>
+				<div class="controls">
+					<button id="fade-out">Fade Out</button>
+					<button id="fade-in">Fade In</button>
+					<button id="toggle-class" class="secondary">Toggle Class</button>
+					<button id="animate-box" class="secondary">Animate</button>
+				</div>
+				<div id="dom-tests"></div>
 			</div>
-			<div class="controls">
-				<button id="fade-out">Fade Out</button>
-				<button id="fade-in">Fade In</button>
-				<button id="toggle-class" class="secondary">Toggle Class</button>
-				<button id="animate-box" class="secondary">Animate</button>
+
+			<div class="card">
+				<h3>Event Handling</h3>
+				<div class="demo-box">
+					<button id="event-test-btn">Click Me</button>
+					<ul id="event-delegation-list">
+						<li>Item 1</li>
+						<li>Item 2</li>
+						<li>Item 3</li>
+					</ul>
+				</div>
+				<div class="controls">
+					<button id="test-on">Test on()</button>
+					<button id="test-off" class="secondary">Test off()</button>
+					<button id="test-delegation" class="secondary">Test Delegation</button>
+					<button id="test-off-all" class="secondary">off() All</button>
+				</div>
+				<div id="event-tests"></div>
 			</div>
-			<div id="dom-tests"></div>
 		</div>
 
 		<h2>Form Handling</h2>
@@ -586,6 +607,11 @@
 					runPlatformTests();
 					runFileSystemTests();
 					runDOMTests();
+					// Reset event tests
+					$_('#event-tests').empty();
+					$_('#event-test-btn').off();
+					$_('#event-delegation-list').off();
+					addTestResult('#event-tests', 'Event handlers', 'Reset - use buttons to test', 'pass');
 					log('All tests re-run', 'success');
 				});
 
@@ -620,6 +646,52 @@
 						{ transform: 'scale(1) rotate(360deg)' }
 					], { duration: 600, easing: 'ease-in-out' });
 					log('Animation triggered');
+				});
+
+				// Event handling tests
+				let clickCount = 0;
+				let delegationClickCount = 0;
+				const testHandler = () => {
+					clickCount++;
+					addTestResult('#event-tests', 'Click count', String(clickCount), 'pass');
+					log(`Button clicked (count: ${clickCount})`);
+				};
+
+				const delegationHandler = (e) => {
+					delegationClickCount++;
+					addTestResult('#event-tests', 'Delegation click', e.target.textContent, 'pass');
+					log(`List item clicked: ${e.target.textContent}`);
+				};
+
+				$_('#test-on').click(() => {
+					$_('#event-tests').empty();
+					clickCount = 0;
+					$_('#event-test-btn').on('click', testHandler);
+					addTestResult('#event-tests', 'on() attached', 'Click the button above', 'pass');
+					log('Event handler attached - click "Click Me" to test');
+				});
+
+				$_('#test-off').click(() => {
+					$_('#event-tests').empty();
+					$_('#event-test-btn').off('click', testHandler);
+					addTestResult('#event-tests', 'off() removed', 'Handler removed', 'pass');
+					log('Event handler removed');
+				});
+
+				$_('#test-delegation').click(() => {
+					$_('#event-tests').empty();
+					delegationClickCount = 0;
+					$_('#event-delegation-list').on('click', 'li', delegationHandler);
+					addTestResult('#event-tests', 'Delegation attached', 'Click list items above', 'pass');
+					log('Delegated handler attached - click list items to test');
+				});
+
+				$_('#test-off-all').click(() => {
+					$_('#event-tests').empty();
+					$_('#event-test-btn').off();
+					$_('#event-delegation-list').off();
+					addTestResult('#event-tests', 'off() all', 'All handlers removed', 'pass');
+					log('All event handlers removed');
 				});
 
 				// Form handlers
