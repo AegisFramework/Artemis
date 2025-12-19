@@ -21,10 +21,10 @@
 	"sideEffects": false,
 	"repository": {
 		"type": "git",
-		"url": "https://gitlab.com/AegisFramework/Artemis.git"
+		"url": "https://github.com/AegisFramework/Artemis.git"
 	},
 	"bugs": {
-		"url": "https://gitlab.com/AegisFramework/Artemis/issues"
+		"url": "https://github.com/AegisFramework/Artemis/issues"
 	},
 	"homepage": "https://aegisframework.com/",
 	"author": "Diana Islas Ocampo <dev@hyuchia.com>",
