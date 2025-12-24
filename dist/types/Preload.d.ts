@@ -81,5 +81,23 @@ export declare class Preload {
      * @returns Promise<void>
      */
     static font(url: string, crossOrigin?: boolean): Promise<void>;
+    /**
+     * Preload and decode an audio file into an AudioBuffer.
+     *
+     * @param url - URL of the audio file
+     * @param audioContext - Optional AudioContext to use for decoding. If not provided,
+     *                       a temporary one will be created. For best results, pass the
+     *                       same AudioContext that will be used for playback.
+     * @returns Promise<AudioBuffer> - Decoded audio ready for playback
+     */
+    static audio(url: string, audioContext?: AudioContext): Promise<AudioBuffer>;
+    /**
+     * Preload and decode multiple audio files in parallel.
+     *
+     * @param urls - Array of audio file URLs
+     * @param audioContext - Optional AudioContext to use for decoding
+     * @returns Promise<AudioBuffer[]>
+     */
+    static audios(urls: string[], audioContext?: AudioContext): Promise<AudioBuffer[]>;
 }
 //# sourceMappingURL=Preload.d.ts.map

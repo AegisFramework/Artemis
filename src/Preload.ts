@@ -193,4 +193,58 @@ export class Preload {
       document.head.appendChild(link);
     });
   }
+
+  /**
+   * Preload and decode an audio file into an AudioBuffer.
+   *
+   * @param url - URL of the audio file
+   * @param audioContext - Optional AudioContext to use for decoding. If not provided,
+   *                       a temporary one will be created. For best results, pass the
+   *                       same AudioContext that will be used for playback.
+   * @returns Promise<AudioBuffer> - Decoded audio ready for playback
+   */
+  static async audio(url: string, audioContext?: AudioContext): Promise<AudioBuffer> {
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error(`Preload failed for "${url}": ${response.status} ${response.statusText}`);
+    }
+
+    const arrayBuffer = await response.arrayBuffer();
+
+    // Use provided context or create a temporary one for decoding
+    const ctx = audioContext ?? new AudioContext();
+    const shouldCloseContext = !audioContext;
+
+    try {
+      const audioBuffer = await ctx.decodeAudioData(arrayBuffer);
+      return audioBuffer;
+    } finally {
+      // Close the context if we created it (to free resources)
+      if (shouldCloseContext) {
+        await ctx.close();
+      }
+    }
+  }
+
+  /**
+   * Preload and decode multiple audio files in parallel.
+   *
+   * @param urls - Array of audio file URLs
+   * @param audioContext - Optional AudioContext to use for decoding
+   * @returns Promise<AudioBuffer[]>
+   */
+  static async audios(urls: string[], audioContext?: AudioContext): Promise<AudioBuffer[]> {
+    // Create a shared context for decoding if none provided
+    const ctx = audioContext ?? new AudioContext();
+    const shouldCloseContext = !audioContext;
+
+    try {
+      return await Promise.all(urls.map(url => Preload.audio(url, ctx)));
+    } finally {
+      if (shouldCloseContext) {
+        await ctx.close();
+      }
+    }
+  }
 }

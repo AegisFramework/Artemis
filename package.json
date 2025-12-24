@@ -1,6 +1,6 @@
 {
 	"name": "@aegis-framework/artemis",
-	"version": "0.5.1",
+	"version": "0.5.2",
 	"description": "Aegis Framework Javascript Library",
 	"type": "module",
 	"main": "./dist/artemis.js",
@@ -44,7 +44,7 @@
 		"check": "tsc --noEmit",
 		"lint": "eslint ./src/**/*.ts",
 		"clean": "rm -rf dist",
-		"test": "http-server -p 3000 -c-1"
+		"test": "bun test/index.html"
 	},
 	"devDependencies": {
 		"@babel/eslint-parser": "^7.28.5",
