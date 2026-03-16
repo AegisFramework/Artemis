@@ -79,6 +79,10 @@ export class IndexedDB implements SpaceAdapterInterface {
       throw new Error('IndexedDB requires a store name. No store has been defined for this space.');
     }
 
+    if (this.numericVersion < 1) {
+      throw new Error('IndexedDB requires a version >= 1. No valid version has been defined for this space.');
+    }
+
     if (this.storage instanceof IDBDatabase) {
       return this;
     } else if (this.storage instanceof Promise) {

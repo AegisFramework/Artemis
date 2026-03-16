@@ -98,6 +98,10 @@ export class Text {
       return text;
     }
 
+    if (maxLength <= ellipsis.length) {
+      return ellipsis.slice(0, maxLength);
+    }
+
     return text.slice(0, maxLength - ellipsis.length).trimEnd() + ellipsis;
   }
 

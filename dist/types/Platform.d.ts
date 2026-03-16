@@ -47,6 +47,15 @@ export declare class Platform {
      */
     static get electron(): boolean;
     /**
+     * Check if the app is running inside Electrobun.
+     * Electrobun injects __electrobun into the WebView context.
+     */
+    static get electrobun(): boolean;
+    /**
+     * Check if the app is running inside any desktop app shell (Electron or Electrobun).
+     */
+    static get desktopApp(): boolean;
+    /**
      * Check if the app is running inside Cordova / PhoneGap.
      */
     static get cordova(): boolean;

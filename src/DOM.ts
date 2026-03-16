@@ -115,6 +115,10 @@ export class DOM {
    * @param classToCheck - Class name to check
    */
   hasClass(classToCheck: string): boolean {
+    if (this.length === 0) {
+      return false;
+    }
+
     return this.collection.every(element => element.classList.contains(classToCheck));
   }
 
@@ -303,7 +307,7 @@ export class DOM {
 
       const events = eventNames ? eventNames.split(' ') : Array.from(elementHandlers.keys());
       const isDelegation = typeof targetOrCallback === 'string';
-      const selector = isDelegation ? targetOrCallback : null;
+      const selector = isDelegation ? (targetOrCallback as string) : undefined;
       const callbackToRemove = isDelegation ? callback : (targetOrCallback as EventCallback | undefined);
 
       events.forEach(eventName => {
@@ -687,6 +691,10 @@ export class DOM {
    * @param attribute - Attribute name
    */
   hasAttribute(attribute: string): boolean {
+    if (this.length === 0) {
+      return false;
+    }
+
     return this.collection.every(element => element.hasAttribute(attribute));
   }
 

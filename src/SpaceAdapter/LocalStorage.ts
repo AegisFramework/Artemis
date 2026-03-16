@@ -201,11 +201,7 @@ export class LocalStorage implements SpaceAdapterInterface {
    */
   async set(key: string, value: StorageValue): Promise<KeyValueResult> {
     await this.open();
-    if (typeof value === 'object') {
-      (this.storage as Storage).setItem(this.id + key, JSON.stringify(value));
-    } else {
-      (this.storage as Storage).setItem(this.id + key, String(value));
-    }
+    (this.storage as Storage).setItem(this.id + key, JSON.stringify(value));
     return { key, value };
   }
 
@@ -220,14 +216,14 @@ export class LocalStorage implements SpaceAdapterInterface {
   async update(key: string, value: StorageValue): Promise<KeyValueResult> {
     try {
       const currentValue = await this.get(key);
+
       if (typeof currentValue === 'object' && currentValue !== null) {
         if (typeof value === 'object' && value !== null) {
           value = { ...(currentValue as object), ...(value as object) };
         }
-        (this.storage as Storage).setItem(this.id + key, JSON.stringify(value));
-      } else {
-        (this.storage as Storage).setItem(this.id + key, String(value));
       }
+
+      (this.storage as Storage).setItem(this.id + key, JSON.stringify(value));
       return { key, value };
     } catch {
       return this.set(key, value);
@@ -249,13 +245,9 @@ export class LocalStorage implements SpaceAdapterInterface {
     }
 
     try {
-      const parsed = JSON.parse(rawValue);
-      if (parsed && typeof parsed === 'object') {
-        return parsed;
-      }
-      return rawValue;
+      return JSON.parse(rawValue);
     } catch {
-      // Unable to parse to JSON, return raw value
+      // Unable to parse as JSON, return raw value
       return rawValue;
     }
   }

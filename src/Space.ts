@@ -350,8 +350,8 @@ export class Space {
 }
 
 // Re-export adapter types
-export { LocalStorage } from './SpaceAdapter/LocalStorage';
+export { LocalStorage, KeyNotFoundError as LocalStorageKeyNotFoundError } from './SpaceAdapter/LocalStorage';
 export { SessionStorage } from './SpaceAdapter/SessionStorage';
-export { IndexedDB } from './SpaceAdapter/IndexedDB';
-export { RemoteStorage } from './SpaceAdapter/RemoteStorage';
+export { IndexedDB, KeyNotFoundError as IndexedDBKeyNotFoundError } from './SpaceAdapter/IndexedDB';
+export { RemoteStorage, KeyNotFoundError as RemoteStorageKeyNotFoundError } from './SpaceAdapter/RemoteStorage';
 export type { SpaceConfiguration, StorageValue, KeyValueResult, UpgradeCallback } from './SpaceAdapter/types';

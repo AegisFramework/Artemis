@@ -25,6 +25,7 @@ interface ExtendedWindow extends Window {
     versions?: { electron?: string };
   };
   cordova?: unknown;
+  __electrobun?: unknown;
 }
 
 export class Platform {
@@ -113,6 +114,21 @@ export class Platform {
     }
 
     return false;
+  }
+
+  /**
+   * Check if the app is running inside Electrobun.
+   * Electrobun injects __electrobun into the WebView context.
+   */
+  static get electrobun(): boolean {
+    return !!(window as ExtendedWindow).__electrobun;
+  }
+
+  /**
+   * Check if the app is running inside any desktop app shell (Electron or Electrobun).
+   */
+  static get desktopApp(): boolean {
+    return Platform.electron || Platform.electrobun;
   }
 
   /**

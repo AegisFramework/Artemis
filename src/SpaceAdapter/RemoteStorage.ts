@@ -116,12 +116,16 @@ export class RemoteStorage implements SpaceAdapterInterface {
    */
   async update(key: string, value: StorageValue): Promise<KeyValueResult> {
     await this.open();
-    const currentValue = await this.get(key);
-    const merged = { ...(currentValue as object), ...(value as object) };
-    const response = await this.storage!.put(this.endpoint + key, merged as Record<string, unknown>, this.props);
-    const json = await response.json();
+    try {
+      const currentValue = await this.get(key);
+      const merged = { ...(currentValue as object), ...(value as object) };
+      const response = await this.storage!.put(this.endpoint + key, merged as Record<string, unknown>, this.props);
+      const json = await response.json();
 
-    return { key, value: json };
+      return { key, value: json };
+    } catch {
+      return this.set(key, value);
+    }
   }
 
   /**

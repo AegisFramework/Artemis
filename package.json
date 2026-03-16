@@ -1,6 +1,6 @@
 {
 	"name": "@aegis-framework/artemis",
-	"version": "0.5.2",
+	"version": "0.5.3",
 	"description": "Aegis Framework Javascript Library",
 	"type": "module",
 	"main": "./dist/artemis.js",

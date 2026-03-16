@@ -134,7 +134,14 @@ export class Request {
       if (data && typeof data === 'object' && !(data instanceof FormData)) {
         Object.entries(data).forEach(([key, val]) => {
           if (val !== undefined && val !== null) {
-            urlObj.searchParams.append(key, String(val));
+            if (typeof val === 'object') {
+              // Nested objects/arrays: use serialize for proper encoding
+              const serialized = Request.serialize({ [key]: val });
+              const nestedParams = new URLSearchParams(serialized);
+              nestedParams.forEach((v, k) => urlObj.searchParams.append(k, v));
+            } else {
+              urlObj.searchParams.append(key, String(val));
+            }
           }
         });
       }
