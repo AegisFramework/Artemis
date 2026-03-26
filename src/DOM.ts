@@ -4,7 +4,7 @@
  * ==============================
  */
 
-export type DOMSelector = string | Element | Element[] | NodeList | NodeListOf<Element> | HTMLElement[] | DOM | null;
+export type DOMSelector<E extends HTMLElement = HTMLElement> = string | E | E[] | Element | Element[] | NodeList | NodeListOf<E> | DOM<E> | null;
 
 export type StyleProperties = Record<string, string | number>;
 
@@ -14,7 +14,7 @@ export interface DOMOffset {
 }
 
 export type EventCallback = (event: Event) => void;
-export type ElementCallback = (element: HTMLElement, index: number) => void;
+export type ElementCallback<E extends HTMLElement = HTMLElement> = (element: E, index: number) => void;
 
 interface StoredHandler {
   selector: string | null;
@@ -27,23 +27,23 @@ const eventHandlers = new WeakMap<Element, Map<string, StoredHandler[]>>();
 /**
  * Simple DOM manipulation functions
  */
-export class DOM {
-  public collection: HTMLElement[];
+export class DOM<E extends HTMLElement = HTMLElement> {
+  public collection: E[];
   public length: number;
 
-  constructor(selector: DOMSelector) {
+  constructor(selector: DOMSelector<E>) {
     if (!selector) {
       this.collection = [];
     } else if (typeof selector === 'string') {
-      this.collection = Array.from(document.querySelectorAll(selector)) as HTMLElement[];
+      this.collection = Array.from(document.querySelectorAll(selector)) as E[];
     } else if (selector instanceof NodeList) {
-      this.collection = Array.from(selector) as HTMLElement[];
+      this.collection = Array.from(selector) as E[];
     } else if (selector instanceof DOM) {
-      this.collection = selector.collection;
+      this.collection = selector.collection as E[];
     } else if (selector instanceof Element) {
-      this.collection = [selector as HTMLElement];
+      this.collection = [selector as E];
     } else if (Array.isArray(selector)) {
-      this.collection = selector as HTMLElement[];
+      this.collection = selector as E[];
     } else {
       this.collection = [];
     }
@@ -378,8 +378,8 @@ export class DOM {
    *
    * @param selector - CSS selector to match
    */
-  filter(selector: string): DOM {
-    return new DOM(this.collection.filter(element => element.matches(selector)));
+  filter(selector: string): DOM<E> {
+    return new DOM<E>(this.collection.filter(element => element.matches(selector)));
   }
 
   /**
@@ -503,7 +503,7 @@ export class DOM {
    *
    * @param callback - Function to call for each element
    */
-  each(callback: ElementCallback): this {
+  each(callback: ElementCallback<E>): this {
     this.collection.forEach((element, i) => callback(element, i));
     return this;
   }
@@ -513,22 +513,22 @@ export class DOM {
    *
    * @param index - Zero-based index
    */
-  get(index: number): HTMLElement | undefined {
+  get(index: number): E | undefined {
     return this.collection[index];
   }
 
   /**
    * Get the first element wrapped in a new DOM instance
    */
-  first(): DOM {
-    return new DOM(this.collection[0] ?? null);
+  first(): DOM<E> {
+    return new DOM<E>(this.collection[0] ?? null);
   }
 
   /**
    * Get the last element wrapped in a new DOM instance
    */
-  last(): DOM {
-    return new DOM(this.collection[this.collection.length - 1] ?? null);
+  last(): DOM<E> {
+    return new DOM<E>(this.collection[this.collection.length - 1] ?? null);
   }
 
   /**
@@ -536,9 +536,9 @@ export class DOM {
    *
    * @param index - Zero-based index (negative counts from end)
    */
-  eq(index: number): DOM {
+  eq(index: number): DOM<E> {
     const actualIndex = index < 0 ? this.collection.length + index : index;
-    return new DOM(this.collection[actualIndex] ?? null);
+    return new DOM<E>(this.collection[actualIndex] ?? null);
   }
 
   /**
@@ -840,9 +840,9 @@ export class DOM {
    *
    * @param deep - Whether to clone child nodes (default: true)
    */
-  clone(deep: boolean = true): DOM {
-    const clones = this.collection.map(element => element.cloneNode(deep) as HTMLElement);
-    return new DOM(clones);
+  clone(deep: boolean = true): DOM<E> {
+    const clones = this.collection.map(element => element.cloneNode(deep) as E);
+    return new DOM<E>(clones);
   }
 
   /**
@@ -884,12 +884,12 @@ export class DOM {
    * @param name - Property name
    * @param value - Value to set (if omitted, returns current value)
    */
-  property<K extends keyof HTMLElement>(name: K, value: HTMLElement[K]): this;
-  property<K extends keyof HTMLElement>(name: K): HTMLElement[K] | undefined;
-  property<K extends keyof HTMLElement>(name: K, value?: HTMLElement[K]): this | HTMLElement[K] | undefined {
+  property<K extends keyof E>(name: K, value: E[K]): this;
+  property<K extends keyof E>(name: K): E[K] | undefined;
+  property<K extends keyof E>(name: K, value?: E[K]): this | E[K] | undefined {
     if (value !== undefined) {
       this.collection.forEach(element => {
-        (element as HTMLElement)[name] = value;
+        element[name] = value;
       });
       return this;
     }
@@ -987,8 +987,8 @@ export class DOM {
  *
  * @param selector - CSS selector, Element, or collection
  */
-export function $_(selector: DOMSelector): DOM {
-  return new DOM(selector);
+export function $_<E extends HTMLElement = HTMLElement>(selector: DOMSelector<E>): DOM<E> {
+  return new DOM<E>(selector);
 }
 
 /**
@@ -1013,7 +1013,7 @@ export function $_ready(callback: () => void): void {
 export function $_create<K extends keyof HTMLElementTagNameMap>(
   tagName: K,
   attributes?: Record<string, string>
-): DOM {
+): DOM<HTMLElementTagNameMap[K]> {
   const element = document.createElement(tagName);
 
   if (attributes) {
@@ -1022,5 +1022,5 @@ export function $_create<K extends keyof HTMLElementTagNameMap>(
     });
   }
 
-  return new DOM(element);
+  return new DOM<HTMLElementTagNameMap[K]>(element);
 }

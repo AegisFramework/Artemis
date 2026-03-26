@@ -3,21 +3,21 @@
  * DOM
  * ==============================
  */
-export type DOMSelector = string | Element | Element[] | NodeList | NodeListOf<Element> | HTMLElement[] | DOM | null;
+export type DOMSelector<E extends HTMLElement = HTMLElement> = string | E | E[] | Element | Element[] | NodeList | NodeListOf<E> | DOM<E> | null;
 export type StyleProperties = Record<string, string | number>;
 export interface DOMOffset {
     top: number;
     left: number;
 }
 export type EventCallback = (event: Event) => void;
-export type ElementCallback = (element: HTMLElement, index: number) => void;
+export type ElementCallback<E extends HTMLElement = HTMLElement> = (element: E, index: number) => void;
 /**
  * Simple DOM manipulation functions
  */
-export declare class DOM {
-    collection: HTMLElement[];
+export declare class DOM<E extends HTMLElement = HTMLElement> {
+    collection: E[];
     length: number;
-    constructor(selector: DOMSelector);
+    constructor(selector: DOMSelector<E>);
     /**
      * Hide elements by setting display to none
      */
@@ -121,7 +121,7 @@ export declare class DOM {
      *
      * @param selector - CSS selector to match
      */
-    filter(selector: string): DOM;
+    filter(selector: string): DOM<E>;
     /**
      * Check if the collection contains any elements
      */
@@ -167,27 +167,27 @@ export declare class DOM {
      *
      * @param callback - Function to call for each element
      */
-    each(callback: ElementCallback): this;
+    each(callback: ElementCallback<E>): this;
     /**
      * Get an element by index
      *
      * @param index - Zero-based index
      */
-    get(index: number): HTMLElement | undefined;
+    get(index: number): E | undefined;
     /**
      * Get the first element wrapped in a new DOM instance
      */
-    first(): DOM;
+    first(): DOM<E>;
     /**
      * Get the last element wrapped in a new DOM instance
      */
-    last(): DOM;
+    last(): DOM<E>;
     /**
      * Get element at index wrapped in a new DOM instance
      *
      * @param index - Zero-based index (negative counts from end)
      */
-    eq(index: number): DOM;
+    eq(index: number): DOM<E>;
     /**
      * Check if any element in the collection is visible
      */
@@ -302,7 +302,7 @@ export declare class DOM {
      *
      * @param deep - Whether to clone child nodes (default: true)
      */
-    clone(deep?: boolean): DOM;
+    clone(deep?: boolean): DOM<E>;
     /**
      * Replace elements with new content
      *
@@ -319,8 +319,8 @@ export declare class DOM {
      * @param name - Property name
      * @param value - Value to set (if omitted, returns current value)
      */
-    property<K extends keyof HTMLElement>(name: K, value: HTMLElement[K]): this;
-    property<K extends keyof HTMLElement>(name: K): HTMLElement[K] | undefined;
+    property<K extends keyof E>(name: K, value: E[K]): this;
+    property<K extends keyof E>(name: K): E[K] | undefined;
     /**
      * Get sibling elements
      */
@@ -349,7 +349,7 @@ export declare class DOM {
  *
  * @param selector - CSS selector, Element, or collection
  */
-export declare function $_(selector: DOMSelector): DOM;
+export declare function $_<E extends HTMLElement = HTMLElement>(selector: DOMSelector<E>): DOM<E>;
 /**
  * Execute a callback when the DOM is ready
  *
@@ -362,5 +362,5 @@ export declare function $_ready(callback: () => void): void;
  * @param tagName - HTML tag name
  * @param attributes - Optional attributes to set
  */
-export declare function $_create<K extends keyof HTMLElementTagNameMap>(tagName: K, attributes?: Record<string, string>): DOM;
+export declare function $_create<K extends keyof HTMLElementTagNameMap>(tagName: K, attributes?: Record<string, string>): DOM<HTMLElementTagNameMap[K]>;
 //# sourceMappingURL=DOM.d.ts.map
