@@ -429,10 +429,17 @@ Form.fill('UserForm', {
 
 // Get form values with type parsing
 const values = Form.values('UserForm', {
-  parseNumbers: true,  // Parse number inputs as numbers (default: true)
+  parseNumbers: true,  // default: true — see note below
   parseBooleans: true  // Parse single checkboxes as booleans (default: true)
 });
 // { username: 'john_doe', email: '...', age: 30, newsletter: true, country: 'us' }
+//
+// `parseNumbers: true` coerces *any* numeric-looking string — not just
+// `<input type="number">` values, but also text/select/textarea — into a
+// `Number`. That means leading-zero data like ZIP codes, account IDs, or
+// phone numbers ("01234") will be returned as `1234`. If your form holds
+// such fields, pass `parseNumbers: false` and convert numeric fields
+// explicitly at the call site.
 
 // Reset form
 Form.reset('UserForm');

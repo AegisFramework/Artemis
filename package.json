@@ -1,6 +1,6 @@
 {
 	"name": "@aegis-framework/artemis",
-	"version": "0.5.3",
+	"version": "0.6.0",
 	"description": "Aegis Framework Javascript Library",
 	"type": "module",
 	"main": "./dist/artemis.js",
@@ -13,12 +13,14 @@
 			"default": "./dist/artemis.js"
 		},
 		"./browser": {
-			"types": "./dist/types/index.d.ts",
+			"types": "./dist/types/browser.d.ts",
 			"import": "./dist/artemis.browser.js",
 			"default": "./dist/artemis.browser.js"
 		}
 	},
-	"sideEffects": false,
+	"sideEffects": [
+		"./dist/artemis.browser.js"
+	],
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/AegisFramework/Artemis.git"
@@ -44,7 +46,7 @@
 		"check": "tsc --noEmit",
 		"lint": "eslint ./src/**/*.ts",
 		"clean": "rm -rf dist",
-		"test": "bun test/index.html"
+		"test": "bun test"
 	},
 	"devDependencies": {
 		"@babel/eslint-parser": "^7.28.5",
@@ -53,6 +55,8 @@
 		"@typescript-eslint/parser": "^8.50.0",
 		"bun": "^1.3.5",
 		"eslint": "^9.39.2",
+		"fake-indexeddb": "^6.2.5",
+		"happy-dom": "^20.9.0",
 		"http-server": "^14.1.1",
 		"typescript": "^5.9.3",
 		"typescript-eslint": "^8.50.0"

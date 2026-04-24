@@ -27,10 +27,12 @@ export class IndexedDB implements SpaceAdapterInterface {
   public store: string;
   public props: IDBObjectStoreParameters;
   public index: Record<string, { name: string; field: string; props?: IDBIndexParameters }>;
-  public keyPath: string;
+  public keyPath: string | null;
   public numericVersion: number;
   public upgrades: Record<string, UpgradeCallback<IndexedDB>>;
-  public storage: IDBDatabase | Promise<IDBDatabase> | undefined;
+  public storage: IDBDatabase | undefined;
+  private _openPromise: Promise<this> | undefined;
+  private _failedUpgradeError: unknown | undefined;
 
   /**
    * Create a new IndexedDB. Differently from Local and Session Storages, the
@@ -45,7 +47,7 @@ export class IndexedDB implements SpaceAdapterInterface {
     this.props = props || {};
     this.index = index;
 
-    this.keyPath = (props?.keyPath as string) || 'id';
+    this.keyPath = typeof props?.keyPath === 'string' ? props.keyPath : null;
     this.upgrades = {};
 
     this.numericVersion = versionToNumber(version);
@@ -57,12 +59,61 @@ export class IndexedDB implements SpaceAdapterInterface {
    * @param config - Configuration object to set up
    */
   configuration(config: IndexedDBConfiguration): void {
-    if (config.name !== undefined) this.name = config.name;
+    if (config.name !== undefined) {
+      this.name = config.name;
+    }
+
     if (config.version !== undefined) {
       this.version = config.version;
       this.numericVersion = versionToNumber(config.version);
     }
-    if (config.store !== undefined) this.store = config.store;
+
+    if (config.store !== undefined) {
+      this.store = config.store;
+    }
+
+    if (config.props !== undefined) {
+      const newKeyPath = typeof config.props.keyPath === 'string' ? config.props.keyPath : null;
+
+      if (this.storage instanceof IDBDatabase && newKeyPath !== this.keyPath) {
+        // Mutating keyPath after open would silently route writes through the
+        // wrong field while the on-disk store still uses the original keyPath.
+        // Force the caller to bump the version and migrate via upgrade().
+        throw new Error(
+          `Cannot change keyPath after the IndexedDB has been opened. ` +
+          `The on-disk store still uses keyPath "${this.keyPath ?? '<out-of-line>'}"; ` +
+          `bump the version and migrate via upgrade() instead.`
+        );
+      }
+      this.props = config.props;
+      this.keyPath = newKeyPath;
+    }
+  }
+
+  private static isRecord(value: StorageValue): value is Record<string, unknown> {
+    if (value === null || typeof value !== 'object' || Array.isArray(value)) {
+      return false;
+    }
+
+    const prototype = Object.getPrototypeOf(value);
+
+    return prototype === Object.prototype || prototype === null;
+  }
+
+  private valueWithInlineKey(key: string, value: StorageValue): Record<string, unknown> {
+    if (!IndexedDB.isRecord(value)) {
+      throw new Error(`IndexedDB store "${this.store}" uses keyPath "${this.keyPath}" and requires object values when setting an explicit key.`);
+    }
+
+    return { ...value, [this.keyPath as string]: key };
+  }
+
+  private mergeValues(currentValue: StorageValue, value: StorageValue): StorageValue {
+    if (IndexedDB.isRecord(currentValue) && IndexedDB.isRecord(value)) {
+      return { ...currentValue, ...value };
+    }
+
+    return value;
   }
 
   /**
@@ -83,33 +134,53 @@ export class IndexedDB implements SpaceAdapterInterface {
       throw new Error('IndexedDB requires a version >= 1. No valid version has been defined for this space.');
     }
 
+    if (this._failedUpgradeError !== undefined) {
+      // Async upgrade failure persists across open() calls. The on-disk
+      // version was already bumped before the failure surfaced, so re-opening
+      // would skip the upgrade and silently use possibly-inconsistent data.
+      // The caller must handle recovery (delete the database, ship a new
+      // version, or instantiate a fresh adapter).
+      throw this._failedUpgradeError;
+    }
+
     if (this.storage instanceof IDBDatabase) {
       return this;
-    } else if (this.storage instanceof Promise) {
-      return await (this.storage as unknown as Promise<this>);
-    } else {
-      const openTask = (async () => {
-        let upgradeEvent: IDBVersionChangeEvent | undefined;
-        let upgradesToApply: string[] = [];
+    }
 
-        const db = await new Promise<IDBDatabase>((resolve, reject) => {
-          const request = window.indexedDB.open(this.name, this.numericVersion);
+    if (this._openPromise) {
+      return this._openPromise;
+    }
 
-          request.onerror = (event) => {
+    this._openPromise = (async () => {
+      const asyncUpgradeErrors: unknown[] = [];
+      const upgradePromises: Promise<void>[] = [];
+
+      const db = await new Promise<IDBDatabase>((resolve, reject) => {
+        const request = window.indexedDB.open(this.name, this.numericVersion);
+        let upgradeError: unknown;
+
+        request.onerror = (event) => {
+          if (upgradeError instanceof Error) {
+            reject(upgradeError);
+          } else if (upgradeError !== undefined) {
+            reject(new Error(`IndexedDB "${this.name}" upgrade failed`, { cause: upgradeError }));
+          } else {
             reject(new Error(`Failed to open IndexedDB "${this.name}": ${(event.target as IDBOpenDBRequest).error?.message}`));
-          };
+          }
+        };
 
-          request.onsuccess = (event) => {
-            resolve((event.target as IDBOpenDBRequest).result);
-          };
+        request.onsuccess = (event) => {
+          resolve((event.target as IDBOpenDBRequest).result);
+        };
 
-          request.onupgradeneeded = (event: IDBVersionChangeEvent) => {
-            upgradeEvent = event;
-            const db = (event.target as IDBOpenDBRequest).result;
+        request.onupgradeneeded = (event: IDBVersionChangeEvent) => {
+          const db = (event.target as IDBOpenDBRequest).result;
 
+          try {
             if (event.oldVersion < 1) {
               // Create all the needed Stores
               const store = db.createObjectStore(this.store, this.props);
+
               for (const indexKey of Object.keys(this.index)) {
                 const idx = this.index[indexKey];
                 store.createIndex(idx.name, idx.field, idx.props);
@@ -128,39 +199,65 @@ export class IndexedDB implements SpaceAdapterInterface {
               });
 
               if (startFrom > -1) {
-                upgradesToApply = availableUpgrades.slice(startFrom).filter((u) => {
+                const upgradesToApply = availableUpgrades.slice(startFrom).filter((u) => {
                   const [old, next] = u.split('::');
                   return parseInt(old) < this.numericVersion && parseInt(next) <= this.numericVersion;
                 });
+
+                for (const upgradeKey of upgradesToApply) {
+                  const result = this.upgrades[upgradeKey].call(this, this, event);
+
+                  if (result instanceof Promise) {
+                    // Attach the catch handler immediately so the rejection is
+                    // never observed as unhandled while we wait for the
+                    // version-change transaction to commit. We re-surface the
+                    // collected errors after all upgrades settle.
+                    upgradePromises.push(result.catch((err) => { asyncUpgradeErrors.push(err); }));
+                  }
+                }
               }
             }
-
-            // Once the transaction is done, resolve the storage object
-            const transaction = (event.target as IDBOpenDBRequest).transaction;
-            if (transaction) {
-              transaction.addEventListener('complete', () => {
-                // Transaction completed
-              });
-            }
-          };
-        });
-
-        this.storage = db;
-
-        // Apply upgrades
-        for (const upgradeKey of upgradesToApply) {
-          try {
-            await this.upgrades[upgradeKey].call(this, this, upgradeEvent);
-          } catch (e) {
-            console.error(e);
+          } catch (error) {
+            upgradeError = error;
+            (event.target as IDBOpenDBRequest).transaction?.abort();
           }
-        }
+        };
+      });
 
-        return this;
-      })();
+      this.storage = db;
 
-      this.storage = openTask as unknown as Promise<IDBDatabase>;
-      return await openTask;
+      // Wait for any async upgrade work to settle. The IDB version-change
+      // transaction commits as soon as `onsuccess` fires, so by the time
+      // these settle the version bump is already on disk and we can't roll
+      // back. We still surface failures so the caller knows the migration
+      // didn't complete and can stop using the potentially-inconsistent
+      // data. Upgrades that need transactional safety must run
+      // synchronously inside onupgradeneeded.
+      await Promise.all(upgradePromises);
+
+      if (asyncUpgradeErrors.length > 0) {
+        const error = asyncUpgradeErrors.length === 1
+          ? asyncUpgradeErrors[0]
+          : new AggregateError(
+            asyncUpgradeErrors as Error[],
+            `IndexedDB "${this.name}": ${asyncUpgradeErrors.length} async upgrade callback(s) rejected after the version-change transaction committed.`
+          );
+
+        // Poison the adapter: close the connection, drop the storage handle,
+        // and remember the failure so subsequent open() calls also reject.
+        try { db.close(); } catch { /* close() never throws in spec, but be defensive */ }
+        this.storage = undefined;
+        this._failedUpgradeError = error;
+        throw error;
+      }
+
+      return this;
+    })();
+
+    try {
+      return await this._openPromise;
+    } finally {
+      this._openPromise = undefined;
     }
   }
 
@@ -182,10 +279,11 @@ export class IndexedDB implements SpaceAdapterInterface {
       let op: IDBRequest;
 
       if (key !== null) {
-        const temp: Record<string, unknown> = {};
-
-        temp[this.keyPath] = key;
-        op = transaction.put({ ...temp, ...(value as object) });
+        if (this.keyPath) {
+          op = transaction.put(this.valueWithInlineKey(key, value));
+        } else {
+          op = transaction.put(value, key);
+        }
       } else {
         op = transaction.add(value);
       }
@@ -221,7 +319,10 @@ export class IndexedDB implements SpaceAdapterInterface {
           .transaction(this.store, 'readwrite')
           .objectStore(this.store);
 
-        const op = transaction.put({ ...(currentValue as object), ...(value as object) });
+        const mergedValue = this.mergeValues(currentValue, value);
+        const op = this.keyPath
+          ? transaction.put(this.valueWithInlineKey(key, mergedValue))
+          : transaction.put(mergedValue, key);
 
         op.addEventListener('success', (event) => {
           resolve({ key: String((event.target as IDBRequest).result), value });
@@ -268,7 +369,8 @@ export class IndexedDB implements SpaceAdapterInterface {
 
   /**
    * Retrieves all the values in the space in a key-value JSON object.
-   * Note: The keyPath property is preserved in the returned items.
+   * If the store uses an inline keyPath, the keyPath property is removed from
+   * the returned items to match the Space key-value shape.
    *
    * @returns Promise resolving to all values
    */
@@ -279,21 +381,32 @@ export class IndexedDB implements SpaceAdapterInterface {
         .transaction(this.store, 'readonly')
         .objectStore(this.store);
 
-      const op = transaction.getAll();
+      const op = transaction.openCursor();
+      const keyPath = this.keyPath;
+      const results: Record<string, StorageValue> = {};
 
       op.addEventListener('success', (event) => {
-        const results: Record<string, StorageValue> = {};
-        const items = (event.target as IDBRequest).result as Record<string, unknown>[];
+        const cursor = (event.target as IDBRequest).result as IDBCursorWithValue | null;
 
-        items.forEach((item) => {
-          const id = item[this.keyPath] as string;
+        if (!cursor) {
+          resolve(results);
+          return;
+        }
+
+        const key = String(cursor.key);
+        const item = cursor.value;
+
+        if (keyPath && IndexedDB.isRecord(item)) {
+          const id = item[keyPath] ?? key;
           // Create a shallow copy to avoid mutating the original item
           const itemCopy = { ...item };
-          delete itemCopy[this.keyPath];
-          results[id] = itemCopy;
-        });
+          delete itemCopy[keyPath];
+          results[String(id)] = itemCopy;
+        } else {
+          results[key] = item;
+        }
 
-        resolve(results);
+        cursor.continue();
       });
 
       op.addEventListener('error', (event) => {

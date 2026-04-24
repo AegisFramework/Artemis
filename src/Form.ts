@@ -6,16 +6,55 @@
 
 export type FormValue = string | number | boolean | File | null;
 export type FormValues = Record<string, FormValue | FormValue[]>;
+type NamedFormControl = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 
 /**
  * Options for parsing form values
  */
 export interface FormParseOptions {
-  parseNumbers?: boolean; // Whether to parse numeric strings as numbers
-  parseBooleans?: boolean; // Whether to parse checkbox values as booleans for single checkboxes
+  /**
+   * When true (default), every numeric-looking string returned by the form is
+   * coerced to a `Number`. This covers `<input type="number">` *and*
+   * text / select / textarea values. Forms that hold leading-zero data such as
+   * ZIP codes, account IDs, or phone numbers should pass `false` and convert
+   * numeric fields explicitly at the call site.
+   */
+  parseNumbers?: boolean;
+  /** Parse a single checkbox into a boolean instead of an array. Default true. */
+  parseBooleans?: boolean;
 }
 
 export class Form {
+  private static isNamedControl(element: Element): element is NamedFormControl {
+    return (
+      (
+        element instanceof HTMLInputElement ||
+        element instanceof HTMLSelectElement ||
+        element instanceof HTMLTextAreaElement
+      ) &&
+      element.name !== '' &&
+      !element.disabled
+    );
+  }
+
+  private static escapeAttributeValue(value: string): string {
+    // Escape `\` first so subsequent backslashes aren't double-encoded.
+    // Then hex-escape `'` (the string delimiter) and every C0/DEL control
+    // character per CSS Syntax Module §4.3.5. We avoid `\'` because some
+    // selector parsers (e.g. happy-dom's regex-based one) treat the next
+    // `'` as the closing quote regardless of the preceding backslash.
+    return value
+      .replace(/\\/g, '\\\\')
+      .replace(new RegExp("[\\u0000-\\u001F\\u007F']", 'g'), (ch) => `\\${ch.charCodeAt(0).toString(16).toUpperCase()} `);
+  }
+
+  private static formSelector(formName: string): string {
+    return `form[data-form='${Form.escapeAttributeValue(formName)}']`;
+  }
+
+  private static nameSelector(name: string): string {
+    return `[name='${Form.escapeAttributeValue(name)}']`;
+  }
 
   /**
    * Fill a form with data.
@@ -24,7 +63,7 @@ export class Form {
    * @param data - Key-value pairs to fill
    */
   static fill(formName: string, data: Record<string, unknown>): void {
-    const form = document.querySelector(`form[data-form='${formName}']`) as HTMLFormElement;
+    const form = document.querySelector(Form.formSelector(formName)) as HTMLFormElement;
 
     if (!form) {
       console.warn(`Form [data-form='${formName}'] not found.`);
@@ -32,7 +71,11 @@ export class Form {
     }
 
     Object.entries(data).forEach(([name, value]) => {
-      const elements = form.querySelectorAll(`[name='${name}']`);
+      // Skip nullish values so we don't unset existing state (e.g. uncheck a
+      // radio group, write the literal string "null" into a text field).
+      if (value === null || value === undefined) return;
+
+      const elements = form.querySelectorAll(Form.nameSelector(name));
 
       if (elements.length === 0) return;
 
@@ -44,9 +87,7 @@ export class Form {
         case 'radio':
           elements.forEach((el) => {
             const input = el as HTMLInputElement;
-            if (input.value === valString) {
-              input.checked = true;
-            }
+            input.checked = input.value === valString;
           });
           break;
 
@@ -85,27 +126,30 @@ export class Form {
   static values(formName: string, options: FormParseOptions = {}): FormValues {
     const { parseNumbers = true, parseBooleans = true } = options;
 
-    const form = document.querySelector(`form[data-form='${formName}']`) as HTMLFormElement;
+    const form = document.querySelector(Form.formSelector(formName)) as HTMLFormElement;
 
     if (!form) {
       console.warn(`Form [data-form='${formName}'] not found.`);
       return {};
     }
 
-    const formData = new FormData(form);
+    const controls = Array.from(form.elements).filter(Form.isNamedControl);
     const data: FormValues = {};
 
-    const keys = Array.from(new Set(formData.keys()));
+    const keys = Array.from(new Set(controls.map(control => control.name)));
+    // Build FormData once so any `formdata` listeners fire a single time.
+    const formData = new FormData(form);
 
     for (const key of keys) {
-      const allValues = formData.getAll(key);
-      const element = form.querySelector(`[name='${key}']`) as HTMLInputElement | null;
+      const elements = controls.filter(control => control.name === key);
+      const element = elements[0] as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | undefined;
       const inputType = element?.type;
 
       // Handle file inputs
       if (inputType === 'file') {
-        const files = allValues.filter((v): v is File => v instanceof File);
-        if (element?.multiple || files.length > 1) {
+        const fileInputs = elements.filter((control): control is HTMLInputElement => control instanceof HTMLInputElement);
+        const files = fileInputs.flatMap(input => Array.from(input.files ?? []));
+        if ((element as HTMLInputElement).multiple || files.length > 1) {
           data[key] = files;
         } else {
           data[key] = files[0] || null;
@@ -115,16 +159,25 @@ export class Form {
 
       // Handle checkboxes
       if (inputType === 'checkbox') {
-        const checkboxes = form.querySelectorAll(`[name='${key}']`);
+        const checkboxes = elements.filter((control): control is HTMLInputElement => control instanceof HTMLInputElement);
         if (checkboxes.length === 1 && parseBooleans) {
           // Single checkbox: return boolean
-          data[key] = (checkboxes[0] as HTMLInputElement).checked;
+          data[key] = checkboxes[0].checked;
           continue;
         }
         // Multiple checkboxes: return array of checked values
-        data[key] = allValues.map((v) => Form.parseValue(String(v), parseNumbers));
+        data[key] = checkboxes.filter(input => input.checked).map((input) => input.value);
         continue;
       }
+
+      // Handle radio groups
+      if (inputType === 'radio') {
+        const checked = elements.find((control) => control instanceof HTMLInputElement && control.checked);
+        data[key] = checked ? checked.value : '';
+        continue;
+      }
+
+      const allValues = formData.getAll(key);
 
       // Handle number inputs
       if (inputType === 'number' && parseNumbers) {
@@ -136,7 +189,7 @@ export class Form {
         continue;
       }
 
-      // Handle other inputs
+      // Handle other inputs (text, select, textarea, etc.)
       if (allValues.length > 1) {
         data[key] = allValues.map((v) => Form.parseValue(String(v), parseNumbers));
       } else {
@@ -166,7 +219,7 @@ export class Form {
    * @param formName - The data-form attribute value
    */
   static reset(formName: string): void {
-    const form = document.querySelector(`form[data-form='${formName}']`) as HTMLFormElement;
+    const form = document.querySelector(Form.formSelector(formName)) as HTMLFormElement;
 
     if (!form) {
       console.warn(`Form [data-form='${formName}'] not found.`);
@@ -182,7 +235,7 @@ export class Form {
    * @param formName - The data-form attribute value
    */
   static isValid(formName: string): boolean {
-    const form = document.querySelector(`form[data-form='${formName}']`) as HTMLFormElement;
+    const form = document.querySelector(Form.formSelector(formName)) as HTMLFormElement;
 
     if (!form) {
       console.warn(`Form [data-form='${formName}'] not found.`);
@@ -198,7 +251,7 @@ export class Form {
    * @param formName - The data-form attribute value
    */
   static reportValidity(formName: string): boolean {
-    const form = document.querySelector(`form[data-form='${formName}']`) as HTMLFormElement;
+    const form = document.querySelector(Form.formSelector(formName)) as HTMLFormElement;
 
     if (!form) {
       console.warn(`Form [data-form='${formName}'] not found.`);

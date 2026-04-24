@@ -3,6 +3,8 @@
 
 import * as Artemis from './index';
 
+export * from './index';
+
 declare global {
   interface Window {
     Artemis: typeof Artemis;
@@ -12,4 +14,3 @@ declare global {
 if (typeof window === 'object') {
   window.Artemis = Artemis;
 }
-

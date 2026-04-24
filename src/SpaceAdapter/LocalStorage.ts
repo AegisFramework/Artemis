@@ -83,7 +83,20 @@ export class LocalStorage implements SpaceAdapterInterface {
   }
 
   /**
-   * Open the Storage Object
+   * Open the Storage Object.
+   *
+   * If the space is versioned and an older version exists, this method copies
+   * the previous version's keys into the new version's namespace and runs any
+   * declared upgrade callbacks. If an upgrade callback rejects, a best-effort
+   * rollback restores the target namespace to its pre-upgrade snapshot and the
+   * old-version keys are kept so the next open can retry.
+   *
+   * Caveats:
+   * - Rollback is best-effort, not transactional. localStorage has no atomic
+   *   multi-key API, so a quota error or other cross-tab write during rollback
+   *   can leave the snapshot partially restored.
+   * - Concurrent writes from another tab to the target namespace between the
+   *   snapshot and a rollback will be clobbered by the restore.
    *
    * @returns Promise resolving to this adapter
    */
@@ -101,6 +114,8 @@ export class LocalStorage implements SpaceAdapterInterface {
     // Start opening
     this._openPromise = (async () => {
       let upgradesToApply: string[] = [];
+      const migratedPreviousKeys: string[] = [];
+      let targetSnapshot: Map<string, string | null> | null = null;
 
       // Check if this space is versioned
       if (this.version !== '') {
@@ -113,16 +128,26 @@ export class LocalStorage implements SpaceAdapterInterface {
         }
 
         // Get all the currently stored keys that contain the versionless ID
-        const storedVersions = Object.keys(window.localStorage).filter((key) => {
-          return key.indexOf(versionless) === 0;
-        }).map((key) => {
-          return key.replace(versionless, '').split('_')[0];
-        }).filter((key) => {
-          return key.indexOf('::') === -1;
-        }).sort();
+        const storedVersions = Array.from(new Set(
+          Object.keys(window.localStorage).filter((key) => {
+            return key.indexOf(versionless) === 0;
+          }).map((key) => {
+            return key.replace(versionless, '').split('_')[0];
+          }).filter((key) => {
+            return key.indexOf('::') === -1;
+          })
+        )).sort((a, b) => versionToNumber(a) - versionToNumber(b));
 
         if (storedVersions.length > 0) {
-          const oldVersion = storedVersions[0];
+          const oldVersion = storedVersions.filter((storedVersion) => {
+            return versionToNumber(storedVersion) < this.numericVersion;
+          }).pop();
+
+          if (!oldVersion) {
+            this.storage = window.localStorage;
+            return this;
+          }
+
           const oldVersionNumeric = versionToNumber(oldVersion);
 
           if (oldVersionNumeric < this.numericVersion) {
@@ -160,12 +185,20 @@ export class LocalStorage implements SpaceAdapterInterface {
               return key.replace(previousId, '');
             });
 
+            targetSnapshot = new Map();
+            Object.keys(window.localStorage).filter((key) => {
+              return key.indexOf(this.id) === 0;
+            }).forEach((key) => {
+              targetSnapshot!.set(key, window.localStorage.getItem(key));
+            });
+
             for (const key of keys) {
-              const previous = window.localStorage.getItem(`${previousId}${key}`);
+              const previousKey = `${previousId}${key}`;
+              const previous = window.localStorage.getItem(previousKey);
               if (previous !== null) {
                 window.localStorage.setItem(this.id + key, previous);
+                migratedPreviousKeys.push(previousKey);
               }
-              window.localStorage.removeItem(`${previousId}${key}`);
             }
           }
         }
@@ -173,13 +206,36 @@ export class LocalStorage implements SpaceAdapterInterface {
 
       this.storage = window.localStorage;
 
-      // Apply upgrades
-      for (const upgradeKey of upgradesToApply) {
-        try {
+      try {
+        // Apply upgrades against the copied target version. If any upgrade fails,
+        // preserve the previous version and roll back copied target keys.
+        for (const upgradeKey of upgradesToApply) {
           await this.upgrades[upgradeKey].call(this, this);
-        } catch (e) {
-          console.error(e);
         }
+
+        for (const key of migratedPreviousKeys) {
+          window.localStorage.removeItem(key);
+        }
+      } catch (error) {
+        if (targetSnapshot) {
+          Object.keys(window.localStorage).filter((key) => {
+            return key.indexOf(this.id) === 0;
+          }).forEach((key) => {
+            if (targetSnapshot!.has(key)) {
+              const previous = targetSnapshot!.get(key) ?? null;
+              if (previous === null) {
+                window.localStorage.removeItem(key);
+              } else {
+                window.localStorage.setItem(key, previous);
+              }
+            } else {
+              window.localStorage.removeItem(key);
+            }
+          });
+        }
+
+        this.storage = undefined;
+        throw error;
       }
 
       return this;

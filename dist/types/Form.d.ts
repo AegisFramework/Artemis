@@ -9,10 +9,22 @@ export type FormValues = Record<string, FormValue | FormValue[]>;
  * Options for parsing form values
  */
 export interface FormParseOptions {
+    /**
+     * When true (default), every numeric-looking string returned by the form is
+     * coerced to a `Number`. This covers `<input type="number">` *and*
+     * text / select / textarea values. Forms that hold leading-zero data such as
+     * ZIP codes, account IDs, or phone numbers should pass `false` and convert
+     * numeric fields explicitly at the call site.
+     */
     parseNumbers?: boolean;
+    /** Parse a single checkbox into a boolean instead of an array. Default true. */
     parseBooleans?: boolean;
 }
 export declare class Form {
+    private static isNamedControl;
+    private static escapeAttributeValue;
+    private static formSelector;
+    private static nameSelector;
     /**
      * Fill a form with data.
      *

@@ -24,10 +24,12 @@ export declare class IndexedDB implements SpaceAdapterInterface {
         field: string;
         props?: IDBIndexParameters;
     }>;
-    keyPath: string;
+    keyPath: string | null;
     numericVersion: number;
     upgrades: Record<string, UpgradeCallback<IndexedDB>>;
-    storage: IDBDatabase | Promise<IDBDatabase> | undefined;
+    storage: IDBDatabase | undefined;
+    private _openPromise;
+    private _failedUpgradeError;
     /**
      * Create a new IndexedDB. Differently from Local and Session Storages, the
      * IndexedDB Adapter requires a mandatory name, version and store name.
@@ -41,6 +43,9 @@ export declare class IndexedDB implements SpaceAdapterInterface {
      * @param config - Configuration object to set up
      */
     configuration(config: IndexedDBConfiguration): void;
+    private static isRecord;
+    private valueWithInlineKey;
+    private mergeValues;
     /**
      * Open the Storage Object
      *
@@ -74,7 +79,8 @@ export declare class IndexedDB implements SpaceAdapterInterface {
     get(key: string): Promise<StorageValue>;
     /**
      * Retrieves all the values in the space in a key-value JSON object.
-     * Note: The keyPath property is preserved in the returned items.
+     * If the store uses an inline keyPath, the keyPath property is removed from
+     * the returned items to match the Space key-value shape.
      *
      * @returns Promise resolving to all values
      */

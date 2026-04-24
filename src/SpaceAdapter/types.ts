@@ -54,7 +54,7 @@ export interface KeyValueResult {
 /**
  * Upgrade callback function type
  */
-export type UpgradeCallback<T = unknown> = (adapter: T, event?: IDBVersionChangeEvent) => Promise<void>;
+export type UpgradeCallback<T = unknown> = (adapter: T, event?: IDBVersionChangeEvent) => void | Promise<void>;
 
 /**
  * Base interface for all space adapters
@@ -125,25 +125,104 @@ export function compareVersions(v1: string, v2: string): number {
 }
 
 /**
- * Deep clone a value to prevent mutation
+ * Clone a value to isolate it from later mutation by the caller.
+ *
+ * Best-effort: `structuredClone` is preferred when available, with manual
+ * fallbacks for Date / RegExp / Map / Set / arrays / plain objects.
+ * Custom class instances (anything whose prototype is not `Object.prototype`
+ * or `null`) are returned **by reference** — preserving methods/identity
+ * matters more than isolating mutation, and there is no general way to
+ * reconstruct an arbitrary class instance.
  *
  * @param value - Value to clone
- * @returns Cloned value
+ * @returns Cloned value, or the same reference for class instances
  */
 export function cloneValue<T>(value: T): T {
   if (value === null || typeof value !== 'object') {
     return value;
   }
 
+  // Custom class instances pass through by reference. structuredClone would
+  // happily clone them but strip the prototype, breaking methods. Returning
+  // the original reference preserves identity and behavior; isolating
+  // mutation of class state is the caller's responsibility.
+  if (
+    !Array.isArray(value) &&
+    !(value instanceof Date) &&
+    !(value instanceof RegExp) &&
+    !(value instanceof Map) &&
+    !(value instanceof Set)
+  ) {
+    const prototype = Object.getPrototypeOf(value);
+    if (prototype !== Object.prototype && prototype !== null) {
+      return value;
+    }
+  }
+
+  if (typeof globalThis.structuredClone === 'function') {
+    try {
+      return globalThis.structuredClone(value);
+    } catch (error) {
+      if (!(error instanceof DOMException) || error.name !== 'DataCloneError') {
+        throw error;
+      }
+    }
+  }
+
   if (Array.isArray(value)) {
     return value.map(item => cloneValue(item)) as T;
   }
 
+  if (value instanceof Date) {
+    return new Date(value.getTime()) as T;
+  }
+
+  if (value instanceof RegExp) {
+    return new RegExp(value.source, value.flags) as T;
+  }
+
+  if (value instanceof Map) {
+    const cloned = cloneCollection(value, () => new Map<unknown, unknown>());
+
+    value.forEach((mapValue, mapKey) => {
+      cloned.set(cloneValue(mapKey), cloneValue(mapValue));
+    });
+
+    return cloned as T;
+  }
+
+  if (value instanceof Set) {
+    const cloned = cloneCollection(value, () => new Set<unknown>());
+
+    value.forEach((setValue) => {
+      cloned.add(cloneValue(setValue));
+    });
+
+    return cloned as T;
+  }
+
   const cloned: Record<string, unknown> = {};
+
   for (const key of Object.keys(value as object)) {
     cloned[key] = cloneValue((value as Record<string, unknown>)[key]);
   }
+
   return cloned as T;
+}
+
+/**
+ * Construct an empty container that preserves the original's subclass when
+ * possible. Falls back to the built-in if the subclass constructor needs
+ * arguments we don't have.
+ */
+function cloneCollection<T extends Map<unknown, unknown> | Set<unknown>>(value: T, fallback: () => T): T {
+  const Ctor = (value as object).constructor as new () => T;
+
+  try {
+    return new Ctor();
+  } catch {
+    return fallback();
+  }
 }
 
 /**

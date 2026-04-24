@@ -44,7 +44,20 @@ export declare class LocalStorage implements SpaceAdapterInterface {
      */
     configuration(config: LocalStorageConfiguration): void;
     /**
-     * Open the Storage Object
+     * Open the Storage Object.
+     *
+     * If the space is versioned and an older version exists, this method copies
+     * the previous version's keys into the new version's namespace and runs any
+     * declared upgrade callbacks. If an upgrade callback rejects, a best-effort
+     * rollback restores the target namespace to its pre-upgrade snapshot and the
+     * old-version keys are kept so the next open can retry.
+     *
+     * Caveats:
+     * - Rollback is best-effort, not transactional. localStorage has no atomic
+     *   multi-key API, so a quota error or other cross-tab write during rollback
+     *   can leave the snapshot partially restored.
+     * - Concurrent writes from another tab to the target namespace between the
+     *   snapshot and a rollback will be clobbered by the restore.
      *
      * @returns Promise resolving to this adapter
      */

@@ -4,7 +4,7 @@
  * ==============================
  */
 
-import { Request } from '../Request';
+import { Request, RequestError } from '../Request';
 import type { RequestOptions } from '../Request';
 import type { RemoteStorageConfiguration, StorageValue, KeyValueResult, SpaceAdapterInterface } from './types';
 import { normalizeUrl } from './types';
@@ -18,6 +18,15 @@ export class KeyNotFoundError extends Error {
     this.name = 'KeyNotFoundError';
   }
 }
+
+/**
+ * Wire-format marker. Request bodies must be JSON objects, but `Space.set`
+ * accepts primitives, arrays, and class instances. We wrap those under this
+ * sentinel key so a "dumb" storage server that round-trips bodies verbatim
+ * can still preserve the original value. `get`/`getAll`/etc. unwrap any
+ * single-key object that uses this marker so callers see the original shape.
+ */
+const REMOTE_VALUE_WRAPPER_KEY = '__artemis_value__';
 
 /**
  * The Remote Storage Adapter provides the Space Class the ability to interact
@@ -47,6 +56,79 @@ export class RemoteStorage implements SpaceAdapterInterface {
     this.baseEndpoint = endpoint;
     this.endpoint = this.computeEndpoint();
     this.props = props;
+  }
+
+  private static isRecord(value: StorageValue): value is Record<string, unknown> {
+    if (
+      value === null ||
+      typeof value !== 'object' ||
+      Array.isArray(value) ||
+      (typeof FormData !== 'undefined' && value instanceof FormData)
+    ) {
+      return false;
+    }
+
+    const prototype = Object.getPrototypeOf(value);
+    return prototype === Object.prototype || prototype === null;
+  }
+
+  private static looksLikeWrapper(value: StorageValue): value is Record<string, unknown> {
+    return (
+      RemoteStorage.isRecord(value) &&
+      Object.keys(value).length === 1 &&
+      Object.prototype.hasOwnProperty.call(value, REMOTE_VALUE_WRAPPER_KEY)
+    );
+  }
+
+  private static toRequestData(value: StorageValue): Record<string, unknown> {
+    // Wrap non-records so the body is always a JSON object. Also wrap
+    // records that already match the wrapper shape (`{ __artemis_value__: X }`
+    // with no other keys) so unwrap() can later distinguish "user stored a
+    // record that happens to look like a wrapper" from "we wrapped a
+    // primitive". Without this, the user's record would be returned as the
+    // inner X.
+    if (RemoteStorage.isRecord(value) && !RemoteStorage.looksLikeWrapper(value)) {
+      return value;
+    }
+    return { [REMOTE_VALUE_WRAPPER_KEY]: value };
+  }
+
+  private static unwrapValue(value: StorageValue): StorageValue {
+    if (RemoteStorage.looksLikeWrapper(value)) {
+      return value[REMOTE_VALUE_WRAPPER_KEY] as StorageValue;
+    }
+    return value;
+  }
+
+  private static mergeValues(currentValue: StorageValue, value: StorageValue): StorageValue {
+    if (RemoteStorage.isRecord(currentValue) && RemoteStorage.isRecord(value)) {
+      return { ...currentValue, ...value };
+    }
+
+    return value;
+  }
+
+  private ensureOk(response: Response, key?: string): void {
+    if (response.ok) {
+      return;
+    }
+
+    if (response.status === 404 && key !== undefined) {
+      throw new KeyNotFoundError(key);
+    }
+
+    throw new RequestError(response);
+  }
+
+  private async readJsonResponse(response: Response, key?: string): Promise<StorageValue> {
+    this.ensureOk(response, key);
+
+    if (response.status === 204) {
+      return null;
+    }
+
+    const text = await response.text();
+    return text === '' ? null : JSON.parse(text);
   }
 
   /**
@@ -99,10 +181,10 @@ export class RemoteStorage implements SpaceAdapterInterface {
   async set(key: string, value: StorageValue): Promise<KeyValueResult> {
     await this.open();
 
-    const response = await this.storage!.post(this.endpoint + key, value as Record<string, unknown>, this.props);
-    const json = await response.json();
+    const response = await this.storage!.post(this.endpoint + key, RemoteStorage.toRequestData(value), this.props);
+    const json = await this.readJsonResponse(response, key);
 
-    return { key, value: json };
+    return { key, value: RemoteStorage.unwrapValue(json) };
   }
 
   /**
@@ -116,15 +198,20 @@ export class RemoteStorage implements SpaceAdapterInterface {
    */
   async update(key: string, value: StorageValue): Promise<KeyValueResult> {
     await this.open();
+
     try {
       const currentValue = await this.get(key);
-      const merged = { ...(currentValue as object), ...(value as object) };
-      const response = await this.storage!.put(this.endpoint + key, merged as Record<string, unknown>, this.props);
-      const json = await response.json();
+      const merged = RemoteStorage.mergeValues(currentValue, value);
+      const response = await this.storage!.put(this.endpoint + key, RemoteStorage.toRequestData(merged), this.props);
+      const json = await this.readJsonResponse(response, key);
 
-      return { key, value: json };
-    } catch {
-      return this.set(key, value);
+      return { key, value: RemoteStorage.unwrapValue(json) };
+    } catch (error) {
+      if (error instanceof KeyNotFoundError) {
+        return this.set(key, value);
+      }
+
+      throw error;
     }
   }
 
@@ -136,7 +223,17 @@ export class RemoteStorage implements SpaceAdapterInterface {
    */
   async get(key: string): Promise<StorageValue> {
     await this.open();
-    return this.storage!.json(this.endpoint + key, {}, this.props);
+
+    try {
+      const json = await this.storage!.json(this.endpoint + key, {}, this.props);
+      return RemoteStorage.unwrapValue(json as StorageValue);
+    } catch (error) {
+      if (error instanceof RequestError && error.status === 404) {
+        throw new KeyNotFoundError(key);
+      }
+
+      throw error;
+    }
   }
 
   /**
@@ -146,7 +243,19 @@ export class RemoteStorage implements SpaceAdapterInterface {
    */
   async getAll(): Promise<Record<string, StorageValue>> {
     await this.open();
-    return this.storage!.json(this.endpoint, {}, this.props);
+    const raw = await this.storage!.json<Record<string, StorageValue>>(this.endpoint, {}, this.props);
+
+    if (raw === null || typeof raw !== 'object') {
+      return {};
+    }
+
+    const unwrapped: Record<string, StorageValue> = {};
+
+    for (const [key, value] of Object.entries(raw)) {
+      unwrapped[key] = RemoteStorage.unwrapValue(value);
+    }
+
+    return unwrapped;
   }
 
   /**
@@ -157,6 +266,7 @@ export class RemoteStorage implements SpaceAdapterInterface {
    */
   async contains(key: string): Promise<void> {
     const keys = await this.keys();
+
     if (keys.includes(key)) {
       return;
     } else {
@@ -215,7 +325,7 @@ export class RemoteStorage implements SpaceAdapterInterface {
   async remove(key: string): Promise<StorageValue> {
     await this.open();
     const response = await this.storage!.delete(this.endpoint + key, {}, this.props);
-    return response.json();
+    return RemoteStorage.unwrapValue(await this.readJsonResponse(response, key));
   }
 
   /**
@@ -225,6 +335,7 @@ export class RemoteStorage implements SpaceAdapterInterface {
    */
   async clear(): Promise<void> {
     await this.open();
-    await this.storage!.delete(this.endpoint, {}, this.props);
+    const response = await this.storage!.delete(this.endpoint, {}, this.props);
+    this.ensureOk(response);
   }
 }

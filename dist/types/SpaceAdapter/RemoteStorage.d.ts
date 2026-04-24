@@ -33,6 +33,13 @@ export declare class RemoteStorage implements SpaceAdapterInterface {
      * @param configuration - Configuration Object for the Adapter
      */
     constructor({ name, version, store, endpoint, props }: RemoteStorageConfiguration);
+    private static isRecord;
+    private static looksLikeWrapper;
+    private static toRequestData;
+    private static unwrapValue;
+    private static mergeValues;
+    private ensureOk;
+    private readJsonResponse;
     /**
      * Compute the full endpoint URL
      *

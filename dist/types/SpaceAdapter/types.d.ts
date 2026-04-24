@@ -47,7 +47,7 @@ export interface KeyValueResult {
 /**
  * Upgrade callback function type
  */
-export type UpgradeCallback<T = unknown> = (adapter: T, event?: IDBVersionChangeEvent) => Promise<void>;
+export type UpgradeCallback<T = unknown> = (adapter: T, event?: IDBVersionChangeEvent) => void | Promise<void>;
 /**
  * Base interface for all space adapters
  */
@@ -90,10 +90,17 @@ export declare function versionToNumber(version: string): number;
  */
 export declare function compareVersions(v1: string, v2: string): number;
 /**
- * Deep clone a value to prevent mutation
+ * Clone a value to isolate it from later mutation by the caller.
+ *
+ * Best-effort: `structuredClone` is preferred when available, with manual
+ * fallbacks for Date / RegExp / Map / Set / arrays / plain objects.
+ * Custom class instances (anything whose prototype is not `Object.prototype`
+ * or `null`) are returned **by reference** — preserving methods/identity
+ * matters more than isolating mutation, and there is no general way to
+ * reconstruct an arbitrary class instance.
  *
  * @param value - Value to clone
- * @returns Cloned value
+ * @returns Cloned value, or the same reference for class instances
  */
 export declare function cloneValue<T>(value: T): T;
 /**
